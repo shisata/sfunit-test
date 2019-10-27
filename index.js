@@ -46,9 +46,13 @@ io.on('connection', function(socket) {
     players[socket.id] = {
       x: 300,
       y: 300,
-      health: 4.33
+      health: 4.33,
+      level: 1,
+      dmg: 5,
+      speed: 10
     };
   });
+  // Responds to a movement event
   socket.on('movement', function(data) {
     var player = players[socket.id] || {};
 
@@ -56,22 +60,27 @@ io.on('connection', function(socket) {
     console.log(players)
     // Comment out above line if not needed
 
+    // Modified the values here to reflect player speed - GG 2019.10.26 17:30
     if (data.left) {
-      player.x -= 5;
+      player.x -= player.speed;
     }
     if (data.up) {
-      player.y -= 5;
+      player.y -= player.speed;
     }
     if (data.right) {
-      player.x += 5;
+      player.x += player.speed;
     }
     if (data.down) {
-      player.y += 5;
+      player.y += player.speed;
     }
   });
+
+//Collects client data at 60 events/second
 });setInterval(function() {
   io.sockets.emit('state', players);
 }, 1000 / 60);
+
+
 
 //=============================================================================
 // Fazal Workspace
