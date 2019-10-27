@@ -1,3 +1,27 @@
+/* ============================CODE WRITING RULES==============================
+ *
+ * Our objective is to write CLEAN, well written code. Please follow these
+ * basic guidelines:
+ * 
+ *       1) Line width will be set to 80 chars. Lines of code longer than this
+ *          will be divided up across multiple lines.
+ *          
+ *          link to how to set character line rules in VSCODE:
+ *          https://tinyurl.com/y2skbpbk
+ * 
+ *       2) Variable naming will be in camelCase. Use good variable names.
+ * 
+ *       3) DOCUMENT changes. If you refactor a line of code, document exactly
+ *          what was done to change it, and initial/date the change.
+ * 
+ *       4) Keep spacing consistent, such as indentations and parenthesis 
+ *          positioning.
+ * 
+ *       5) Put a comment above EVERY function declaration describing its 
+ *          purpose.
+ *          
+ * ==========================================================================*/
+
 // Dependencies
 var express = require('express');
 var http = require('http');
@@ -14,6 +38,8 @@ server.listen(5000, function() {
   console.log('Starting server on port 5000');
 });
 
+//Players object will contain position, health, etc. information about
+//the players
 var players = {};
 io.on('connection', function(socket) {
   socket.on('new player', function() {
@@ -72,7 +98,6 @@ io.on('connection', function(socket) {
 // setInterval(function() {
 //   io.sockets.emit('message', players)
 // }, 1000000);
-
 
 //=============================================================================
 
