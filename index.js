@@ -2,7 +2,8 @@
 var express = require('express');
 var http = require('http');
 var path = require('path');
-var socketIO = require('socket.io');var app = express();
+var socketIO = require('socket.io');
+var app = express();
 var server = http.Server(app);
 var io = socketIO(server);app.set('port', 5000);
 app.use('/static', express.static(__dirname + '/static'));// Routing
@@ -18,11 +19,16 @@ io.on('connection', function(socket) {
   socket.on('new player', function() {
     players[socket.id] = {
       x: 300,
-      y: 300
+      y: 300,
+      health: 4.33
     };
   });
   socket.on('movement', function(data) {
     var player = players[socket.id] || {};
+
+    //For visualizing players ovject data
+    console.log(players)
+
     if (data.left) {
       player.x -= 5;
     }
@@ -39,3 +45,34 @@ io.on('connection', function(socket) {
 });setInterval(function() {
   io.sockets.emit('state', players);
 }, 1000 / 60);
+
+//=============================================================================
+
+
+// Fazal Space
+
+
+
+
+
+//=============================================================================
+
+
+
+
+
+//=============================================================================
+// George Space
+
+// var msg = io()
+// msg.on('message', function(data) {
+//   console.log(data)
+// })
+
+// setInterval(function() {
+//   io.sockets.emit('message', players)
+// }, 1000000);
+
+
+//=============================================================================
+
