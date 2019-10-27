@@ -40,17 +40,22 @@ server.listen(5000, function() {
 
 //Players object will contain all information about each player's position, 
 //health, etc. 
-var players = {};
+var players = {
+  numPlayers: 0  //Length will keep track of ther
+};
 io.on('connection', function(socket) {
   socket.on('new player', function() {
-    players[socket.id] = {
-      x: 300,
-      y: 300,
-      health: 4.33,
-      level: 1,
-      dmg: 5,
-      speed: 10
-    };
+    if (players.numPlayers < 4) {
+      players.numPlayers += 1;
+      players[socket.id] = {
+        x: 300,
+        y: 300,
+        health: 4.33,
+        level: 1,
+        damage: 5,
+        speed: 10
+      };
+    }
   });
   // Responds to a movement event
   socket.on('movement', function(data) {
