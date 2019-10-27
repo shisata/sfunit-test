@@ -48,6 +48,7 @@ io.on('connection', function(socket) {
     if (players.numPlayers < 4) {
       players.numPlayers += 1;
       players[socket.id] = {
+        playerID: players.numPlayers,
         x: 300,
         y: 300,
         health: 4.33,
@@ -62,7 +63,7 @@ io.on('connection', function(socket) {
     var player = players[socket.id] || {};
 
     //For visualizing players ovject data
-    console.log(players)
+    console.log(player.playerID)
     //Comment out above line if not needed
 
     //Modified the values here to reflect player speed - GG 2019.10.26 17:30
