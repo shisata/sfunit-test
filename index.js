@@ -63,9 +63,9 @@ io.on('connection', function(socket) {
 
     //For visualizing players ovject data
     console.log(players)
-    // Comment out above line if not needed
+    //Comment out above line if not needed
 
-    // Modified the values here to reflect player speed - GG 2019.10.26 17:30
+    //Modified the values here to reflect player speed - GG 2019.10.26 17:30
     if (data.left) {
       player.x -= player.speed;
     }
@@ -79,12 +79,16 @@ io.on('connection', function(socket) {
       player.y += player.speed;
     }
   });
+  //Removes disconnected player
+  socket.on('disconnect', function() {
+    players[socket.id] = 0;
+    players.numPlayers -= 1;
+  });
 
 //Collects client data at 60 events/second
 });setInterval(function() {
   io.sockets.emit('state', players);
 }, 1000 / 60);
-
 
 
 //=============================================================================
