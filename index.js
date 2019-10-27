@@ -41,7 +41,7 @@ server.listen(5000, function() {
 //Players object will contain all information about each player's position, 
 //health, etc. 
 var players = {
-  numPlayers: 0  //Length will keep track of ther
+  numPlayers: 0  //Length will keep track of the number of players
 };
 io.on('connection', function(socket) {
   socket.on('new player', function() {
