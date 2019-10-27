@@ -38,8 +38,8 @@ server.listen(5000, function() {
   console.log('Starting server on port 5000');
 });
 
-//Players object will contain position, health, etc. information about
-//the players
+//Players object will contain all information about each player's position, 
+//health, etc. 
 var players = {};
 io.on('connection', function(socket) {
   socket.on('new player', function() {
@@ -54,6 +54,7 @@ io.on('connection', function(socket) {
 
     //For visualizing players ovject data
     console.log(players)
+    // Comment out above line if not needed
 
     if (data.left) {
       player.x -= 5;
@@ -73,22 +74,17 @@ io.on('connection', function(socket) {
 }, 1000 / 60);
 
 //=============================================================================
-
-
-// Fazal Space
-
-
-
-
-
-//=============================================================================
+// Fazal Workspace
 
 
 
 
 
 //=============================================================================
-// George Space
+
+
+//=============================================================================
+// George Workpace
 
 // var msg = io()
 // msg.on('message', function(data) {
@@ -101,3 +97,27 @@ io.on('connection', function(socket) {
 
 //=============================================================================
 
+
+//=============================================================================
+// Hailey Workpace
+
+
+//=============================================================================
+
+
+
+
+//=============================================================================
+// Long Workpace
+
+
+//=============================================================================
+
+
+
+
+//=============================================================================
+// Josh Workpace
+
+
+//=============================================================================
