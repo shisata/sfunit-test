@@ -2,25 +2,33 @@
  *
  * Our objective is to write CLEAN, well written code. Please follow these
  * basic guidelines:
- * 
+ *
  *       1) Line width will be set to 80 chars. Lines of code longer than this
  *          will be divided up across multiple lines.
- *          
+ *
  *          link to how to set character line rules in VSCODE:
  *          https://tinyurl.com/y2skbpbk
- * 
+ *
  *       2) Variable naming will be in camelCase. Use good variable names.
- * 
+ *
  *       3) DOCUMENT changes. If you refactor a line of code, document exactly
  *          what was done to change it, and initial/date the change.
- * 
- *       4) Keep spacing consistent, such as indentations and parenthesis 
+ *
+ *       4) Keep spacing consistent, such as indentations and parenthesis
  *          positioning.
- * 
- *       5) Put a comment above EVERY function declaration describing its 
+ *
+ *       5) Put a comment above EVERY function declaration describing its
  *          purpose.
- *          
+ *
  * ==========================================================================*/
+
+
+ //app designing
+
+
+
+
+
 
 // Dependencies
 var express = require('express');
@@ -30,16 +38,30 @@ var socketIO = require('socket.io');
 var app = express();
 var server = http.Server(app);
 var io = socketIO(server);app.set('port', 5000);
+//database
+const { Pool } = require('pg')
+var pool
+pool = new Pool({
+  connectionString: process.env.DATABASE_URL
+});
+
 app.use('/static', express.static(__dirname + '/static'));// Routing
-app.get('/', function(request, response) {
-  response.sendFile(path.join(__dirname, 'index.html'));
-});// Starts the server.
+//app.get('/', function(request, response) {
+//  response.sendFile(path.join(__dirname, 'index.html'));
+//});// Starts the server.
 server.listen(5000, function() {
   console.log('Starting server on port 5000');
 });
 
-//Players object will contain all information about each player's position, 
-//health, etc. 
+//setting up default viewpath to views folder
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
+
+//Looking for static pages in public folder
+app.use(express.static(path.join(__dirname, 'public')));
+
+//Players object will contain all information about each player's position,
+//health, etc.
 var players = {
   numPlayers: 0  //Length will keep track of the number of players
 };
@@ -130,6 +152,19 @@ io.on('connection', function(socket) {
 
 //=============================================================================
 // Long Workpace
+
+
+//login page
+app.get('/', (req, res) =>
+{
+  res.render('pages/login');
+});
+
+app.get('/register', (req,res) =>
+{
+  res.render('pages/register');
+});
+
 
 
 //=============================================================================
