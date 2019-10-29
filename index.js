@@ -38,12 +38,11 @@ const { Pool } = require('pg')
 var pool
 pool = new Pool({
   connectionString: process.env.DATABASE_URL
-});
-
-app.use('/static', express.static(__dirname + '/static'));// Routing
-app.get('/', function(request, response) {
-response.sendFile(path.join(__dirname, 'index.html'));
-});// Starts the server.
+})
+// app.use('/static', express.static(__dirname + '/static'));// Routing
+// app.get('/', function(request, response) {
+// response.sendFile(path.join(__dirname, 'index.html'));
+// });// Starts the server.
 server.listen(5000, function() {
   console.log('Starting server on port 5000');
 });
@@ -104,7 +103,7 @@ io.on('connection', function(socket) {
       player.y += player.speed;
     }
   });
-
+//Code block to respond to shooting
 socket.on('actions', function(data) {
   if (data.shootBullet) {
     projectiles.numProjectiles = bulletCount;
@@ -118,7 +117,7 @@ socket.on('actions', function(data) {
     while (shot.x < 1000 && shot.y < 1000) {
       shot.x += shot.projectileSpeed;
       shot.y += shot.projectileSpeed;
-      console.log("[" + shot.x + ", " + shot.y + "]");
+      // console.log("[" + data.x + ", " + data.y + "]");
       if (shot.x == 1000 || shot.y == 1000) {
         projectiles[bulletCount] = 0;
       }
@@ -190,15 +189,15 @@ socket.on('disconnect', function() {
 
 
 // //login page
-// app.get('/', (req, res) =>
-// {
-//   res.render('pages/login');
-// });
+app.get('/', (req, res) =>
+{
+  res.render('pages/login');
+});
 
-// app.get('/register', (req,res) =>
-// {
-//   res.render('pages/register');
-// });
+app.get('/register', (req,res) =>
+{
+  res.render('pages/register');
+});
 
 
 

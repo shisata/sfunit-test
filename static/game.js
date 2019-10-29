@@ -10,7 +10,9 @@ var movement = {
     right: false,
 }
 var actions = {
-    shootBullet: false
+    shootBullet: false,
+    x: 0,
+    y: 0
 }
 document.addEventListener('keydown', function(event) {
   switch (event.keyCode) {
@@ -28,6 +30,9 @@ document.addEventListener('keydown', function(event) {
       break;
     case 32: // ' '
       actions.shootBullet = true;
+      console.log(event.clientX)
+      actions.x = event.clientX;
+      actions.y = event.clientY;
       break;
   }
 });
@@ -47,10 +52,12 @@ document.addEventListener('keyup', function(event) {
       break;
     case 32: // ' '
       actions.shootBullet = false;
+      actions.x = 0;
+      actions.y = 0;
       break;
   }
 });
- 
+
 socket.emit('new player');
 setInterval(function() {
   socket.emit('movement', movement);
