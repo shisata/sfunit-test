@@ -10,7 +10,7 @@ var movement = {
     right: false,
 }
 var actions = {
-    shoot: false
+    shootBullet: false
 }
 document.addEventListener('keydown', function(event) {
   switch (event.keyCode) {
@@ -27,7 +27,7 @@ document.addEventListener('keydown', function(event) {
       movement.down = true;
       break;
     case 32: // ' '
-      actions.shoot = true;
+      actions.shootBullet = true;
       break;
   }
 });
@@ -46,7 +46,7 @@ document.addEventListener('keyup', function(event) {
       movement.down = false;
       break;
     case 32: // ' '
-      actions.shoot = false;
+      actions.shootBullet = false;
       break;
   }
 });

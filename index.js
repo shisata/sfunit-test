@@ -41,9 +41,9 @@ pool = new Pool({
 });
 
 app.use('/static', express.static(__dirname + '/static'));// Routing
-// app.get('/', function(request, response) {
-// response.sendFile(path.join(__dirname, 'index.html'));
-// });// Starts the server.
+app.get('/', function(request, response) {
+response.sendFile(path.join(__dirname, 'index.html'));
+});// Starts the server.
 server.listen(5000, function() {
   console.log('Starting server on port 5000');
 });
@@ -60,6 +60,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 var players = {
   numPlayers: 0  //Length will keep track of the number of players
 };
+
+//Projectiles object will keep track of active projectiles
+var projectiles = {
+  numProjectiles: 0
+}
+var bulletCount = 0;
+
 io.on('connection', function(socket) {
   socket.on('new player', function() {
     if (players.numPlayers < 4) {
@@ -99,16 +106,35 @@ io.on('connection', function(socket) {
   });
 
 socket.on('actions', function(data) {
-  var player = players[socket.id] || {};
-
-    // Handles player damage - at health <= 0, player is removed
-    if (data.shoot) {
-      player.health -= .2;
-      if (player.health <= 0) {
-        players[socket.id] = 0;
-        players.numPlayers -= 1;
+  if (data.shootBullet) {
+    projectiles.numProjectiles = bulletCount;
+    bulletCount += 1;
+    projectiles[bulletCount] = {
+      x: 300,
+      y: 300,
+      projectileSpeed: 1
+    };
+    shot = projectiles[bulletCount];
+    while (shot.x < 1000 && shot.y < 1000) {
+      shot.x += shot.projectileSpeed;
+      shot.y += shot.projectileSpeed;
+      console.log("[" + shot.x + ", " + shot.y + "]");
+      if (shot.x == 1000 || shot.y == 1000) {
+        projectiles[bulletCount] = 0;
       }
     }
+  }
+
+  // var player = players[socket.id] || {};
+
+  //   // Handles player damage - at health <= 0, player is removed
+  //   if (data.shoot) {
+  //     player.health -= .2;
+  //     if (player.health <= 0) {
+  //       players[socket.id] = 0;
+  //       players.numPlayers -= 1;
+  //     }
+  //   }
 });
 
 //Removes disconnected player
@@ -164,15 +190,15 @@ socket.on('disconnect', function() {
 
 
 // //login page
-app.get('/', (req, res) =>
-{
-  res.render('pages/login');
-});
+// app.get('/', (req, res) =>
+// {
+//   res.render('pages/login');
+// });
 
-app.get('/register', (req,res) =>
-{
-  res.render('pages/register');
-});
+// app.get('/register', (req,res) =>
+// {
+//   res.render('pages/register');
+// });
 
 
 
