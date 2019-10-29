@@ -25,11 +25,6 @@
 
  //app designing
 
-
-
-
-
-
 // Dependencies
 var express = require('express');
 var http = require('http');
@@ -46,9 +41,9 @@ pool = new Pool({
 });
 
 app.use('/static', express.static(__dirname + '/static'));// Routing
-//app.get('/', function(request, response) {
-//  response.sendFile(path.join(__dirname, 'index.html'));
-//});// Starts the server.
+// app.get('/', function(request, response) {
+// response.sendFile(path.join(__dirname, 'index.html'));
+// });// Starts the server.
 server.listen(5000, function() {
   console.log('Starting server on port 5000');
 });
@@ -85,7 +80,7 @@ io.on('connection', function(socket) {
     var player = players[socket.id] || {};
 
     //For visualizing players ovject data
-    console.log(player.playerID)
+    // console.log(player)
     //Comment out above line if not needed
 
     //Modified the values here to reflect player speed - GG 2019.10.26 17:30
@@ -102,11 +97,25 @@ io.on('connection', function(socket) {
       player.y += player.speed;
     }
   });
-  //Removes disconnected player
-  socket.on('disconnect', function() {
-    players[socket.id] = 0;
-    players.numPlayers -= 1;
-  });
+
+socket.on('actions', function(data) {
+  var player = players[socket.id] || {};
+
+    // Handles player damage - at health <= 0, player is removed
+    if (data.shoot) {
+      player.health -= .2;
+      if (player.health <= 0) {
+        players[socket.id] = 0;
+        players.numPlayers -= 1;
+      }
+    }
+});
+
+//Removes disconnected player
+socket.on('disconnect', function() {
+  players[socket.id] = 0;
+  players.numPlayers -= 1;
+});
 
 //Collects client data at 60 events/second
 });setInterval(function() {
@@ -154,7 +163,7 @@ io.on('connection', function(socket) {
 // Long Workpace
 
 
-//login page
+// //login page
 app.get('/', (req, res) =>
 {
   res.render('pages/login');
