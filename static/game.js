@@ -7,44 +7,61 @@ var movement = {
     up: false,
     down: false,
     left: false,
-    right: false
+    right: false,
+}
+var actions = {
+    shootBullet: false,
+    x: 0,
+    y: 0
+}
+document.addEventListener('keydown', function(event) {
+  switch (event.keyCode) {
+    case 65: // A
+      movement.left = true;
+      break;
+    case 87: // W
+      movement.up = true;
+      break;
+    case 68: // D
+      movement.right = true;
+      break;
+    case 83: // S
+      movement.down = true;
+      break;
+    case 32: // ' '
+      actions.shootBullet = true;
+      console.log(event.clientX)
+      actions.x = event.clientX;
+      actions.y = event.clientY;
+      break;
   }
-  document.addEventListener('keydown', function(event) {
-    switch (event.keyCode) {
-      case 65: // A
-        movement.left = true;
-        break;
-      case 87: // W
-        movement.up = true;
-        break;
-      case 68: // D
-        movement.right = true;
-        break;
-      case 83: // S
-        movement.down = true;
-        break;
-    }
-  });
-  document.addEventListener('keyup', function(event) {
-    switch (event.keyCode) {
-      case 65: // A
-        movement.left = false;
-        break;
-      case 87: // W
-        movement.up = false;
-        break;
-      case 68: // D
-        movement.right = false;
-        break;
-      case 83: // S
-        movement.down = false;
-        break;
-    }
-  });
- 
+});
+document.addEventListener('keyup', function(event) {
+  switch (event.keyCode) {
+    case 65: // A
+      movement.left = false;
+      break;
+    case 87: // W
+      movement.up = false;
+      break;
+    case 68: // D
+      movement.right = false;
+      break;
+    case 83: // S
+      movement.down = false;
+      break;
+    case 32: // ' '
+      actions.shootBullet = false;
+      actions.x = 0;
+      actions.y = 0;
+      break;
+  }
+});
+
 socket.emit('new player');
 setInterval(function() {
   socket.emit('movement', movement);
+  socket.emit('actions', actions);
 }, 1000 / 60);
 
   var canvas = document.getElementById('canvas');

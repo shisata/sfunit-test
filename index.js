@@ -25,11 +25,6 @@
 
  //app designing
 
-
-
-
-
-
 // Dependencies
 var express = require('express');
 var http = require('http');
@@ -43,12 +38,11 @@ const { Pool } = require('pg')
 var pool
 pool = new Pool({
   connectionString: process.env.DATABASE_URL
-});
-
-app.use('/static', express.static(__dirname + '/static'));// Routing
-//app.get('/', function(request, response) {
-//  response.sendFile(path.join(__dirname, 'index.html'));
-//});// Starts the server.
+})
+// app.use('/static', express.static(__dirname + '/static'));// Routing
+// app.get('/', function(request, response) {
+// response.sendFile(path.join(__dirname, 'index.html'));
+// });// Starts the server.
 server.listen(5000, function() {
   console.log('Starting server on port 5000');
 });
@@ -65,6 +59,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 var players = {
   numPlayers: 0  //Length will keep track of the number of players
 };
+
+//Projectiles object will keep track of active projectiles
+var projectiles = {
+  numProjectiles: 0
+}
+var bulletCount = 0;
+
 io.on('connection', function(socket) {
   socket.on('new player', function() {
     if (players.numPlayers < 4) {
@@ -85,7 +86,7 @@ io.on('connection', function(socket) {
     var player = players[socket.id] || {};
 
     //For visualizing players ovject data
-    console.log(player.playerID)
+    // console.log(player)
     //Comment out above line if not needed
 
     //Modified the values here to reflect player speed - GG 2019.10.26 17:30
@@ -102,11 +103,44 @@ io.on('connection', function(socket) {
       player.y += player.speed;
     }
   });
-  //Removes disconnected player
-  socket.on('disconnect', function() {
-    players[socket.id] = 0;
-    players.numPlayers -= 1;
-  });
+//Code block to respond to shooting
+socket.on('actions', function(data) {
+  if (data.shootBullet) {
+    projectiles.numProjectiles = bulletCount;
+    bulletCount += 1;
+    projectiles[bulletCount] = {
+      x: 300,
+      y: 300,
+      projectileSpeed: 1
+    };
+    shot = projectiles[bulletCount];
+    while (shot.x < 1000 && shot.y < 1000) {
+      shot.x += shot.projectileSpeed;
+      shot.y += shot.projectileSpeed;
+      // console.log("[" + data.x + ", " + data.y + "]");
+      if (shot.x == 1000 || shot.y == 1000) {
+        projectiles[bulletCount] = 0;
+      }
+    }
+  }
+
+  // var player = players[socket.id] || {};
+
+  //   // Handles player damage - at health <= 0, player is removed
+  //   if (data.shoot) {
+  //     player.health -= .2;
+  //     if (player.health <= 0) {
+  //       players[socket.id] = 0;
+  //       players.numPlayers -= 1;
+  //     }
+  //   }
+});
+
+//Removes disconnected player
+socket.on('disconnect', function() {
+  players[socket.id] = 0;
+  players.numPlayers -= 1;
+});
 
 //Collects client data at 60 events/second
 });setInterval(function() {
@@ -135,6 +169,8 @@ io.on('connection', function(socket) {
 // setInterval(function() {
 //   io.sockets.emit('message', players)
 // }, 1000000);
+
+// Testing git
 
 //=============================================================================
 
