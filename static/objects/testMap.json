@@ -1,0 +1,35 @@
+{
+  "name": "testMap",
+  "description": "map for testing~",
+  "map": {
+    "wall": [
+      {
+        "x": 0,
+        "y": 0,
+        "height": 10,
+        "width": 160
+      },
+      {
+        "x": 0,
+        "y": 0,
+        "height": 160,
+        "width": 10
+      },
+      {
+        "x": 100,
+        "y": 100,
+        "height": 10,
+        "width": 10;
+      }
+    ],
+    "player": [
+      {
+        "x": 60,
+        "y": 60
+      }
+    ]
+  },
+  "event": {
+
+  }
+}
