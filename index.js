@@ -152,18 +152,17 @@ io.on('connection', function(socket) {
 // Long Workpace
 
 
-//login page
-app.get('/', (req, res) =>
+//home page
+app.get('/', function(req, res)
 {
   res.render('pages/login');
 });
 
-app.get('/register', (req,res) =>
+//sign-up page
+app.get('/register', function(req,res)
 {
   res.render('pages/register');
 });
-
-
 
 //=============================================================================
 
