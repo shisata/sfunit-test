@@ -62,7 +62,7 @@ var players = {
 
 //Projectiles object will keep track of active projectiles
 var projectiles = {
-  numProjectiles: 0
+  numProjectiles: 0,
 }
 var bulletCount = 0;
 
@@ -104,24 +104,47 @@ io.on('connection', function(socket) {
     }
   });
 //Code block to respond to shooting
-socket.on('actions', function(data) {
+socket.on('shoot', function(data) {
   if (data.shootBullet) {
-    projectiles.numProjectiles = bulletCount;
-    bulletCount += 1;
+    // getNormVec(player.x, player.y, 300, 300);
+
+    console.log(data.x)
+    console.log(data.y)
+    projectiles.numProjectiles++;
     projectiles[bulletCount] = {
-      x: 300,
-      y: 300,
-      projectileSpeed: 1
+      x: data.x,
+      y: data.y,
+      vx: 5,
+      vy: 5
     };
-    shot = projectiles[bulletCount];
-    while (shot.x < 1000 && shot.y < 1000) {
-      shot.x += shot.projectileSpeed;
-      shot.y += shot.projectileSpeed;
-      // console.log("[" + data.x + ", " + data.y + "]");
-      if (shot.x == 1000 || shot.y == 1000) {
-        projectiles[bulletCount] = 0;
-      }
-    }
+    bulletCount++;
+
+  
+
+    // for (i = 0; i < 100; i ++) {
+    //   players[socket.id].x -= .2;
+    //   players[socket.id].y -= .2;
+    // }
+
+
+    // projectiles.numProjectiles = bulletCount;
+    // bulletCount += 1;
+    // projectiles[bulletCount] = {
+    //   x: 300,
+    //   y: 300,
+    //   projectileSpeed: 1
+    // };
+    // shot = projectiles[bulletCount];
+    // while (shot.x < 1000 && shot.y < 1000) {
+    //   shot.x += shot.projectileSpeed;
+    //   shot.y += shot.projectileSpeed;
+    //     // console.log("[" + data.x + ", " + data.y + "]");
+    //   if (shot.x == 1000 || shot.y == 1000) {
+    //     projectiles[bulletCount] = 0;
+    //   }
+    // }
+
+
   }
 
   // var player = players[socket.id] || {};
@@ -145,6 +168,7 @@ socket.on('disconnect', function() {
 //Collects client data at 60 events/second
 });setInterval(function() {
   io.sockets.emit('state', players);
+  io.sockets.emit('projectileState', projectiles);
 }, 1000 / 60);
 
 
@@ -152,9 +176,10 @@ socket.on('disconnect', function() {
 // Fazal Workspace
 
 //Function to return a vector from one point to the next
-// Code is in ES6
+// Code is in ES6(a js framework)
 // fx, fy is from coordinate
 // tx, ty is to coordinate
+<<<<<<< HEAD
 // function getNormVec(fx, fy, tx, ty){
 //   var x = tx - fx;  // get differance
 //   var y = ty - fy;
@@ -163,6 +188,16 @@ socket.on('disconnect', function() {
 //   y /= dist;
 //   return {x,y};
 // }
+=======
+function getNormVec(fx, fy, tx, ty){
+  var x = tx - fx;  // get differance
+  var y = ty - fy;
+  var dist = Math.sqrt(x * x + y * y); // get the distance.
+  x /= dist;  // normalised difference
+  y /= dist;
+  return {x,y};
+} 
+>>>>>>> 351cdb3626c2a454e9927101107fa760be1c6eec
 
 // var myObj = {}
 // var myTarget = {};
@@ -200,6 +235,16 @@ socket.on('disconnect', function() {
 // }, 1000000);
 
 // Testing git
+
+// document.addEventListener('click', function(event) {
+//     event.preventDefault();
+//     actions.shootBullet = true;
+//     actions.x = event.pageX;
+//     actions.y = event.pageY;
+//     // actions.shootBullet = false;
+//     // this.removeEventListener('click');
+// });
+
 
 //=============================================================================
 
