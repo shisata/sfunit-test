@@ -51,7 +51,7 @@ server.listen(5000, function() {
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-//Looking for static pages in public folder
+//Looking for static files in public folder
 app.use(express.static(path.join(__dirname, 'public')));
 
 //Players object will contain all information about each player's position,
@@ -251,18 +251,47 @@ function getNormVec(fx, fy, tx, ty){
 // Long Workpace
 
 
-// //login page
-app.get('/', (req, res) =>
+//home page
+//Parse URL-encoded bodies (sent by HTML form)
+app.use(express.urlencoded({extended:false}));
+//Parse JSON body( sent by API client)
+app.use(express.json());
+
+app.get('/', function(request, respond)
 {
-  res.render('pages/login');
+  respond.render('pages/login');
 });
 
-app.get('/register', (req,res) =>
+//sign-up page
+app.get('/register', function(request,respond)
 {
-  res.render('pages/register');
+  respond.render('pages/register');
 });
 
-
+//Login function
+app.post('/', function(request, respond)
+{
+  var uname = request.body.username;
+  var pw = request.body.password;
+  var query ="Select password FROM account WHERE username='"+uname+"'";
+  console.log(query);
+  pool.query(query, function(error,results)
+  {
+    console.log(results.rows[0].password);
+    if (error)
+      respond.send('Error');
+    else
+    {
+      if (results.rows[0].password == null)
+        respond.send('Not existing');
+      else
+      {
+        if (results.rows[0].password == String(pw))
+          respond.send('Success');
+      }
+    }
+  });
+});
 
 //=============================================================================
 

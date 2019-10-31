@@ -5,6 +5,7 @@
     <meta charset="utf-8" />
     <title> Login </title>
     <link rel ="stylesheet" href ="/stylesheets/login_page.css" />
+    <script src"login.js"></script>
 </head>
 <body>
   <section id ="page_title">
@@ -12,10 +13,12 @@
     <h2 class="title"> Special Fortification Unit</h2>
   </section>
   <section id="login_box">
-      <img src="/image/login_profile2.png" id="log_in_photo"/>
-      <form>
-        <input type="text" placeholder="Username" id="username"/>
-        <input type="password" placeholder="Password" id="password" />
+    <div class ="imgcontainer">
+      <img src="/image/login_profile2.png" id="log_in_photo" alt="avatar">
+    </div>
+      <form action="/" method='post'>
+        <input type="text" placeholder="Username" id="username" name="username" required>
+        <input type="password" placeholder="Password" id="password" name="password" required>
         <input type="submit" id="sign_in_button" value="JOIN US" />
       </form>
       <button onclick="window.location.href ='/register'"id="sign_up_button">REGISTER </button>
