@@ -97,6 +97,7 @@ setInterval(function() {
     for (var id in projectiles) {
       var projectile = projectiles[id];
 
+      
       //Determines how the characters look
       context.beginPath();
       context.arc(projectile.x, projectile.y, 5, 0, 2 * Math.PI);

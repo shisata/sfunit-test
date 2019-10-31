@@ -40,9 +40,9 @@ pool = new Pool({
   connectionString: process.env.DATABASE_URL
 })
 app.use('/static', express.static(__dirname + '/static'));// Routing
-//app.get('/', function(request, response) {
-//response.sendFile(path.join(__dirname, 'index.html'));
-//});// Starts the server.
+app.get('/', function(request, response) {
+response.sendFile(path.join(__dirname, 'index.html'));
+});// Starts the server.
 server.listen(5000, function() {
   console.log('Starting server on port 5000');
 });
@@ -108,16 +108,37 @@ socket.on('shoot', function(data) {
   if (data.shootBullet) {
     // getNormVec(player.x, player.y, 300, 300);
 
-    console.log(data.x)
-    console.log(data.y)
+    // console.log(data.x)
+    // console.log(data.y)
     projectiles.numProjectiles++;
+
+    mouseX = data.x;
+    mouseY = data.y;
+    playerX = players[socket.id].x;
+    playerY = players[socket.id].y;
+
+    dx = mouseX - playerX;
+    dy = mouseY - playerY;
+    theta = Math.atan(dx / dy);
+
+    velX = 10 * Math.sin(theta);
+    velY = 10 * Math.cos(theta);
+    if (dy < 0) {
+      velY *= -1;
+      velX *= -1;
+    }
+
+
     projectiles[bulletCount] = {
-      x: data.x,
-      y: data.y,
-      vx: 5,
-      vy: 5
+      x: players[socket.id].x,
+      y: players[socket.id].y,
+      vx: velX,
+      vy: velY
     };
     bulletCount++;
+
+
+
 
 
 
@@ -168,6 +189,12 @@ socket.on('disconnect', function() {
 //Collects client data at 60 events/second
 });setInterval(function() {
   io.sockets.emit('state', players);
+
+  for (var id in projectiles) {
+    projectiles[id].x += projectiles[id].vx;
+    projectiles[id].y += projectiles[id].vy;
+  }
+
   io.sockets.emit('projectileState', projectiles);
 }, 1000 / 60);
 
@@ -254,44 +281,44 @@ socket.on('disconnect', function() {
 
 
 //Parse URL-encoded bodies (sent by HTML form)
-app.use(express.urlencoded({extended:false}));
-//Parse JSON body( sent by API client)
-app.use(express.json());
+// app.use(express.urlencoded({extended:false}));
+// //Parse JSON body( sent by API client)
+// app.use(express.json());
 
-//home page
-app.get('/', function(request, respond)
-{
-  respond.render('pages/login');
-});
+// //home page
+// app.get('/', function(request, respond)
+// {
+//   respond.render('pages/login');
+// });
 
-//sign-up page
-app.get('/register', function(request,respond)
-{
-  respond.render('pages/register');
-});
+// //sign-up page
+// app.get('/register', function(request,respond)
+// {
+//   respond.render('pages/register');
+// });
 
-//Login function
-app.post('/', function(request, respond)
-{
-  var uname = request.body.username;
-  var pw = request.body.password;
-  var query ="Select password FROM account WHERE username='"+uname+"'";
-  console.log(query);
-  pool.query(query, function(error,results)
-  {
-    if (error)
-      respond.send('Error');
-    else
-    {
-      if (results.rows == '' || results.rows[0].password != String(pw))
-        respond.send('Not existing')
-      else if (results.rows[0].password == String(pw))
-      {
-        respond.render('/index.html');
-      }
-    }
-  });
-});
+// //Login function
+// app.post('/', function(request, respond)
+// {
+//   var uname = request.body.username;
+//   var pw = request.body.password;
+//   var query ="Select password FROM account WHERE username='"+uname+"'";
+//   console.log(query);
+//   pool.query(query, function(error,results)
+//   {
+//     if (error)
+//       respond.send('Error');
+//     else
+//     {
+//       if (results.rows == '' || results.rows[0].password != String(pw))
+//         respond.send('Not existing')
+//       else if (results.rows[0].password == String(pw))
+//       {
+//         respond.render('/index.html');
+//       }
+//     }
+//   });
+// });
 
 //=============================================================================
 
