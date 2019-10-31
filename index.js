@@ -39,10 +39,10 @@ var pool
 pool = new Pool({
   connectionString: process.env.DATABASE_URL
 })
-// app.use('/static', express.static(__dirname + '/static'));// Routing
-// app.get('/', function(request, response) {
-// response.sendFile(path.join(__dirname, 'index.html'));
-// });// Starts the server.
+app.use('/static', express.static(__dirname + '/static'));// Routing
+app.get('/', function(request, response) {
+response.sendFile(path.join(__dirname, 'index.html'));
+});// Starts the server.
 server.listen(5000, function() {
   console.log('Starting server on port 5000');
 });
@@ -151,7 +151,36 @@ socket.on('disconnect', function() {
 //=============================================================================
 // Fazal Workspace
 
+//Function to return a vector from one point to the next
+// Code is in ES6
+// fx, fy is from coordinate
+// tx, ty is to coordinate
+// function getNormVec(fx, fy, tx, ty){
+//   var x = tx - fx;  // get differance
+//   var y = ty - fy;
+//   var dist = Math.sqrt(x * x + y * y); // get the distance.
+//   x /= dist;  // normalised difference
+//   y /= dist;
+//   return {x,y};
+// } 
 
+// var myObj = {}
+// var myTarget = {};
+// var myBullet = {}
+// myObj.x = 100;
+// myObj.y = 100;
+// myTarget.x = 1000
+// myTarget.y = 1000
+
+// var vecToTag = getNormVect(myObj.x, myObj.y, myTarget.x, myTarget.y);
+// myBullet.nx = vecToTag.x; // set bullets direction vector
+// myBullet.ny = vecToTag.y;
+// myBullet.x = myObj.x; // set the bullet start position.
+// myBullet.y = myObj.y;
+// myBullet.speed = 5; // set speed 5 pixels per frame
+
+// myBullet.x += myBullet.nx * myBullet.speed;
+// myBullet.y += myBullet.ny * myBullet.speed;
 
 
 
