@@ -243,6 +243,17 @@ function getNormVec(fx, fy, tx, ty){
 
 
 
+const fs = require('fs');
+var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
+var processor = require('./static/objects/jsonProcessor.js');
+mapData = processor.constructFromData(mapDataFromFile);
+
+console.log(JSON.stringify(mapData));
+
+
+
+// processor.constructFromData(initialData);
+
 //=============================================================================
 
 
