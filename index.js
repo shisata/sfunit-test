@@ -66,6 +66,7 @@ var projectiles = {
 }
 var bulletCount = 0;
 
+//Creates a new player
 io.on('connection', function(socket) {
   socket.on('new player', function() {
     if (players.numPlayers < 4) {
@@ -81,6 +82,7 @@ io.on('connection', function(socket) {
       };
     }
   });
+
   // Responds to a movement event
   socket.on('movement', function(data) {
     var player = players[socket.id] || {};
@@ -103,91 +105,48 @@ io.on('connection', function(socket) {
       player.y += player.speed;
     }
   });
-//Code block to respond to shooting
-socket.on('shoot', function(data) {
-  if (data.shootBullet) {
-    // getNormVec(player.x, player.y, 300, 300);
 
-    // console.log(data.x)
-    // console.log(data.y)
-    projectiles.numProjectiles++;
+  //Code block to respond to shooting
+  socket.on('shoot', function(data) {
+    if (data.shootBullet) {
+      projectiles.numProjectiles++;
 
-    mouseX = data.x;
-    mouseY = data.y;
-    playerX = players[socket.id].x;
-    playerY = players[socket.id].y;
+      mouseX = data.x;
+      mouseY = data.y;
+      playerX = players[socket.id].x;
+      playerY = players[socket.id].y;
 
-    dx = mouseX - playerX;
-    dy = mouseY - playerY;
-    theta = Math.atan(dx / dy);
+      dx = mouseX - playerX;
+      dy = mouseY - playerY;
+      theta = Math.atan(dx / dy);
 
-    velX = 10 * Math.sin(theta);
-    velY = 10 * Math.cos(theta);
-    if (dy < 0) {
-      velY *= -1;
-      velX *= -1;
+      velX = 3 * Math.sin(theta);
+      velY = 3 * Math.cos(theta);
+      if (dy < 0) {
+        velY *= -1;
+        velX *= -1;
+      }
+
+      projectiles[bulletCount] = {
+        x: players[socket.id].x,
+        y: players[socket.id].y,
+        vx: velX,
+        vy: velY
+      };
+      bulletCount++;
     }
+  });
 
-
-    projectiles[bulletCount] = {
-      x: players[socket.id].x,
-      y: players[socket.id].y,
-      vx: velX,
-      vy: velY
-    };
-    bulletCount++;
-
-
-
-
-
-
-    // for (i = 0; i < 100; i ++) {
-    //   players[socket.id].x -= .2;
-    //   players[socket.id].y -= .2;
-    // }
-
-
-    // projectiles.numProjectiles = bulletCount;
-    // bulletCount += 1;
-    // projectiles[bulletCount] = {
-    //   x: 300,
-    //   y: 300,
-    //   projectileSpeed: 1
-    // };
-    // shot = projectiles[bulletCount];
-    // while (shot.x < 1000 && shot.y < 1000) {
-    //   shot.x += shot.projectileSpeed;
-    //   shot.y += shot.projectileSpeed;
-    //     // console.log("[" + data.x + ", " + data.y + "]");
-    //   if (shot.x == 1000 || shot.y == 1000) {
-    //     projectiles[bulletCount] = 0;
-    //   }
-    // }
-
-
-  }
-
-  // var player = players[socket.id] || {};
-
-  //   // Handles player damage - at health <= 0, player is removed
-  //   if (data.shoot) {
-  //     player.health -= .2;
-  //     if (player.health <= 0) {
-  //       players[socket.id] = 0;
-  //       players.numPlayers -= 1;
-  //     }
-  //   }
-});
-
-//Removes disconnected player
-socket.on('disconnect', function() {
-  players[socket.id] = 0;
-  players.numPlayers -= 1;
-});
-
+  //Removes disconnected player
+  socket.on('disconnect', function() {
+    players[socket.id] = 0;
+    players.numPlayers -= 1;
+  });
+  
 //Collects client data at 60 events/second
-});setInterval(function() {
+});
+
+setInterval(function() {
   io.sockets.emit('state', players);
 
   for (var id in projectiles) {
@@ -196,7 +155,7 @@ socket.on('disconnect', function() {
   }
 
   io.sockets.emit('projectileState', projectiles);
-}, 1000 / 60);
+}, 1000 / 240);
 
 
 //=============================================================================
@@ -234,6 +193,43 @@ socket.on('disconnect', function() {
 // myBullet.y += myBullet.ny * myBullet.speed;
 
 
+
+    // for (i = 0; i < 100; i ++) {
+    //   players[socket.id].x -= .2;
+    //   players[socket.id].y -= .2;
+    // }
+
+
+    // projectiles.numProjectiles = bulletCount;
+    // bulletCount += 1;
+    // projectiles[bulletCount] = {
+    //   x: 300,
+    //   y: 300,
+    //   projectileSpeed: 1
+    // };
+    // shot = projectiles[bulletCount];
+    // while (shot.x < 1000 && shot.y < 1000) {
+    //   shot.x += shot.projectileSpeed;
+    //   shot.y += shot.projectileSpeed;
+    //     // console.log("[" + data.x + ", " + data.y + "]");
+    //   if (shot.x == 1000 || shot.y == 1000) {
+    //     projectiles[bulletCount] = 0;
+    //   }
+    // }
+
+
+  
+
+  // var player = players[socket.id] || {};
+
+  //   // Handles player damage - at health <= 0, player is removed
+  //   if (data.shoot) {
+  //     player.health -= .2;
+  //     if (player.health <= 0) {
+  //       players[socket.id] = 0;
+  //       players.numPlayers -= 1;
+  //     }
+  //   }
 
 //=============================================================================
 
