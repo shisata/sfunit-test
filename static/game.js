@@ -9,11 +9,15 @@ var movement = {
     left: false,
     right: false,
 }
-var actions = {
+var shoot = {
     shootBullet: false,
     x: 0,
     y: 0
 }
+
+var xPos = 0;
+var yPos = 0;
+
 document.addEventListener('keydown', function(event) {
   switch (event.keyCode) {
     case 65: // A
@@ -29,10 +33,9 @@ document.addEventListener('keydown', function(event) {
       movement.down = true;
       break;
     case 32: // ' '
-      actions.shootBullet = true;
-      console.log(event.clientX)
-      actions.x = event.clientX;
-      actions.y = event.clientY;
+      shoot.shootBullet = true;
+      shoot.x = xPos;
+      shoot.y = yPos;
       break;
   }
 });
@@ -51,9 +54,9 @@ document.addEventListener('keyup', function(event) {
       movement.down = false;
       break;
     case 32: // ' '
-      actions.shootBullet = false;
-      actions.x = 0;
-      actions.y = 0;
+      shoot.shootBullet = false;
+      shoot.x = xPos;
+      shoot.y = yPos;
       break;
   }
 });
@@ -61,12 +64,21 @@ document.addEventListener('keyup', function(event) {
 socket.emit('new player');
 setInterval(function() {
   socket.emit('movement', movement);
-  socket.emit('actions', actions);
+  socket.emit('shoot', shoot);
 }, 1000 / 60);
 
   var canvas = document.getElementById('canvas');
   canvas.width = 800;
   canvas.height = 600;
+  // canvas.cursor = "none"; //hide the original cursor
+
+  window.addEventListener('mousemove', function (e) {
+    xPos = e.pageX;
+    yPos = e.pageY;
+
+    console.log(xPos)
+  })
+
   var context = canvas.getContext('2d');
   socket.on('state', function(players) {
     context.clearRect(0, 0, 800, 600);
@@ -77,6 +89,18 @@ setInterval(function() {
       //Determines how the characters look
       context.beginPath();
       context.arc(player.x, player.y, 10, 0, 2 * Math.PI);
+      context.fill();
+    }
+  });
+
+  socket.on('projectileState', function(projectiles) {
+    for (var id in projectiles) {
+      var projectile = projectiles[id];
+
+      //Determines how the characters look
+      context.beginPath();
+      context.arc(projectile.x, projectile.y, 5, 0, 2 * Math.PI);
+      context.fillStyle = 'red';
       context.fill();
     }
   });
