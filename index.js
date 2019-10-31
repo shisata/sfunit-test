@@ -40,9 +40,9 @@ pool = new Pool({
   connectionString: process.env.DATABASE_URL
 })
 app.use('/static', express.static(__dirname + '/static'));// Routing
-app.get('/', function(request, response) {
-response.sendFile(path.join(__dirname, 'index.html'));
-});// Starts the server.
+//app.get('/', function(request, response) {
+//response.sendFile(path.join(__dirname, 'index.html'));
+//});// Starts the server.
 server.listen(5000, function() {
   console.log('Starting server on port 5000');
 });
@@ -162,7 +162,7 @@ socket.on('disconnect', function() {
 //   x /= dist;  // normalised difference
 //   y /= dist;
 //   return {x,y};
-// } 
+// }
 
 // var myObj = {}
 // var myTarget = {};
@@ -217,12 +217,13 @@ socket.on('disconnect', function() {
 // Long Workpace
 
 
-//home page
+
 //Parse URL-encoded bodies (sent by HTML form)
 app.use(express.urlencoded({extended:false}));
 //Parse JSON body( sent by API client)
 app.use(express.json());
 
+//home page
 app.get('/', function(request, respond)
 {
   respond.render('pages/login');
@@ -243,17 +244,15 @@ app.post('/', function(request, respond)
   console.log(query);
   pool.query(query, function(error,results)
   {
-    console.log(results.rows[0].password);
     if (error)
       respond.send('Error');
     else
     {
-      if (results.rows[0].password == null)
-        respond.send('Not existing');
-      else
+      if (results.rows == '' || results.rows[0].password != String(pw))
+        respond.send('Not existing')
+      else if (results.rows[0].password == String(pw))
       {
-        if (results.rows[0].password == String(pw))
-          respond.send('Success');
+        respond.render('/index.html');
       }
     }
   });
