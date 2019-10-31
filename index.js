@@ -119,7 +119,7 @@ socket.on('shoot', function(data) {
     };
     bulletCount++;
 
-  
+
 
     // for (i = 0; i < 100; i ++) {
     //   players[socket.id].x -= .2;
@@ -179,16 +179,6 @@ socket.on('disconnect', function() {
 // Code is in ES6(a js framework)
 // fx, fy is from coordinate
 // tx, ty is to coordinate
-<<<<<<< HEAD
-// function getNormVec(fx, fy, tx, ty){
-//   var x = tx - fx;  // get differance
-//   var y = ty - fy;
-//   var dist = Math.sqrt(x * x + y * y); // get the distance.
-//   x /= dist;  // normalised difference
-//   y /= dist;
-//   return {x,y};
-// }
-=======
 function getNormVec(fx, fy, tx, ty){
   var x = tx - fx;  // get differance
   var y = ty - fy;
@@ -196,8 +186,7 @@ function getNormVec(fx, fy, tx, ty){
   x /= dist;  // normalised difference
   y /= dist;
   return {x,y};
-} 
->>>>>>> 351cdb3626c2a454e9927101107fa760be1c6eec
+}
 
 // var myObj = {}
 // var myTarget = {};
