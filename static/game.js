@@ -80,24 +80,19 @@ setInterval(function() {
   })
 
   var context = canvas.getContext('2d');
-  socket.on('state', function(players) {
+  socket.on('state', function(players, projectiles) {
     context.clearRect(0, 0, 800, 600);
     context.fillStyle = 'green';
     for (var id in players) {
       var player = players[id];
-
       //Determines how the characters look
       context.beginPath();
       context.arc(player.x, player.y, 10, 0, 2 * Math.PI);
       context.fill();
     }
-  });
 
-  socket.on('projectileState', function(projectiles) {
     for (var id in projectiles) {
       var projectile = projectiles[id];
-
-      
       //Determines how the bullets look
       context.beginPath();
       context.arc(projectile.x, projectile.y, 2, 0, 2 * Math.PI);
@@ -105,4 +100,17 @@ setInterval(function() {
       context.fill();
     }
   });
+
+  // socket.on('projectileState', function(projectiles) {
+  //   for (var id in projectiles) {
+  //     var projectile = projectiles[id];
+
+      
+  //     //Determines how the bullets look
+  //     context.beginPath();
+  //     context.arc(projectile.x, projectile.y, 2, 0, 2 * Math.PI);
+  //     context.fillStyle = 'black';
+  //     context.fill();
+  //   }
+  // });
 

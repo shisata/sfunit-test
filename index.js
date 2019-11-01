@@ -179,8 +179,8 @@ setInterval(function() {
     // console.log(players[player].health)
   }
   
-  io.sockets.emit('state', players);
-  io.sockets.emit('projectileState', projectiles);
+  io.sockets.emit('state', players, projectiles);
+  // io.sockets.emit('projectileState', projectiles);
 }, 1000 / 120);
 
 
