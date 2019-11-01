@@ -100,17 +100,3 @@ setInterval(function() {
       context.fill();
     }
   });
-
-  // socket.on('projectileState', function(projectiles) {
-  //   for (var id in projectiles) {
-  //     var projectile = projectiles[id];
-
-      
-  //     //Determines how the bullets look
-  //     context.beginPath();
-  //     context.arc(projectile.x, projectile.y, 2, 0, 2 * Math.PI);
-  //     context.fillStyle = 'black';
-  //     context.fill();
-  //   }
-  // });
-

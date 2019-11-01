@@ -153,6 +153,7 @@ io.on('connection', function(socket) {
 
 setInterval(function() {
 
+  //Projectile handler
   for (var id in projectiles) {
     projectiles[id].x += projectiles[id].vx;
     projectiles[id].y += projectiles[id].vy;
@@ -164,8 +165,6 @@ setInterval(function() {
   //Collision handler
   for (var player in players) {
     for (var id in projectiles) {
-      // console.log(Math.abs(players[player].x - projectiles[id].x));
-      // console.log(Math.abs(players[player].x));
       if ( (Math.abs(players[player].x - projectiles[id].x) < 2) && 
            (Math.abs(players[player].y - projectiles[id].y) < 2) ) {
         // console.log("[", player.x, ", ", player.y, "]");
@@ -176,11 +175,9 @@ setInterval(function() {
         }
       }
     }
-    // console.log(players[player].health)
   }
   
   io.sockets.emit('state', players, projectiles);
-  // io.sockets.emit('projectileState', projectiles);
 }, 1000 / 120);
 
 
