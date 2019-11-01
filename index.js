@@ -87,10 +87,6 @@ io.on('connection', function(socket) {
   socket.on('movement', function(data) {
     var player = players[socket.id] || {};
 
-    //For visualizing players ovject data
-    // console.log(player)
-    //Comment out above line if not needed
-
     //Modified the values here to reflect player speed - GG 2019.10.26 17:30
     if (data.left) {
       player.x -= player.speed;
@@ -167,7 +163,6 @@ setInterval(function() {
     for (var id in projectiles) {
       if ( (Math.abs(players[player].x - projectiles[id].x) < 2) && 
            (Math.abs(players[player].y - projectiles[id].y) < 2) ) {
-        // console.log("[", player.x, ", ", player.y, "]");
         players[player].health -= 1;
         if (players[player].health < 0) {
           players[player] = 0;
