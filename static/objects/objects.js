@@ -33,10 +33,11 @@ function Wall(x, y, width, height, textureLink){
     this.width = width;
     this.height = height;
     this.texture = textureLink;
-
+/*
+    //I don't think we need this but let's leave it as a comment for now
     this.collideable = true;
     this.distructible = false;
-    this.interactable = false;
+    this.interactable = false;*/
     return this;
 }
 
@@ -58,3 +59,6 @@ function Player(x, y){
 //this is for using functions (classes) in other .js files.
 module.exports.Wall = Wall;
 module.exports.Furniture = Furniture;
+
+
+// Detailed definitions for: furnitures
