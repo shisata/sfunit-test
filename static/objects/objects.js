@@ -1,22 +1,32 @@
 //size of the grid. the program should run even if this constant variable is changed.
 const GRID_SIZE = 5;
-/*
-//superclass of ALL objects in the map.
-class MapObject {
 
-  //variables: (x, y) for left-top corner, and width, height. / textures.
-  var x;
-  var y;
-  var width;
-  var height;
+/*Guide for adding classes to this file: [When not sure ask Hailey]
+1. Add a function in the similar form as others.
+    function NAME(parameters) {
+      ...
+    }
+2. creating member variables:
+    this.x = x;   //creates member variable and initializes it.
+3. add
+    return this;
+4. at the end of the file, add
+    module.exports.NAME = NAME;
+  (This is required when accessing these from other .js files)
 
-  //bool variables.
-  var collideable;
-  var distructible;
-  var interactable;
+When accessing these from other .js files:
 
-  var texture;
-}*/
+1. link the file by
+  var objFile = require('objects.js');
+with appropriate path (and appropriate variable name)
+2. call them as
+  var wall1 = objFile.Wall(x, y, width, height, textureLink);
+
+will create a variable 'wall1' constructed with class 'Wall'.
+*/
+
+//constructor function for Walls.
+//This is how classes are defined.
 function Wall(x, y, width, height, textureLink){
     this.x = x;
     this.y = y;
@@ -30,6 +40,7 @@ function Wall(x, y, width, height, textureLink){
     return this;
 }
 
+//constructor function for Map objects that are not Walls.
 function Furniture(name, x, y, direction){
   this.name = name;
   this.x = x;
@@ -38,6 +49,7 @@ function Furniture(name, x, y, direction){
   return this;
 }
 
-// TODO: class Vend, Exit, Couch, etc.
+
+//this is for using functions (classes) in other .js files.
 module.exports.Wall = Wall;
 module.exports.Furniture = Furniture;
