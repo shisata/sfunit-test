@@ -142,7 +142,7 @@ io.on('connection', function(socket) {
     players[socket.id] = 0;
     players.numPlayers -= 1;
   });
-  
+
 //Collects client data at 60 events/second
 });
 
@@ -218,7 +218,7 @@ setInterval(function() {
     // }
 
 
-  
+
 
   // var player = players[socket.id] || {};
 
@@ -263,11 +263,21 @@ setInterval(function() {
 
 //=============================================================================
 // Hailey Workpace
+/*Guide to accessing map data:
+1. Walls: objects that has x, y, width, height, texture.
+2. Furnitures: objects that has names, x, y, direction.
+3. Enemies, bullets, players: will think about this tomorrow
 
+console.log( mapData.walls[2].x );
+-->prints the x-axis of mapData's wall's 3rd element.
 
+console.log(mapData.furnitures[4].name );
+-->prints the x-axis of mapData's wall's 5th element.
+*/
 
 const fs = require('fs');
-var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
+var mapDataFromFile
+  = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
 var processor = require('./static/objects/jsonProcessor.js');
 mapData = processor.constructFromData(mapDataFromFile);
 

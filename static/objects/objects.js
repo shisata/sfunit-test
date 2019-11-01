@@ -1,4 +1,4 @@
-//size of the grid. the program should run even if this constant variable is changed.
+//size of the grid. the program should run even if this constant variable is suddenly changed.
 const GRID_SIZE = 5;
 
 /*Guide for adding classes to this file: [When not sure ask Hailey]
@@ -47,6 +47,11 @@ function Furniture(name, x, y, direction){
   this.y = y;
   this.direction = direction;
   return this;
+}
+
+function Player(x, y){
+  this.x = x;
+  this.y = y;
 }
 
 
