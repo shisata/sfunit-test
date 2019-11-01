@@ -98,10 +98,10 @@ setInterval(function() {
       var projectile = projectiles[id];
 
       
-      //Determines how the characters look
+      //Determines how the bullets look
       context.beginPath();
-      context.arc(projectile.x, projectile.y, 5, 0, 2 * Math.PI);
-      context.fillStyle = 'red';
+      context.arc(projectile.x, projectile.y, 2, 0, 2 * Math.PI);
+      context.fillStyle = 'black';
       context.fill();
     }
   });

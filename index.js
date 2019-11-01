@@ -39,10 +39,10 @@ var pool
 pool = new Pool({
   connectionString: process.env.DATABASE_URL
 })
-// app.use('/static', express.static(__dirname + '/static'));// Routing
-// app.get('/', function(request, response) {
-// response.sendFile(path.join(__dirname, 'index.html'));
-// });// Starts the server.
+app.use('/static', express.static(__dirname + '/static'));// Routing
+app.get('/', function(request, response) {
+response.sendFile(path.join(__dirname, 'index.html'));
+});// Starts the server.
 server.listen(5000, function() {
   console.log('Starting server on port 5000');
 });
@@ -133,7 +133,12 @@ io.on('connection', function(socket) {
         vx: velX,
         vy: velY
       };
+
       bulletCount++;
+      //reset bullet count
+      if (bulletCount > 100) {
+        bulletCount = 0;
+      }
     }
   });
 
@@ -147,15 +152,36 @@ io.on('connection', function(socket) {
 });
 
 setInterval(function() {
-  io.sockets.emit('state', players);
 
   for (var id in projectiles) {
     projectiles[id].x += projectiles[id].vx;
     projectiles[id].y += projectiles[id].vy;
+    if (projectiles[id].x > 1100 || projectiles[id].y > 1100) {
+      projectiles[id].vx = 0;
+      projectiles[id].vy = 0;
+    }
   }
-
+  //Collision handler
+  for (var player in players) {
+    for (var id in projectiles) {
+      // console.log(Math.abs(players[player].x - projectiles[id].x));
+      // console.log(Math.abs(players[player].x));
+      if ( (Math.abs(players[player].x - projectiles[id].x) < 2) && 
+           (Math.abs(players[player].y - projectiles[id].y) < 2) ) {
+        // console.log("[", player.x, ", ", player.y, "]");
+        players[player].health -= 1;
+        if (players[player].health < 0) {
+          players[player] = 0;
+          players.numPlayers -= 1;
+        }
+      }
+    }
+    // console.log(players[player].health)
+  }
+  
+  io.sockets.emit('state', players);
   io.sockets.emit('projectileState', projectiles);
-}, 1000 / 240);
+}, 1000 / 120);
 
 
 //=============================================================================
@@ -297,45 +323,45 @@ console.log(JSON.stringify(mapData));
 
 
 
-//Parse URL-encoded bodies (sent by HTML form)
-app.use(express.urlencoded({extended:false}));
-//Parse JSON body( sent by API client)
-app.use(express.json());
+// //Parse URL-encoded bodies (sent by HTML form)
+// app.use(express.urlencoded({extended:false}));
+// //Parse JSON body( sent by API client)
+// app.use(express.json());
 
-//home page
-app.get('/', function(request, respond)
-{
-  respond.render('pages/login');
-});
+// //home page
+// app.get('/', function(request, respond)
+// {
+//   respond.render('pages/login');
+// });
 
-//sign-up page
-app.get('/register', function(request,respond)
-{
-  respond.render('pages/register');
-});
+// //sign-up page
+// app.get('/register', function(request,respond)
+// {
+//   respond.render('pages/register');
+// });
 
-// //Login function
-app.post('/', function(request, respond)
-{
-  var uname = request.body.username;
-  var pw = request.body.password;
-  var query ="Select password FROM account WHERE username='"+uname+"'";
-  console.log(query);
-  pool.query(query, function(error,results)
-  {
-    if (error)
-      respond.send('Error');
-    else
-    {
-      if (results.rows == '' || results.rows[0].password != String(pw))
-        respond.send('Not existing')
-      else if (results.rows[0].password == String(pw))
-      {
-        respond.render('/index.html');
-      }
-    }
-  });
-});
+// // //Login function
+// app.post('/', function(request, respond)
+// {
+//   var uname = request.body.username;
+//   var pw = request.body.password;
+//   var query ="Select password FROM account WHERE username='"+uname+"'";
+//   console.log(query);
+//   pool.query(query, function(error,results)
+//   {
+//     if (error)
+//       respond.send('Error');
+//     else
+//     {
+//       if (results.rows == '' || results.rows[0].password != String(pw))
+//         respond.send('Not existing')
+//       else if (results.rows[0].password == String(pw))
+//       {
+//         respond.render('/index.html');
+//       }
+//     }
+//   });
+// });
 
 //=============================================================================
 
