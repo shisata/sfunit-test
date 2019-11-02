@@ -40,9 +40,9 @@ pool = new Pool({
   connectionString: process.env.DATABASE_URL
 })
 app.use('/static', express.static(__dirname + '/static'));// Routing
-//app.get('/', function(request, response) {
-//response.sendFile(path.join(__dirname, 'index.html'));
-//});// Starts the server.
+app.get('/', function(request, response) {
+response.sendFile(path.join(__dirname, 'index.html'));
+});// Starts the server.
 server.listen(5000, function() {
   console.log('Starting server on port 5000');
 });
@@ -62,10 +62,17 @@ var players = {
 
 //Projectiles object will keep track of active projectiles
 var projectiles = {
-  numProjectiles: 0,
+  numProjectiles: 0
 }
 var bulletCount = 0;
 
+//Enemies
+var enemies = {
+  numEnemies: 0
+}
+enemyID = 0;
+
+//Creates a new player
 io.on('connection', function(socket) {
   socket.on('new player', function() {
     if (players.numPlayers < 4) {
@@ -77,17 +84,14 @@ io.on('connection', function(socket) {
         health: 4.33,
         level: 1,
         damage: 5,
-        speed: 10
+        speed: 8
       };
     }
   });
+
   // Responds to a movement event
   socket.on('movement', function(data) {
     var player = players[socket.id] || {};
-
-    //For visualizing players ovject data
-    // console.log(player)
-    //Comment out above line if not needed
 
     //Modified the values here to reflect player speed - GG 2019.10.26 17:30
     if (data.left) {
@@ -103,21 +107,167 @@ io.on('connection', function(socket) {
       player.y += player.speed;
     }
   });
-//Code block to respond to shooting
-socket.on('shoot', function(data) {
-  if (data.shootBullet) {
-    // getNormVec(player.x, player.y, 300, 300);
 
-    console.log(data.x)
-    console.log(data.y)
-    projectiles.numProjectiles++;
-    projectiles[bulletCount] = {
-      x: data.x,
-      y: data.y,
-      vx: 5,
-      vy: 5
-    };
-    bulletCount++;
+  //Code block to respond to shooting
+  socket.on('shoot', function(data) {
+    if (data.shootBullet) {
+      projectiles.numProjectiles++;
+
+      mouseX = data.x;
+      mouseY = data.y;
+      playerX = players[socket.id].x;
+      playerY = players[socket.id].y;
+
+      dx = mouseX - playerX;
+      dy = mouseY - playerY;
+      theta = Math.atan(dx / dy);
+
+      velX = players[socket.id].speed * Math.sin(theta);
+      velY = players[socket.id].speed * Math.cos(theta);
+      if (dy < 0) {
+        velY *= -1;
+        velX *= -1;
+      }
+
+      projectiles[bulletCount] = {
+        x: players[socket.id].x + (4 * velX),
+        y: players[socket.id].y + (4 * velY),
+        vx: velX,
+        vy: velY
+      };
+
+      bulletCount++;
+      //reset bullet count
+      if (bulletCount > 100) {
+        bulletCount = 0;
+      }
+    }
+  });
+
+  //Removes disconnected player
+  socket.on('disconnect', function() {
+    players[socket.id] = 0;
+    players.numPlayers -= 1;
+  });
+//Collects client data at 60 events/second
+});
+
+// newly spawned objects start at Y=25
+var spawnLineY = 25;
+
+// spawn a new object every 1500ms
+var spawnRate = 1500;
+
+// set how fast the objects will fall
+var spawnRateOfDescent = 0.50;
+
+// when was the last object spawned
+var lastSpawn = -1;
+
+// save the starting time (used to calc elapsed time)
+var startTime = Date.now();
+
+//Spawn a random enemy
+function spawnRandomObject() {
+
+  // About Math.random()
+  // Math.random() generates a semi-random number
+  // between 0-1. So to randomly decide if the next object
+  // will be A or B, we say if the random# is 0-.49 we
+  // create A and if the random# is .50-1.00 we create B
+
+  // add the new object to the objects[] array
+  enemies[enemyID] = {
+    // type: t,
+    // set x randomly but at least 15px off the canvas edges
+    x: Math.random() * 250,
+    // set y to start on the line where objects are spawned
+    y: Math.random() * 250
+  }
+  enemies.numEnemies++;
+  enemyID++;
+}
+
+function generateEnemies() {
+
+  // get the elapsed time
+  var time = Date.now();
+
+  // see if its time to spawn a new object
+  if (time > (lastSpawn + spawnRate)) {
+    lastSpawn = time;
+    spawnRandomObject();
+  }
+}
+
+
+
+setInterval(function() {
+
+  //Projectile handler
+  for (var id in projectiles) {
+    projectiles[id].x += projectiles[id].vx;
+    projectiles[id].y += projectiles[id].vy;
+    if (projectiles[id].x > 1100 || projectiles[id].y > 1100) {
+      projectiles[id].vx = 0;
+      projectiles[id].vy = 0;
+    }
+  }
+  //Collision handler
+  for (var player in players) {
+    for (var id in projectiles) {
+      if ( (Math.abs(players[player].x - projectiles[id].x) < 2) &&
+           (Math.abs(players[player].y - projectiles[id].y) < 2) ) {
+        players[player].health -= 1;
+        if (players[player].health < 0) {
+          players[player] = 0;
+          players.numPlayers -= 1;
+        }
+      }
+    }
+  }
+  generateEnemies();
+  // console.log(enemies);
+  io.sockets.emit('state', players, projectiles, enemies);
+
+  //passes the map data. [modified by: Hailey]
+  io.sockets.emit('mapData', mapData);
+}, 1000 / 120);
+
+
+//=============================================================================
+// Fazal Workspace
+
+//Function to return a vector from one point to the next
+// Code is in ES6(a js framework)
+// fx, fy is from coordinate
+// tx, ty is to coordinate
+// function getNormVec(fx, fy, tx, ty){
+//   var x = tx - fx;  // get differance
+//   var y = ty - fy;
+//   var dist = Math.sqrt(x * x + y * y); // get the distance.
+//   x /= dist;  // normalised difference
+//   y /= dist;
+//   return {x,y};
+// }
+
+// var myObj = {}
+// var myTarget = {};
+// var myBullet = {}
+// myObj.x = 100;
+// myObj.y = 100;
+// myTarget.x = 1000
+// myTarget.y = 1000
+
+// var vecToTag = getNormVect(myObj.x, myObj.y, myTarget.x, myTarget.y);
+// myBullet.nx = vecToTag.x; // set bullets direction vector
+// myBullet.ny = vecToTag.y;
+// myBullet.x = myObj.x; // set the bullet start position.
+// myBullet.y = myObj.y;
+// myBullet.speed = 5; // set speed 5 pixels per frame
+
+// myBullet.x += myBullet.nx * myBullet.speed;
+// myBullet.y += myBullet.ny * myBullet.speed;
 
 
 
@@ -145,7 +295,7 @@ socket.on('shoot', function(data) {
     // }
 
 
-  }
+
 
   // var player = players[socket.id] || {};
 
@@ -157,56 +307,44 @@ socket.on('shoot', function(data) {
   //       players.numPlayers -= 1;
   //     }
   //   }
-});
 
-//Removes disconnected player
-socket.on('disconnect', function() {
-  players[socket.id] = 0;
-  players.numPlayers -= 1;
-});
+// var stageWidth = 1000;
+// var stageHeight = 1000;
 
-//Collects client data at 60 events/second
-});setInterval(function() {
-  io.sockets.emit('state', players);
-  io.sockets.emit('projectileState', projectiles);
-}, 1000 / 60);
+// var enemies = [];
 
+// var enemyWidth = 50;
+// var enemyHeight = 100;
 
-//=============================================================================
-// Fazal Workspace
+// function spawnEnemy(){
 
-//Function to return a vector from one point to the next
-// Code is in ES6(a js framework)
-// fx, fy is from coordinate
-// tx, ty is to coordinate
-function getNormVec(fx, fy, tx, ty){
-  var x = tx - fx;  // get differance
-  var y = ty - fy;
-  var dist = Math.sqrt(x * x + y * y); // get the distance.
-  x /= dist;  // normalised difference
-  y /= dist;
-  return {x,y};
-}
+//     //console.log('Spawn a new enemy!');
 
-// var myObj = {}
-// var myTarget = {};
-// var myBullet = {}
-// myObj.x = 100;
-// myObj.y = 100;
-// myTarget.x = 1000
-// myTarget.y = 1000
+//     // Generate a random x position.
+//     var randomXPosition = Math.floor(Math.random() * (stageWidth - enemyWidth)) + 1;
 
-// var vecToTag = getNormVect(myObj.x, myObj.y, myTarget.x, myTarget.y);
-// myBullet.nx = vecToTag.x; // set bullets direction vector
-// myBullet.ny = vecToTag.y;
-// myBullet.x = myObj.x; // set the bullet start position.
-// myBullet.y = myObj.y;
-// myBullet.speed = 5; // set speed 5 pixels per frame
+//     // Generate a random y position.
+//     var randomYPosition = Math.floor(Math.random() * (stageHeight - enemyHeight)) + 1;
 
-// myBullet.x += myBullet.nx * myBullet.speed;
-// myBullet.y += myBullet.ny * myBullet.speed;
+//     //Create a new Enemy instance and use above coordinates to place it in a random spot.
+//     //Fill the rest of this object like we did with var bullet = {...}.
+//     var newEnemy = {
+//         xPosition: randomXPosition,
+//         yPosition: randomYPosition,
+//     };
+
+//     // Push new enemy in the enemies array so we can render them all at once in the draw loop.
+//     enemies.push(newEnemy);
+// }
 
 
+
+// //This function will run 'spawnEnemy()' every 'intervalInMilliSeconds'.
+// setInterval(spawnEnemy);
+
+// setInterval(function(){
+//   io.sockets.emit('enemyState', enemies);
+// }, 1000 / 120);
 
 //=============================================================================
 
@@ -240,7 +378,29 @@ function getNormVec(fx, fy, tx, ty){
 
 //=============================================================================
 // Hailey Workpace
+/*Guide to accessing map data:
+1. Walls: objects that has x, y, width, height, texture.
+2. Furnitures: objects that has names, x, y, direction.
+3. Enemies, bullets, players: will think about this tomorrow
 
+console.log( mapData.walls[2].x );
+-->prints the x-axis of mapData's wall's 3rd element.
+
+console.log(mapData.furnitures[4].name );
+-->prints the x-axis of mapData's wall's 5th element.
+*/
+
+const fs = require('fs');
+var mapDataFromFile
+  = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
+var processor = require('./static/objects/jsonProcessor.js');
+mapData = processor.constructFromData(mapDataFromFile);
+
+console.log(JSON.stringify(mapData));
+
+
+
+// processor.constructFromData(initialData);
 
 //=============================================================================
 
@@ -252,11 +412,12 @@ function getNormVec(fx, fy, tx, ty){
 
 
 
-//Parse URL-encoded bodies (sent by HTML form)
-app.use(express.urlencoded({extended:false}));
-//Parse JSON body( sent by API client)
-app.use(express.json());
+// //Parse URL-encoded bodies (sent by HTML form)
+// app.use(express.urlencoded({extended:false}));
+// //Parse JSON body( sent by API client)
+// app.use(express.json());
 
+<<<<<<< HEAD
 //home page
 app.get('/', function(request, response)
 {
@@ -351,6 +512,42 @@ app.post('/register', (request,response)=>{
 }); // create account
 
 
+=======
+// //home page
+// app.get('/', function(request, respond)
+// {
+//   respond.render('pages/login');
+// });
+
+// //sign-up page
+// app.get('/register', function(request,respond)
+// {
+//   respond.render('pages/register');
+// });
+
+// // //Login function
+// app.post('/', function(request, respond)
+// {
+//   var uname = request.body.username;
+//   var pw = request.body.password;
+//   var query ="Select password FROM account WHERE username='"+uname+"'";
+//   console.log(query);
+//   pool.query(query, function(error,results)
+//   {
+//     if (error)
+//       respond.send('Error');
+//     else
+//     {
+//       if (results.rows == '' || results.rows[0].password != String(pw))
+//         respond.send('Not existing')
+//       else if (results.rows[0].password == String(pw))
+//       {
+//         respond.render('/index.html');
+//       }
+//     }
+//   });
+// });
+>>>>>>> e1dcffd5f3bea4d9fee0991d52317286af41a6ac
 
 //=============================================================================
 

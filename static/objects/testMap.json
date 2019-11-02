@@ -19,13 +19,39 @@
         "x": 100,
         "y": 100,
         "height": 10,
-        "width": 10;
+        "width": 10
+      }
+    ],
+    "furniture": [
+      {
+        "name": "couch",
+        "x": 100,
+        "y": 30,
+        "direction": "down"
+      },
+      {
+        "name": "vend",
+        "x": 120,
+        "y": 40,
+        "direction": "down"
       }
     ],
     "player": [
       {
         "x": 60,
         "y": 60
+      },
+      {
+        "x": 60,
+        "y": 70
+      },
+      {
+        "x": 60,
+        "y": 80
+      },
+      {
+        "x": 60,
+        "y": 90
       }
     ]
   },

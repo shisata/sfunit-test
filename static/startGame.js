@@ -9,6 +9,7 @@ fuction startGame(){
 
 //create map, element placements, player info
 function initGame(){
+  
 
 }
 
