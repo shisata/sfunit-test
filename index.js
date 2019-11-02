@@ -237,6 +237,34 @@ setInterval(function() {
 
 //=============================================================================
 // Fazal Workspace
+// Enemy moves towards player while avoiding an obstacle
+// Calculate vector between player and target
+var toPlayerX = playerPosX - enemyPosX;
+var toPlayerY = playerPosY - enemyPosY;
+
+// Calculate vector between mouse and target
+var toMouseX = mousePosX - enemyPosX;
+var toMouseY = mousePosY - enemyPosY;
+
+// Calculate distance between player and enemy, mouse and enemy
+var toPlayerLength = Math.sqrt(toPlayerX * toPlayerX + toPlayerY * toPlayerY);
+var toMouseLength = Math.sqrt(toMouseX * toMouseX + toMouseY * toMouseY);
+
+// Normalize vector player
+toPlayerX = toPlayerX / toPlayerLength;
+toPlayerY = toPlayerY / toPlayerLength;
+
+// Normalize vector mouse
+toMouseX = toMouseX / toMouseLength;
+toMouseY = toMouseY / toMouseLength;
+
+// Move enemy torwards player
+enemyPosX += toPlayerX * speed;
+enemyPosY += toPlayerY * speed;
+
+// Move enemy away from obstacle (a bit slower than towards player)
+enemyPosX -= toMouseX * (speed * 0.4);
+enemyPosY -= toMouseY * (speed * 0.4);
 
 //Function to return a vector from one point to the next
 // Code is in ES6(a js framework)
