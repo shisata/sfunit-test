@@ -62,9 +62,11 @@ document.addEventListener('keyup', function(event) {
 });
 
 socket.emit('new player');
+
 setInterval(function() {
   socket.emit('movement', movement);
   socket.emit('shoot', shoot);
+  socket.emit('spawn', object);
 }, 1000 / 60);
 
   var canvas = document.getElementById('canvas');
