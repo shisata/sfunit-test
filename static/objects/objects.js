@@ -26,38 +26,70 @@ with appropriate path (and appropriate variable name)
 will create a variable 'wall1' constructed with class 'Wall'.
 */
 
-//constructor function for Walls.
-//This is how classes are defined.
-class Wall {
-  constructor(x, y, width, height, textureLink){
-      this.x = x*GRID_SIZE;
-      this.y = y*GRID_SIZE;
-      this.width = width*GRID_SIZE;
-      this.height = height*GRID_SIZE;
-      this.texture = textureLink;
-  /*
-      //I don't think we need this but let's leave it as a comment for now
-      this.collideable = true;
-      this.distructible = false;
-      this.interactable = false;*/
+class MapObject{
+  var x;
+  var y;
+  var width;
+  var height;
+
+//boolean
+  var collideable;
+  var interactable;
+  var destructible;
+
+  var textureSrc;
+}
+
+//a general class for surfaces such as wall, floor, grass, glasses,etc
+class Surface extends MapObject{
+  constructor(collideable, destructible, interactable, textureSrc) {
+    this.collideable = collideable;
+    this.destructible = destructible;
+    this.interactable = interactable;
+
+    this.textureSrc = textureSrc;
   }
 }
 
-//constructor function for Map objects that are not Walls.
-class Furniture {
-    constructor(name, x, y, direction){
-      this.name = name;
-      this.x = x*GRID_SIZE;
-      this.y = y*GRID_SIZE;
-      this.direction = direction;
-      return this;
-    }
+class Wall extends Surface{
+  constructor(x, y , width, height){
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+
+    var textureSrc = null;
+
+    // calling previous constructor, forgot how to do it
+    // constructor(true, false, false, textureSrc);
+  }
 }
 
+
+
+class Furniture extends MapObject{
+  var direction;
+  constructor(x, y, direction){
+    //we don't need name for this since each type of furniture has different logic into it -> has to be a seperate class
+    this.x = x;
+    this.y = y;
+    this.direction = direction;
+    // return this;
+  }
+}
+
+
 class Player {
+  var x;
+  var y;
+  var width;
+  var height;
+  // var textureSrc;
   constructor(x, y){
-    this.x = x*GRID_SIZE;
-    this.y = y*GRID_SIZE;
+    this.x = x;
+    this.y = y;
+    this.width = 1;
+    this.height = 1;
   }
 }
 
