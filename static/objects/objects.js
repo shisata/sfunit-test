@@ -26,53 +26,55 @@ with appropriate path (and appropriate variable name)
 will create a variable 'wall1' constructed with class 'Wall'.
 */
 
-// class MapObject{
-//   var x;
-//   var y;
-//   var width;
-//   var height;
-//
-// //boolean
-//   var collideable;
-//   var interactable;
-//   var destructible;
-//
-//   var textureSrc;
-// }
+class MapObject{
+  constructor(){
+    this.x;
+    this.y;
+    this.width;
+    this.height;
 
-//a general class for surfaces such as wall, floor, grass, glasses,etc
-// class Surface extends MapObject{
-//   constructor(collideable, destructible, interactable, textureSrc) {
-//     this.collideable = collideable;
-//     this.destructible = destructible;
-//     this.interactable = interactable;
-//
-//     this.textureSrc = textureSrc;
-//   }
-// }
+    //boolean
+    this.collideable;
+    this.interactable;
+    this.destructible;
 
-class Wall{// extends Surface{
+    //link to source
+    this.textureSrc;
+  }
+}
+
+//a general class for Surfaces such as wall, floor, grass, glasses,etc
+class Surface extends MapObject{
+  constructor(collideable, destructible, interactable, textureSrc) {
+    //always call constructor first to init variables
+    super();
+    this.collideable = collideable;
+    this.destructible = destructible;
+    this.interactable = interactable;
+
+    this.textureSrc = textureSrc;
+  }
+}
+
+class Wall extends Surface{
   constructor(x, y , width, height){
+    var source = null;
+    super(true, false, false, source);
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
-
-    var textureSrc = null;
-
-    // calling previous constructor, forgot how to do it
-    // constructor(true, false, false, textureSrc);
   }
 }
 
 
-
-class Furniture{ //extends MapObject{
-  // var direction;
+class Furniture extends MapObject{
   constructor(x, y, direction){
     //we don't need name for this since each type of furniture has different logic into it -> has to be a seperate class
+    super();
     this.x = x;
     this.y = y;
+    //default direction is facing south
     this.direction = direction;
     // return this;
   }
@@ -85,16 +87,22 @@ class Player {
   // var width;
   // var height;
   // var textureSrc;
-  constructor(x, y){
+  constructor(x, y, textureSrc){
     this.x = x;
     this.y = y;
     this.width = 1;
     this.height = 1;
+    this.textureSrc = textureSrc;
+  }
+  changeTexture(textureSrc){
+    this.textureSrc = textureSrc;
   }
 }
 
 
 //this is for using functions (classes) in other .js files.
+module.exports.Surface = Surface;
+module.exports.MapObject = MapObject;
 module.exports.Wall = Wall;
 module.exports.Furniture = Furniture;
 
