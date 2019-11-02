@@ -258,39 +258,99 @@ app.use(express.urlencoded({extended:false}));
 app.use(express.json());
 
 //home page
-app.get('/', function(request, respond)
+app.get('/', function(request, response)
 {
-  respond.render('pages/login');
+  response.render('pages/login');
 });
-
-//sign-up page
-app.get('/register', function(request,respond)
-{
-  respond.render('pages/register');
-});
-
 //Login function
-app.post('/', function(request, respond)
-{
+
+app.post('/checkAccount', (request, response)=>{
+
   var uname = request.body.username;
   var pw = request.body.password;
-  var query ="Select password FROM account WHERE username='"+uname+"'";
-  console.log(query);
-  pool.query(query, function(error,results)
-  {
-    if (error)
-      respond.send('Error');
-    else
-    {
-      if (results.rows == '' || results.rows[0].password != String(pw))
-        respond.send('Not existing')
-      else if (results.rows[0].password == String(pw))
+  pool.query(
+    'SELECT password FROM account WHERE username=$1',[uname], (error,results)=>{
+      if (error)
       {
-        respond.render('/index.html');
+        throw(error);
       }
-    }
-  });
+      var result = (results.rows == '') ? '':results.rows[0].password;
+      if (result == String(pw))
+      {
+        response.render('pages/index');
+      }
+      else {
+        response.send('Account is not existing');
+      }
+    });
+}); // check account info
+
+//sign-up page
+app.get('/register', function(request,response)
+{
+  response.render('pages/register');
 });
+
+app.post('/register', (request,response)=>{
+
+  const uname = request.body.username;
+  const pw = request.body.pw;
+  const gmail = request.body.gmail;
+
+  //Check username availability
+  console.log('CHECKING USERNAME');
+  var text = `SELECT * FROM account WHERE username='${uname}';`;
+  pool.query(text,(error,results)=>{
+    if (error){
+      throw (error);
+    }
+    else {
+      var result = {'rows': results.rows};
+      if (result.rows.length !=0)
+      {
+        console.log('USERNAME IS USED');
+        response.render('pages/register');
+      }
+      else {
+        console.log('USERNAME CHECKED');
+
+        //Check gmail availability
+        console.log('CHECKING GMAIL');
+        var text = `SELECT * FROM account WHERE gmail='${gmail}';`;
+        pool.query(text,(error, results)=>{
+          if (error){
+            throw(error);
+          }
+          else {
+            var result2 = {'rows': results.rows};
+            if (result2.rows.length !=0)
+            {
+              console.log('GMAIL IS USED');
+              response.render('pages/register');
+            }
+            else {
+              console.log('GMAIL CHECKED');
+              console.log('INSERTING...')
+              var text = `INSERT INTO account (username, password, gmail)
+                VALUES ('${uname}','${pw}','${gmail}');`;
+              pool.query(text, (error, results) =>{
+                if (error){
+                  res.end(error);
+                };
+                console.log("INSERT ACCOUNT COMPLETED");
+                response.end('Sign-up Completed');
+              });
+            };
+          };
+        });
+      }
+    };
+  });
+
+
+}); // create account
+
+
 
 //=============================================================================
 

@@ -1,5 +1,4 @@
-
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
@@ -9,10 +8,16 @@
   <body>
     <% include ../partials/top_bar.ejs %>
     <h1> REGISTER </h1>
-    <form id ="info_form">
-      <p>ID: <input type="text" placeholder="Username" id="ID_box"/></p>
-      <p>Password:<input type="password" placeholder="Password" id="PW_box"/></p>
-      <p>Gmail:<input type="email" placeholder="Gmail" id="Gmail_box"/></p>
+    <form id ="info_form" method ='post' action='/register'>
+      <p>Username:
+        <input type="text" placeholder="Username" id="ID_box" name="username"required/>
+      </p>
+      <p>Password:
+        <input type="password" placeholder="Password" id="PW_box" name="pw" required/>
+      </p>
+      <p>Gmail:
+        <input type="email" placeholder="Gmail" id="Gmail_box" name="gmail" required/>
+      </p>
       <input type="submit" id="submit_btn" value="Sign-up"/>
     </form>
   </body>
