@@ -78,7 +78,7 @@ io.on('connection', function(socket) {
         health: 4.33,
         level: 1,
         damage: 5,
-        speed: 10
+        speed: 8
       };
     }
   });
@@ -116,16 +116,16 @@ io.on('connection', function(socket) {
       dy = mouseY - playerY;
       theta = Math.atan(dx / dy);
 
-      velX = 3 * Math.sin(theta);
-      velY = 3 * Math.cos(theta);
+      velX = players[socket.id].speed * Math.sin(theta);
+      velY = players[socket.id].speed * Math.cos(theta);
       if (dy < 0) {
         velY *= -1;
         velX *= -1;
       }
 
       projectiles[bulletCount] = {
-        x: players[socket.id].x,
-        y: players[socket.id].y,
+        x: players[socket.id].x + (4 * velX),
+        y: players[socket.id].y + (4 * velY),
         vx: velX,
         vy: velY
       };
