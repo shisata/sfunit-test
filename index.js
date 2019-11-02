@@ -216,7 +216,7 @@ setInterval(function() {
   //Collision handler
   for (var player in players) {
     for (var id in projectiles) {
-      if ( (Math.abs(players[player].x - projectiles[id].x) < 2) && 
+      if ( (Math.abs(players[player].x - projectiles[id].x) < 2) &&
            (Math.abs(players[player].y - projectiles[id].y) < 2) ) {
         players[player].health -= 1;
         if (players[player].health < 0) {
@@ -227,8 +227,11 @@ setInterval(function() {
     }
   }
   generateEnemies();
-  // console.log(enemies); 
+  // console.log(enemies);
   io.sockets.emit('state', players, projectiles, enemies);
+
+  //passes the map data. [modified by: Hailey]
+  io.sockets.emit('mapData', mapData);
 }, 1000 / 120);
 
 
@@ -314,15 +317,15 @@ setInterval(function() {
 // var enemyHeight = 100;
 
 // function spawnEnemy(){
-    
+
 //     //console.log('Spawn a new enemy!');
 
 //     // Generate a random x position.
 //     var randomXPosition = Math.floor(Math.random() * (stageWidth - enemyWidth)) + 1;
-    
+
 //     // Generate a random y position.
 //     var randomYPosition = Math.floor(Math.random() * (stageHeight - enemyHeight)) + 1;
-    
+
 //     //Create a new Enemy instance and use above coordinates to place it in a random spot.
 //     //Fill the rest of this object like we did with var bullet = {...}.
 //     var newEnemy = {
@@ -339,7 +342,7 @@ setInterval(function() {
 // //This function will run 'spawnEnemy()' every 'intervalInMilliSeconds'.
 // setInterval(spawnEnemy);
 
-// setInterval(function(){ 
+// setInterval(function(){
 //   io.sockets.emit('enemyState', enemies);
 // }, 1000 / 120);
 

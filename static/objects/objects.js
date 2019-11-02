@@ -1,3 +1,4 @@
+
 //size of the grid. the program should run even if this constant variable is suddenly changed.
 const GRID_SIZE = 5;
 
@@ -27,32 +28,37 @@ will create a variable 'wall1' constructed with class 'Wall'.
 
 //constructor function for Walls.
 //This is how classes are defined.
-function Wall(x, y, width, height, textureLink){
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
-    this.texture = textureLink;
-/*
-    //I don't think we need this but let's leave it as a comment for now
-    this.collideable = true;
-    this.distructible = false;
-    this.interactable = false;*/
-    return this;
+class Wall {
+  constructor(x, y, width, height, textureLink){
+      this.x = x*GRID_SIZE;
+      this.y = y*GRID_SIZE;
+      this.width = width*GRID_SIZE;
+      this.height = height*GRID_SIZE;
+      this.texture = textureLink;
+  /*
+      //I don't think we need this but let's leave it as a comment for now
+      this.collideable = true;
+      this.distructible = false;
+      this.interactable = false;*/
+  }
 }
 
 //constructor function for Map objects that are not Walls.
-function Furniture(name, x, y, direction){
-  this.name = name;
-  this.x = x;
-  this.y = y;
-  this.direction = direction;
-  return this;
+class Furniture {
+    constructor(name, x, y, direction){
+      this.name = name;
+      this.x = x*GRID_SIZE;
+      this.y = y*GRID_SIZE;
+      this.direction = direction;
+      return this;
+    }
 }
 
-function Player(x, y){
-  this.x = x;
-  this.y = y;
+class Player {
+  constructor(x, y){
+    this.x = x*GRID_SIZE;
+    this.y = y*GRID_SIZE;
+  }
 }
 
 

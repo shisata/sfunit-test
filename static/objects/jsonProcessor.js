@@ -1,3 +1,4 @@
+
 /*This file reads and constructs the elements in the .json data file for the map.
   This file is only called when initializing the map.
    other purpose, please create another .js file.
@@ -18,25 +19,32 @@ var objects = require('./objects.js');
 // var processor = require('./static/objects/jsonProcessor.js');
 // mapData = processor.constructFromData(mapDataFromFile);
 var constructFromData = function(mapDataFromFile){
+  console.log(mapDataFromFile);
   var walls = [];
   var furnitures = [];
   var enemies = [];
   var bullets = [];
   var players = [];
 
+/*
   //Construct walls and insert them into container 'walls'
   for (i = 0; i < mapDataFromFile.map.wall.length; i++) {
     walls.push(objects.Wall(mapDataFromFile.map.wall[i].x,
       mapDataFromFile.map.wall[i].y, mapDataFromFile.map.wall[i].width,
       mapDataFromFile.map.wall[i].height, mapDataFromFile.map.wall[i].texture));
+    console.log(walls[i]);
   }
   //Construct furnitures and insert them into container 'furnitures'
   for (i = 0; i < mapDataFromFile.map.furniture.length; i++) {
     furnitures.push(objects.Furniture(mapDataFromFile.map.furniture[i].name,
       mapDataFromFile.map.furniture[i].x, mapDataFromFile.map.furniture[i].y,
       mapDataFromFile.map.furniture[i].direction));
-  }
+  }*/
   // TODO: enemies, bullets, players.
+
+  //Damn I'm just hard-coding it [-Hailey]
+  walls.push(new objects.Wall(10, 10, 5, 5, ""));
+  walls.push(new objects.Wall(20, 10, 5, 5, ""));
 
   return [walls, furnitures, enemies, bullets, players];
 }

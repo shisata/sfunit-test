@@ -103,7 +103,7 @@ setInterval(function() {
     }
 
     for (var id in enemies) {
-      
+
       var enemy = enemies[id];
       console.log(enemy);
       //Determines how the bullets look
@@ -114,7 +114,20 @@ setInterval(function() {
     }
 
   });
-  
+
+  //Hailey: guess this should be integrated but let's try this first
+  socket.on('mapData', function(mapData) {
+    //shows only wall now.
+    context.fillStyle = "#B3B3B3"
+    for (var i = 0; i < mapData[0].length; i++) {
+      context.beginPath();
+      console.log(mapData[0][0].x);
+      context.rect(mapData[0][0].x, mapData[0][0].y, mapData[0][0].width,
+        mapData[0][0].height);
+      context.fill();
+    }
+  });
+
   // Fazal' Workstation -------------------------------------------------------------------------
   // var enemyContext = canvas.getContext('2d');
   // socket.on('enemyState', function(enemies) {
@@ -207,7 +220,7 @@ setInterval(function() {
 //     // request another animation frame
 //     requestAnimationFrame(animate);
 
-//     // clear the canvas so all objects can be 
+//     // clear the canvas so all objects can be
 //     // redrawn in new positions
 //     context.clearRect(0, 0, canvas.width, canvas.height);
 
