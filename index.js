@@ -228,10 +228,8 @@ setInterval(function() {
   }
   generateEnemies();
   // console.log(enemies);
-  io.sockets.emit('state', players, projectiles, enemies);
+  io.sockets.emit('state', players, projectiles, enemies, mapData);
 
-  //passes the map data. [modified by: Hailey]
-  io.sockets.emit('mapData', mapData);
 }, 1000 / 120);
 
 
