@@ -417,7 +417,7 @@ console.log(JSON.stringify(mapData));
 // //Parse JSON body( sent by API client)
 // app.use(express.json());
 
-// <<<<<<< HEAD
+<<<<<<< HEAD
 //home page
 app.get('/', function(request, response)
 {
@@ -512,7 +512,7 @@ app.post('/register', (request,response)=>{
 }); // create account
 
 
-// =======
+=======
 // //home page
 // app.get('/', function(request, respond)
 // {
@@ -547,7 +547,7 @@ app.post('/register', (request,response)=>{
 //     }
 //   });
 // });
-// >>>>>>> e1dcffd5f3bea4d9fee0991d52317286af41a6ac
+>>>>>>> e1dcffd5f3bea4d9fee0991d52317286af41a6ac
 
 //=============================================================================
 
