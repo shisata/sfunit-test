@@ -62,9 +62,15 @@ var players = {
 
 //Projectiles object will keep track of active projectiles
 var projectiles = {
-  numProjectiles: 0,
+  numProjectiles: 0
 }
 var bulletCount = 0;
+
+//Enemies
+var enemies = {
+  numEnemies: 0
+}
+enemyID = 0;
 
 //Creates a new player
 io.on('connection', function(socket) {
@@ -143,9 +149,58 @@ io.on('connection', function(socket) {
     players[socket.id] = 0;
     players.numPlayers -= 1;
   });
-
 //Collects client data at 60 events/second
 });
+
+// newly spawned objects start at Y=25
+var spawnLineY = 25;
+
+// spawn a new object every 1500ms
+var spawnRate = 1500;
+
+// set how fast the objects will fall
+var spawnRateOfDescent = 0.50;
+
+// when was the last object spawned
+var lastSpawn = -1;
+
+// save the starting time (used to calc elapsed time)
+var startTime = Date.now();
+
+//Spawn a random enemy
+function spawnRandomObject() {
+
+  // About Math.random()
+  // Math.random() generates a semi-random number
+  // between 0-1. So to randomly decide if the next object
+  // will be A or B, we say if the random# is 0-.49 we
+  // create A and if the random# is .50-1.00 we create B
+
+  // add the new object to the objects[] array
+  enemies[enemyID] = {
+    // type: t,
+    // set x randomly but at least 15px off the canvas edges
+    x: Math.random() * 250,
+    // set y to start on the line where objects are spawned
+    y: Math.random() * 250
+  }
+  enemies.numEnemies++;
+  enemyID++;
+}
+
+function generateEnemies() {
+
+  // get the elapsed time
+  var time = Date.now();
+
+  // see if its time to spawn a new object
+  if (time > (lastSpawn + spawnRate)) {
+    lastSpawn = time;
+    spawnRandomObject();
+  }
+}
+
+
 
 setInterval(function() {
 
@@ -171,8 +226,9 @@ setInterval(function() {
       }
     }
   }
-  
-  io.sockets.emit('state', players, projectiles);
+  generateEnemies();
+  // console.log(enemies); 
+  io.sockets.emit('state', players, projectiles, enemies);
 }, 1000 / 120);
 
 
