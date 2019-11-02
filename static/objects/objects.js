@@ -26,32 +26,32 @@ with appropriate path (and appropriate variable name)
 will create a variable 'wall1' constructed with class 'Wall'.
 */
 
-class MapObject{
-  var x;
-  var y;
-  var width;
-  var height;
-
-//boolean
-  var collideable;
-  var interactable;
-  var destructible;
-
-  var textureSrc;
-}
+// class MapObject{
+//   var x;
+//   var y;
+//   var width;
+//   var height;
+//
+// //boolean
+//   var collideable;
+//   var interactable;
+//   var destructible;
+//
+//   var textureSrc;
+// }
 
 //a general class for surfaces such as wall, floor, grass, glasses,etc
-class Surface extends MapObject{
-  constructor(collideable, destructible, interactable, textureSrc) {
-    this.collideable = collideable;
-    this.destructible = destructible;
-    this.interactable = interactable;
+// class Surface extends MapObject{
+//   constructor(collideable, destructible, interactable, textureSrc) {
+//     this.collideable = collideable;
+//     this.destructible = destructible;
+//     this.interactable = interactable;
+//
+//     this.textureSrc = textureSrc;
+//   }
+// }
 
-    this.textureSrc = textureSrc;
-  }
-}
-
-class Wall extends Surface{
+class Wall{// extends Surface{
   constructor(x, y , width, height){
     this.x = x;
     this.y = y;
@@ -67,8 +67,8 @@ class Wall extends Surface{
 
 
 
-class Furniture extends MapObject{
-  var direction;
+class Furniture{ //extends MapObject{
+  // var direction;
   constructor(x, y, direction){
     //we don't need name for this since each type of furniture has different logic into it -> has to be a seperate class
     this.x = x;
@@ -80,10 +80,10 @@ class Furniture extends MapObject{
 
 
 class Player {
-  var x;
-  var y;
-  var width;
-  var height;
+  // var x;
+  // var y;
+  // var width;
+  // var height;
   // var textureSrc;
   constructor(x, y){
     this.x = x;
