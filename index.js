@@ -249,39 +249,43 @@ setInterval(function() {
   //     }
   //   }
 
-var stageWidth = 1000;
-var stageHeight = 1000;
+// var stageWidth = 1000;
+// var stageHeight = 1000;
 
-var intervalInMilliseconds = 5000;
+// var enemies = [];
 
-var enemies = [];
+// var enemyWidth = 50;
+// var enemyHeight = 100;
 
-var enemyWidth = 50;
-var enemyHeight = 100;
-
-function spawnEnemy(){
+// function spawnEnemy(){
     
-    console.log('Spawn a new enemy!');
+//     //console.log('Spawn a new enemy!');
 
-    // Generate a random x position.
-    var randomXPosition = Math.floor(Math.random() * (stageWidth - enemyWidth)) + 1;
+//     // Generate a random x position.
+//     var randomXPosition = Math.floor(Math.random() * (stageWidth - enemyWidth)) + 1;
     
-    // Generate a random y position.
-    var randomYPosition = Math.floor(Math.random() * (stageHeight - enemyHeight)) + 1;
+//     // Generate a random y position.
+//     var randomYPosition = Math.floor(Math.random() * (stageHeight - enemyHeight)) + 1;
     
-    //Create a new Enemy instance and use above coordinates to place it in a random spot.
-    //Fill the rest of this object like we did with var bullet = {...}.
-    var newEnemy = {
-        xPosition: randomXPosition,
-        yPosition: randomYPosition
-    };
+//     //Create a new Enemy instance and use above coordinates to place it in a random spot.
+//     //Fill the rest of this object like we did with var bullet = {...}.
+//     var newEnemy = {
+//         xPosition: randomXPosition,
+//         yPosition: randomYPosition,
+//     };
 
-    // Push new enemy in the enemies array so we can render them all at once in the draw loop.
-    enemies.push(newEnemy);
-}
+//     // Push new enemy in the enemies array so we can render them all at once in the draw loop.
+//     enemies.push(newEnemy);
+// }
 
-//This function will run 'spawnEnemy()' every 'intervalInMilliSeconds'.
-//setInterval(spawnEnemy, intervalInMilliSeconds);
+
+
+// //This function will run 'spawnEnemy()' every 'intervalInMilliSeconds'.
+// setInterval(spawnEnemy);
+
+// setInterval(function(){ 
+//   io.sockets.emit('enemyState', enemies);
+// }, 1000 / 120);
 
 //=============================================================================
 
