@@ -34,8 +34,11 @@ class MapObject{
     this.height;
 
     //boolean
+    // collision
     this.collideable;
+    // interaction
     this.interactable;
+    // destroys stuff
     this.destructible;
 
     //link to source
