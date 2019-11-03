@@ -93,14 +93,14 @@ io.on('connection', function(socket) {
     }
   });
 
-  socket.on('create map', function(){
-    var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
-    var processor = require('./static/objects/jsonProcessor.js');
-    var mapData = processor.constructFromData(mapDataFromFile);
-    console.log(mapData);
-     // console.log(JSON.stringify(mapData); ///****
-    // // console.log(mapData.walls);
-  });
+  // socket.on('create map', function(){
+  //   var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
+  //   var processor = require('./static/objects/jsonProcessor.js');
+  //   var mapData = processor.constructFromData(mapDataFromFile);
+  //   console.log(mapData);
+  //    // console.log(JSON.stringify(mapData); ///****
+  //   // // console.log(mapData.walls);
+  // });
 
   // Responds to a movement event
   socket.on('movement', function(data) {
@@ -241,14 +241,8 @@ setInterval(function() {
   }
   generateEnemies();
   // console.log(enemies);
-  io.sockets.emit('state', players, projectiles, enemies);
+  io.sockets.emit('state', players, projectiles, enemies, mapData);
 
-// <<<<<<< HEAD
-  //passes the map data. [modified by: Hailey]
-  io.sockets.emit('mapData', {
-  });
-// =======
-// >>>>>>> de4042118f9e82cf4ecf147d987d66862ba766f4
 }, 1000 / 120);
 
 
@@ -439,10 +433,10 @@ console.log(mapData.furnitures[4].name );
 */
 
 
-// var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
-// var processor = require('./static/objects/jsonProcessor.js');
-// mapData = processor.constructFromData(mapDataFromFile);
-// console.log(JSON.stringify(mapData));
+var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
+var processor = require('./static/objects/jsonProcessor.js');
+mapData = processor.constructFromData(mapDataFromFile);
+console.log(JSON.stringify(mapData));
 
 
 
@@ -456,6 +450,7 @@ console.log(mapData.furnitures[4].name );
 
 //=============================================================================
 // Long Workpace
+<<<<<<< HEAD
 
 // //home page
 // app.get('/', function(request, response)
@@ -492,6 +487,50 @@ console.log(mapData.furnitures[4].name );
 // {
 //   response.render('pages/register');
 // });
+=======
+/*
+//home page
+app.get('/', function(request, response)
+{
+  response.render('pages/login');
+});
+//Login function
+
+app.post('/checkAccount', (request, response)=>{
+
+  var uname = request.body.username;
+  var pw = request.body.password;
+  pool.query(
+    'SELECT password FROM account WHERE username=$1',[uname], (error,results)=>{
+      if (error)
+      {
+        throw(error);
+      }
+      var result = (results.rows == '') ? '':results.rows[0].password;
+      if (result == String(pw))
+      {
+        response.render('pages/index');
+      }
+      else {
+        var message ='Account is not existing';
+        console.log(message)
+        response.render('pages/login',message);
+      }
+    });
+}); // check account info
+
+//sign-up page
+app.get('/register', function(request,response)
+{
+  response.render('pages/register');
+});
+
+app.post('/register', (request,response)=>{
+
+  const uname = request.body.username;
+  const pw = request.body.pw;
+  const gmail = request.body.gmail;
+>>>>>>> 03a00762f7fc91220342884d3d71d3de5b346b8a
 
 // app.post('/register', (request,response)=>{
 
@@ -550,8 +589,13 @@ console.log(mapData.furnitures[4].name );
 //   });
 
 
+<<<<<<< HEAD
 // }); // create account
 
+=======
+}); // create account
+*/
+>>>>>>> 03a00762f7fc91220342884d3d71d3de5b346b8a
 
 //=============================================================================
 
