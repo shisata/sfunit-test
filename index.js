@@ -22,9 +22,6 @@
  *
  * ==========================================================================*/
 
-
- //app designing
-
 // Dependencies
 var express = require('express');
 var http = require('http');
@@ -40,7 +37,7 @@ var pool
 pool = new Pool({
   connectionString: process.env.DATABASE_URL
 })
-app.use('/static', express.static(__dirname + '/static'));// Routing
+// app.use('/static', express.static(__dirname + '/static'));// Routing
 app.get('/', function(request, response) {
 response.sendFile(path.join(__dirname, 'index.html'));
 });// Starts the server.
@@ -93,14 +90,14 @@ io.on('connection', function(socket) {
     }
   });
 
-  socket.on('create map', function(){
-    var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
-    var processor = require('./static/objects/jsonProcessor.js');
-    var mapData = processor.constructFromData(mapDataFromFile);
-    console.log(mapData);
-     // console.log(JSON.stringify(mapData); ///****
-    // // console.log(mapData.walls);
-  });
+  // socket.on('create map', function(){
+  //   var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
+  //   var processor = require('./static/objects/jsonProcessor.js');
+  //   var mapData = processor.constructFromData(mapDataFromFile);
+  //   console.log(mapData);
+  //    // console.log(JSON.stringify(mapData); ///****
+  //   // // console.log(mapData.walls);
+  // });
 
   // Responds to a movement event
   socket.on('movement', function(data) {
@@ -241,14 +238,8 @@ setInterval(function() {
   }
   generateEnemies();
   // console.log(enemies);
-  io.sockets.emit('state', players, projectiles, enemies);
+  io.sockets.emit('state', players, projectiles, enemies, mapData);
 
-// <<<<<<< HEAD
-  //passes the map data. [modified by: Hailey]
-  io.sockets.emit('mapData', {
-  });
-// =======
-// >>>>>>> de4042118f9e82cf4ecf147d987d66862ba766f4
 }, 1000 / 120);
 
 
@@ -439,10 +430,10 @@ console.log(mapData.furnitures[4].name );
 */
 
 
-// var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
-// var processor = require('./static/objects/jsonProcessor.js');
-// mapData = processor.constructFromData(mapDataFromFile);
-// console.log(JSON.stringify(mapData));
+var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
+var processor = require('./static/objects/jsonProcessor.js');
+mapData = processor.constructFromData(mapDataFromFile);
+console.log(JSON.stringify(mapData));
 
 
 
@@ -457,23 +448,50 @@ console.log(mapData.furnitures[4].name );
 //=============================================================================
 // Long Workpace
 
+// //home page
+// app.get('/', function(request, response)
+// {
+//   response.render('pages/login');
+// });
+// //Login function
 
+// app.post('/checkAccount', (request, response)=>{
 
-// //Parse URL-encoded bodies (sent by HTML form)
-// app.use(express.urlencoded({extended:false}));
-// //Parse JSON body( sent by API client)
-// app.use(express.json());
+//   var uname = request.body.username;
+//   var pw = request.body.password;
+//   pool.query(
+//     'SELECT password FROM account WHERE username=$1',[uname], (error,results)=>{
+//       if (error)
+//       {
+//         throw(error);
+//       }
+//       var result = (results.rows == '') ? '':results.rows[0].password;
+//       if (result == String(pw))
+//       {
+//         response.render('pages/index');
+//       }
+//       else {
+//         var message ='Account is not existing';
+//         console.log(message)
+//         response.render('pages/login',message);
+//       }
+//     });
+// }); // check account info
 
-// <<<<<<< HEAD
+// //sign-up page
+// app.get('/register', function(request,response)
+// {
+//   response.render('pages/register');
+// });
+/*
 //home page
 app.get('/', function(request, response)
 {
   response.render('pages/login');
 });
+
 //Login function
-
-app.post('/checkAccount', (request, response)=>{
-
+app.post('/users', (request, response)=>{
   var uname = request.body.username;
   var pw = request.body.password;
   pool.query(
@@ -488,10 +506,12 @@ app.post('/checkAccount', (request, response)=>{
         response.render('pages/index');
       }
       else {
-        response.send('Account is not existing');
+        var message ='Account is not existing';
+        console.log(message)
+        response.render('pages/login',message);
       }
     });
-}); // check account info
+});
 
 //sign-up page
 app.get('/register', function(request,response)
@@ -504,97 +524,70 @@ app.post('/register', (request,response)=>{
   const uname = request.body.username;
   const pw = request.body.pw;
   const gmail = request.body.gmail;
+>>>>>>> 03a00762f7fc91220342884d3d71d3de5b346b8a
 
-  //Check username availability
-  console.log('CHECKING USERNAME');
-  var text = `SELECT * FROM account WHERE username='${uname}';`;
-  pool.query(text,(error,results)=>{
-    if (error){
-      throw (error);
-    }
-    else {
-      var result = {'rows': results.rows};
-      if (result.rows.length !=0)
-      {
-        console.log('USERNAME IS USED');
-        response.render('pages/register');
-      }
-      else {
-        console.log('USERNAME CHECKED');
+// app.post('/register', (request,response)=>{
 
-        //Check gmail availability
-        console.log('CHECKING GMAIL');
-        var text = `SELECT * FROM account WHERE gmail='${gmail}';`;
-        pool.query(text,(error, results)=>{
-          if (error){
-            throw(error);
-          }
-          else {
-            var result2 = {'rows': results.rows};
-            if (result2.rows.length !=0)
-            {
-              console.log('GMAIL IS USED');
-              response.render('pages/register');
-            }
-            else {
-              console.log('GMAIL CHECKED');
-              console.log('INSERTING...')
-              var text = `INSERT INTO account (username, password, gmail)
-                VALUES ('${uname}','${pw}','${gmail}');`;
-              pool.query(text, (error, results) =>{
-                if (error){
-                  res.end(error);
-                };
-                console.log("INSERT ACCOUNT COMPLETED");
-                response.end('Sign-up Completed');
-              });
-            };
-          };
-        });
-      }
-    };
-  });
+//   const uname = request.body.username;
+//   const pw = request.body.pw;
+//   const gmail = request.body.gmail;
 
-
-}); // create account
-
-
-// =======
-// //home page
-// app.get('/', function(request, respond)
-// {
-//   respond.render('pages/login');
-// });
-
-// //sign-up page
-// app.get('/register', function(request,respond)
-// {
-//   respond.render('pages/register');
-// });
-
-// // //Login function
-// app.post('/', function(request, respond)
-// {
-//   var uname = request.body.username;
-//   var pw = request.body.password;
-//   var query ="Select password FROM account WHERE username='"+uname+"'";
-//   console.log(query);
-//   pool.query(query, function(error,results)
-//   {
-//     if (error)
-//       respond.send('Error');
-//     else
-//     {
-//       if (results.rows == '' || results.rows[0].password != String(pw))
-//         respond.send('Not existing')
-//       else if (results.rows[0].password == String(pw))
-//       {
-//         respond.render('/index.html');
-//       }
+//   //Check username availability
+//   console.log('CHECKING USERNAME');
+//   var text = `SELECT * FROM account WHERE username='${uname}';`;
+//   pool.query(text,(error,results)=>{
+//     if (error){
+//       throw (error);
 //     }
+//     else {
+//       var result = {'rows': results.rows};
+//       if (result.rows.length !=0)
+//       {
+//         console.log('USERNAME IS USED');
+//         response.render('pages/register');
+//       }
+//       else {
+//         console.log('USERNAME CHECKED');
+
+//         //Check gmail availability
+//         console.log('CHECKING GMAIL');
+//         var text = `SELECT * FROM account WHERE gmail='${gmail}';`;
+//         pool.query(text,(error, results)=>{
+//           if (error){
+//             throw(error);
+//           }
+//           else {
+//             var result2 = {'rows': results.rows};
+//             if (result2.rows.length !=0)
+//             {
+//               console.log('GMAIL IS USED');
+//               response.render('pages/register');
+//             }
+//             else {
+//               console.log('GMAIL CHECKED');
+//               console.log('INSERTING...')
+//               var text = `INSERT INTO account (username, password, gmail)
+//                 VALUES ('${uname}','${pw}','${gmail}');`;
+//               pool.query(text, (error, results) =>{
+//                 if (error){
+//                   res.end(error);
+//                 };
+//                 console.log("INSERT ACCOUNT COMPLETED");
+//                 response.end('Sign-up Completed');
+//               });
+//             };
+//           };
+//         });
+//       }
+//     };
 //   });
-// });
-// >>>>>>> e1dcffd5f3bea4d9fee0991d52317286af41a6ac
+
+
+// }); // create account
+
+=======
+}); // create account
+*/
 
 //=============================================================================
 
@@ -603,7 +596,6 @@ app.post('/register', (request,response)=>{
 
 //=============================================================================
 // Josh Workpace
-
 
 
 //=============================================================================
