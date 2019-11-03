@@ -41,9 +41,9 @@ pool = new Pool({
   connectionString: process.env.DATABASE_URL
 })
 app.use('/static', express.static(__dirname + '/static'));// Routing
-//app.get('/', function(request, response) {
-//response.sendFile(path.join(__dirname, 'index.html'));
-//});// Starts the server.
+app.get('/', function(request, response) {
+response.sendFile(path.join(__dirname, 'index.html'));
+});// Starts the server.
 server.listen(5000, function() {
   console.log('Starting server on port 5000');
 });
@@ -93,14 +93,14 @@ io.on('connection', function(socket) {
     }
   });
 
-  socket.on('create map', function(){
-    var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
-    var processor = require('./static/objects/jsonProcessor.js');
-    var mapData = processor.constructFromData(mapDataFromFile);
-    console.log(mapData);
-     // console.log(JSON.stringify(mapData); ///****
-    // // console.log(mapData.walls);
-  });
+  // socket.on('create map', function(){
+  //   var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
+  //   var processor = require('./static/objects/jsonProcessor.js');
+  //   var mapData = processor.constructFromData(mapDataFromFile);
+  //   console.log(mapData);
+  //    // console.log(JSON.stringify(mapData); ///****
+  //   // // console.log(mapData.walls);
+  // });
 
   // Responds to a movement event
   socket.on('movement', function(data) {
@@ -241,14 +241,8 @@ setInterval(function() {
   }
   generateEnemies();
   // console.log(enemies);
-  io.sockets.emit('state', players, projectiles, enemies);
+  io.sockets.emit('state', players, projectiles, enemies, mapData);
 
-// <<<<<<< HEAD
-  //passes the map data. [modified by: Hailey]
-  io.sockets.emit('mapData', {
-  });
-// =======
-// >>>>>>> de4042118f9e82cf4ecf147d987d66862ba766f4
 }, 1000 / 120);
 
 
@@ -439,10 +433,10 @@ console.log(mapData.furnitures[4].name );
 */
 
 
-// var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
-// var processor = require('./static/objects/jsonProcessor.js');
-// mapData = processor.constructFromData(mapDataFromFile);
-// console.log(JSON.stringify(mapData));
+var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
+var processor = require('./static/objects/jsonProcessor.js');
+mapData = processor.constructFromData(mapDataFromFile);
+console.log(JSON.stringify(mapData));
 
 
 
@@ -456,7 +450,7 @@ console.log(mapData.furnitures[4].name );
 
 //=============================================================================
 // Long Workpace
-
+/*
 //home page
 app.get('/', function(request, response)
 {
@@ -551,7 +545,7 @@ app.post('/register', (request,response)=>{
 
 
 }); // create account
-
+*/
 
 //=============================================================================
 
