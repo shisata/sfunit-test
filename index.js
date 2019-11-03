@@ -169,7 +169,7 @@ io.on('connection', function(socket) {
 var spawnLineY = 25;
 
 // spawn a new object every 1500ms
-var spawnRate = 1500;
+var spawnRate = 5000;
 
 // set how fast the objects will fall
 var spawnRateOfDescent = 0.50;
@@ -195,8 +195,10 @@ function spawnRandomObject() {
     // set x randomly but at least 15px off the canvas edges
     x: Math.random() * 250,
     // set y to start on the line where objects are spawned
-    y: Math.random() * 250
+    y: Math.random() * 250,
+    health: 4
   }
+
   enemies.numEnemies++;
   enemyID++;
 }
@@ -217,7 +219,7 @@ function generateEnemies() {
 
 setInterval(function() {
 
-  //Projectile handler
+  //Projectile movement handler
   for (var id in projectiles) {
     projectiles[id].x += projectiles[id].vx;
     projectiles[id].y += projectiles[id].vy;
@@ -226,7 +228,7 @@ setInterval(function() {
       projectiles[id].vy = 0;
     }
   }
-  //Collision handler
+  //Player-projectile collision handler
   for (var player in players) {
     for (var id in projectiles) {
       if ( (Math.abs(players[player].x - projectiles[id].x) < 2) &&
@@ -239,6 +241,24 @@ setInterval(function() {
       }
     }
   }
+  //Enemy-projectile collision handler
+  for (var enemy in enemies) {
+    for (var id in projectiles) {
+      console.log(enemy);
+      if ( (Math.abs(enemies[enemy].x - projectiles[id].x) < 5) &&
+           (Math.abs(enemies[enemy].y - projectiles[id].y) < 5) ) {
+        enemies[enemy].health -= 1;
+        if (enemies[enemy].health < 0) {
+          var temp = enemies[enemyID -= 1];
+          enemies[enemyID] = enemies[enemy];
+          enemies[enemy] = temp;
+          enemies[enemyID] = 0;
+          enemies.numEnemies -= 1;
+        }
+      }
+    }
+  }
+  //Spawn enemies
   generateEnemies();
   // console.log(enemies);
   io.sockets.emit('state', players, projectiles, enemies, mapData);
