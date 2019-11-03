@@ -22,6 +22,9 @@
  *
  * ==========================================================================*/
 
+
+ //app designing
+
 // Dependencies
 var express = require('express');
 var http = require('http');
@@ -37,7 +40,7 @@ var pool
 pool = new Pool({
   connectionString: process.env.DATABASE_URL
 })
-// app.use('/static', express.static(__dirname + '/static'));// Routing
+app.use('/static', express.static(__dirname + '/static'));// Routing
 app.get('/', function(request, response) {
 response.sendFile(path.join(__dirname, 'index.html'));
 });// Starts the server.
@@ -467,87 +470,6 @@ console.log(JSON.stringify(mapData));
 //       }
 //       var result = (results.rows == '') ? '':results.rows[0].password;
 //       if (result == String(pw))
-<<<<<<< HEAD
-//       {
-//         response.render('pages/index');
-//       }
-//       else {
-//         var message ='Account is not existing';
-//         console.log(message)
-//         response.render('pages/login',message);
-//       }
-//     });
-// }); // check account info
-
-// //sign-up page
-// app.get('/register', function(request,response)
-// {
-//   response.render('pages/register');
-// });
-/*
-//home page
-app.get('/', function(request, response)
-{
-  response.render('pages/login');
-});
-
-//Login function
-app.post('/users', (request, response)=>{
-  var uname = request.body.username;
-  var pw = request.body.password;
-  pool.query(
-    'SELECT password FROM account WHERE username=$1',[uname], (error,results)=>{
-      if (error)
-      {
-        throw(error);
-      }
-      var result = (results.rows == '') ? '':results.rows[0].password;
-      if (result == String(pw))
-      {
-        response.render('pages/index');
-      }
-      else {
-        var message ='Account is not existing';
-        console.log(message)
-        response.render('pages/login',message);
-      }
-    });
-});
-
-//sign-up page
-app.get('/register', function(request,response)
-{
-  response.render('pages/register');
-});
-
-app.post('/register', (request,response)=>{
-
-  const uname = request.body.username;
-  const pw = request.body.pw;
-  const gmail = request.body.gmail;
->>>>>>> 03a00762f7fc91220342884d3d71d3de5b346b8a
-
-// app.post('/register', (request,response)=>{
-
-//   const uname = request.body.username;
-//   const pw = request.body.pw;
-//   const gmail = request.body.gmail;
-
-//   //Check username availability
-//   console.log('CHECKING USERNAME');
-//   var text = `SELECT * FROM account WHERE username='${uname}';`;
-//   pool.query(text,(error,results)=>{
-//     if (error){
-//       throw (error);
-//     }
-//     else {
-//       var result = {'rows': results.rows};
-//       if (result.rows.length !=0)
-//       {
-//         console.log('USERNAME IS USED');
-//         response.render('pages/register');
-//       }
-=======
 //       {
 //         response.render('pages/index');
 //       }
@@ -585,7 +507,6 @@ app.post('/register', (request,response)=>{
 //         console.log('USERNAME IS USED');
 //         response.render('pages/register');
 //       }
->>>>>>> 2dc40d58ad84f90bc68c2dbf3b8f0ab783de795c
 //       else {
 //         console.log('USERNAME CHECKED');
 
@@ -625,12 +546,6 @@ app.post('/register', (request,response)=>{
 
 // }); // create account
 
-<<<<<<< HEAD
-=======
-}); // create account
-*/
-=======
->>>>>>> 2dc40d58ad84f90bc68c2dbf3b8f0ab783de795c
 
 //=============================================================================
 
@@ -639,6 +554,7 @@ app.post('/register', (request,response)=>{
 
 //=============================================================================
 // Josh Workpace
+
 
 
 //=============================================================================
