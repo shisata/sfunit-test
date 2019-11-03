@@ -40,10 +40,10 @@ var pool
 pool = new Pool({
   connectionString: process.env.DATABASE_URL
 })
-app.use('/static', express.static(__dirname + '/static'));// Routing
-app.get('/', function(request, response) {
-response.sendFile(path.join(__dirname, 'index.html'));
-});// Starts the server.
+// app.use('/static', express.static(__dirname + '/static'));// Routing
+// app.get('/', function(request, response) {
+// response.sendFile(path.join(__dirname, 'index.html'));
+// });// Starts the server.
 server.listen(5000, function() {
   console.log('Starting server on port 5000');
 });
@@ -241,14 +241,11 @@ setInterval(function() {
   }
   generateEnemies();
   // console.log(enemies);
-  io.sockets.emit('state', players, projectiles, enemies, mapData);
+  io.sockets.emit('state', players, projectiles, enemies);
 
-<<<<<<< HEAD
   //passes the map data. [modified by: Hailey]
   io.sockets.emit('mapData', {
   });
-=======
->>>>>>> de4042118f9e82cf4ecf147d987d66862ba766f4
 }, 1000 / 120);
 
 
