@@ -249,32 +249,32 @@ setInterval(function() {
 //=============================================================================
 // Fazal Workspace
 
-// // Enemy moves towards player while avoiding an obstacle
-// // Calculate vector between player and target
+// // // Enemy moves towards player while avoiding an obstacle
+// // // Calculate vector between player and target
 // var toPlayerX = playerPosX - enemyPosX;
 // var toPlayerY = playerPosY - enemyPosY;
 
-// // Calculate vector between mouse and target
+// // // Calculate vector between mouse and target
 // var toMouseX = mousePosX - enemyPosX;
 // var toMouseY = mousePosY - enemyPosY;
 
-// // Calculate distance between player and enemy, mouse and enemy
+// // // Calculate distance between player and enemy, mouse and enemy
 // var toPlayerLength = Math.sqrt(toPlayerX * toPlayerX + toPlayerY * toPlayerY);
 // var toMouseLength = Math.sqrt(toMouseX * toMouseX + toMouseY * toMouseY);
 
-// // Normalize vector player
+// // // Normalize vector player
 // toPlayerX = toPlayerX / toPlayerLength;
 // toPlayerY = toPlayerY / toPlayerLength;
 
-// // Normalize vector mouse
+// // // Normalize vector mouse
 // toMouseX = toMouseX / toMouseLength;
 // toMouseY = toMouseY / toMouseLength;
 
-// // Move enemy torwards player
+// // // Move enemy torwards player
 // enemyPosX += toPlayerX * speed;
 // enemyPosY += toPlayerY * speed;
 
-// // Move enemy away from obstacle (a bit slower than towards player)
+// // // Move enemy away from obstacle (a bit slower than towards player)
 // enemyPosX -= toMouseX * (speed * 0.4);
 // enemyPosY -= toMouseY * (speed * 0.4);
 
@@ -450,7 +450,6 @@ console.log(JSON.stringify(mapData));
 
 //=============================================================================
 // Long Workpace
-<<<<<<< HEAD
 
 // //home page
 // app.get('/', function(request, response)
@@ -487,50 +486,6 @@ console.log(JSON.stringify(mapData));
 // {
 //   response.render('pages/register');
 // });
-=======
-/*
-//home page
-app.get('/', function(request, response)
-{
-  response.render('pages/login');
-});
-//Login function
-
-app.post('/checkAccount', (request, response)=>{
-
-  var uname = request.body.username;
-  var pw = request.body.password;
-  pool.query(
-    'SELECT password FROM account WHERE username=$1',[uname], (error,results)=>{
-      if (error)
-      {
-        throw(error);
-      }
-      var result = (results.rows == '') ? '':results.rows[0].password;
-      if (result == String(pw))
-      {
-        response.render('pages/index');
-      }
-      else {
-        var message ='Account is not existing';
-        console.log(message)
-        response.render('pages/login',message);
-      }
-    });
-}); // check account info
-
-//sign-up page
-app.get('/register', function(request,response)
-{
-  response.render('pages/register');
-});
-
-app.post('/register', (request,response)=>{
-
-  const uname = request.body.username;
-  const pw = request.body.pw;
-  const gmail = request.body.gmail;
->>>>>>> 03a00762f7fc91220342884d3d71d3de5b346b8a
 
 // app.post('/register', (request,response)=>{
 
@@ -589,13 +544,8 @@ app.post('/register', (request,response)=>{
 //   });
 
 
-<<<<<<< HEAD
 // }); // create account
 
-=======
-}); // create account
-*/
->>>>>>> 03a00762f7fc91220342884d3d71d3de5b346b8a
 
 //=============================================================================
 
