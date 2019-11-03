@@ -12,7 +12,8 @@
     <h2 class="title"> Special Fortification Unit</h2>
   </section>
   <section id="login_box">
-    <p> <%=message%> </p>
+    <p id='msg'><%=message%></p>
+
     <div class ="imgcontainer">
       <img src="/image/login_profile2.png" id="log_in_photo" alt="avatar">
     </div>
@@ -29,6 +30,15 @@
           </button>
       </div>
   </section>
-
 </body>
 </html>
+
+<script>
+  var msg = document.querySelector('#msg');
+  console.log(msg.innerHTML);
+  if (msg.innerHTML !='')
+    {
+      console.log(msg.innerHTML);
+      alert('Account is not existing');
+    };
+</script>
