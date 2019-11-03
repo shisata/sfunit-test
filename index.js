@@ -246,32 +246,32 @@ setInterval(function() {
 //=============================================================================
 // Fazal Workspace
 
-// // Enemy moves towards player while avoiding an obstacle
-// // Calculate vector between player and target
+// // // Enemy moves towards player while avoiding an obstacle
+// // // Calculate vector between player and target
 // var toPlayerX = playerPosX - enemyPosX;
 // var toPlayerY = playerPosY - enemyPosY;
 
-// // Calculate vector between mouse and target
+// // // Calculate vector between mouse and target
 // var toMouseX = mousePosX - enemyPosX;
 // var toMouseY = mousePosY - enemyPosY;
 
-// // Calculate distance between player and enemy, mouse and enemy
+// // // Calculate distance between player and enemy, mouse and enemy
 // var toPlayerLength = Math.sqrt(toPlayerX * toPlayerX + toPlayerY * toPlayerY);
 // var toMouseLength = Math.sqrt(toMouseX * toMouseX + toMouseY * toMouseY);
 
-// // Normalize vector player
+// // // Normalize vector player
 // toPlayerX = toPlayerX / toPlayerLength;
 // toPlayerY = toPlayerY / toPlayerLength;
 
-// // Normalize vector mouse
+// // // Normalize vector mouse
 // toMouseX = toMouseX / toMouseLength;
 // toMouseY = toMouseY / toMouseLength;
 
-// // Move enemy torwards player
+// // // Move enemy torwards player
 // enemyPosX += toPlayerX * speed;
 // enemyPosY += toPlayerY * speed;
 
-// // Move enemy away from obstacle (a bit slower than towards player)
+// // // Move enemy away from obstacle (a bit slower than towards player)
 // enemyPosX -= toMouseX * (speed * 0.4);
 // enemyPosY -= toMouseY * (speed * 0.4);
 
@@ -467,6 +467,7 @@ console.log(JSON.stringify(mapData));
 //       }
 //       var result = (results.rows == '') ? '':results.rows[0].password;
 //       if (result == String(pw))
+<<<<<<< HEAD
 //       {
 //         response.render('pages/index');
 //       }
@@ -546,6 +547,45 @@ app.post('/register', (request,response)=>{
 //         console.log('USERNAME IS USED');
 //         response.render('pages/register');
 //       }
+=======
+//       {
+//         response.render('pages/index');
+//       }
+//       else {
+//         var message ='Account is not existing';
+//         console.log(message)
+//         response.render('pages/login',message);
+//       }
+//     });
+// }); // check account info
+
+// //sign-up page
+// app.get('/register', function(request,response)
+// {
+//   response.render('pages/register');
+// });
+
+// app.post('/register', (request,response)=>{
+
+//   const uname = request.body.username;
+//   const pw = request.body.pw;
+//   const gmail = request.body.gmail;
+
+//   //Check username availability
+//   console.log('CHECKING USERNAME');
+//   var text = `SELECT * FROM account WHERE username='${uname}';`;
+//   pool.query(text,(error,results)=>{
+//     if (error){
+//       throw (error);
+//     }
+//     else {
+//       var result = {'rows': results.rows};
+//       if (result.rows.length !=0)
+//       {
+//         console.log('USERNAME IS USED');
+//         response.render('pages/register');
+//       }
+>>>>>>> 2dc40d58ad84f90bc68c2dbf3b8f0ab783de795c
 //       else {
 //         console.log('USERNAME CHECKED');
 
@@ -585,9 +625,12 @@ app.post('/register', (request,response)=>{
 
 // }); // create account
 
+<<<<<<< HEAD
 =======
 }); // create account
 */
+=======
+>>>>>>> 2dc40d58ad84f90bc68c2dbf3b8f0ab783de795c
 
 //=============================================================================
 
