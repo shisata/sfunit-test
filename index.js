@@ -248,7 +248,7 @@ setInterval(function() {
 
 //=============================================================================
 // Fazal Workspace
-
+// --------------------------------------------------- partial implementation ends for enemy move to player
 // // Enemy moves towards player while avoiding an obstacle
 // // Calculate vector between player and target
 // var toPlayerX = playerPosX - enemyPosX;
@@ -450,7 +450,7 @@ console.log(JSON.stringify(mapData));
 
 //=============================================================================
 // Long Workpace
-<<<<<<< HEAD
+//<<<<<<< HEAD
 
 // //home page
 // app.get('/', function(request, response)
@@ -487,7 +487,7 @@ console.log(JSON.stringify(mapData));
 // {
 //   response.render('pages/register');
 // });
-=======
+//=======
 /*
 //home page
 app.get('/', function(request, response)
@@ -589,13 +589,13 @@ app.post('/register', (request,response)=>{
 //   });
 
 
-<<<<<<< HEAD
+//<<<<<<< HEAD
 // }); // create account
 
 =======
 }); // create account
 */
->>>>>>> 03a00762f7fc91220342884d3d71d3de5b346b8a
+//>>>>>>> 03a00762f7fc91220342884d3d71d3de5b346b8a
 
 //=============================================================================
 
