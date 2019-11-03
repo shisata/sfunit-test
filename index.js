@@ -241,14 +241,14 @@ setInterval(function() {
   }
   generateEnemies();
   // console.log(enemies);
-  io.sockets.emit('state', players, projectiles, enemies, mapData);
+  io.sockets.emit('state', players, projectiles, enemies);
 
-<<<<<<< HEAD
+// <<<<<<< HEAD
   //passes the map data. [modified by: Hailey]
   io.sockets.emit('mapData', {
   });
-=======
->>>>>>> de4042118f9e82cf4ecf147d987d66862ba766f4
+// =======
+// >>>>>>> de4042118f9e82cf4ecf147d987d66862ba766f4
 }, 1000 / 120);
 
 
@@ -603,6 +603,7 @@ app.post('/register', (request,response)=>{
 
 //=============================================================================
 // Josh Workpace
+
 
 
 //=============================================================================
