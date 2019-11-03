@@ -248,33 +248,39 @@ setInterval(function() {
 
 //=============================================================================
 // Fazal Workspace
+<<<<<<< HEAD
 // --------------------------------------------------- partial implementation ends for enemy move to player
 // // Enemy moves towards player while avoiding an obstacle
 // // Calculate vector between player and target
+=======
+
+// // // Enemy moves towards player while avoiding an obstacle
+// // // Calculate vector between player and target
+>>>>>>> bf38e9bbf4f22e0041fb464bdb3dd9483c65780f
 // var toPlayerX = playerPosX - enemyPosX;
 // var toPlayerY = playerPosY - enemyPosY;
 
-// // Calculate vector between mouse and target
+// // // Calculate vector between mouse and target
 // var toMouseX = mousePosX - enemyPosX;
 // var toMouseY = mousePosY - enemyPosY;
 
-// // Calculate distance between player and enemy, mouse and enemy
+// // // Calculate distance between player and enemy, mouse and enemy
 // var toPlayerLength = Math.sqrt(toPlayerX * toPlayerX + toPlayerY * toPlayerY);
 // var toMouseLength = Math.sqrt(toMouseX * toMouseX + toMouseY * toMouseY);
 
-// // Normalize vector player
+// // // Normalize vector player
 // toPlayerX = toPlayerX / toPlayerLength;
 // toPlayerY = toPlayerY / toPlayerLength;
 
-// // Normalize vector mouse
+// // // Normalize vector mouse
 // toMouseX = toMouseX / toMouseLength;
 // toMouseY = toMouseY / toMouseLength;
 
-// // Move enemy torwards player
+// // // Move enemy torwards player
 // enemyPosX += toPlayerX * speed;
 // enemyPosY += toPlayerY * speed;
 
-// // Move enemy away from obstacle (a bit slower than towards player)
+// // // Move enemy away from obstacle (a bit slower than towards player)
 // enemyPosX -= toMouseX * (speed * 0.4);
 // enemyPosY -= toMouseY * (speed * 0.4);
 
@@ -450,7 +456,10 @@ console.log(JSON.stringify(mapData));
 
 //=============================================================================
 // Long Workpace
+<<<<<<< HEAD
 //<<<<<<< HEAD
+=======
+>>>>>>> bf38e9bbf4f22e0041fb464bdb3dd9483c65780f
 
 // //home page
 // app.get('/', function(request, response)
@@ -487,6 +496,7 @@ console.log(JSON.stringify(mapData));
 // {
 //   response.render('pages/register');
 // });
+<<<<<<< HEAD
 //=======
 /*
 //home page
@@ -531,6 +541,8 @@ app.post('/register', (request,response)=>{
   const pw = request.body.pw;
   const gmail = request.body.gmail;
 >>>>>>> 03a00762f7fc91220342884d3d71d3de5b346b8a
+=======
+>>>>>>> bf38e9bbf4f22e0041fb464bdb3dd9483c65780f
 
 // app.post('/register', (request,response)=>{
 
@@ -589,6 +601,7 @@ app.post('/register', (request,response)=>{
 //   });
 
 
+<<<<<<< HEAD
 //<<<<<<< HEAD
 // }); // create account
 
@@ -596,6 +609,10 @@ app.post('/register', (request,response)=>{
 }); // create account
 */
 //>>>>>>> 03a00762f7fc91220342884d3d71d3de5b346b8a
+=======
+// }); // create account
+
+>>>>>>> bf38e9bbf4f22e0041fb464bdb3dd9483c65780f
 
 //=============================================================================
 
