@@ -248,15 +248,13 @@ setInterval(function() {
 
 //=============================================================================
 // Fazal Workspace
-<<<<<<< HEAD
 // --------------------------------------------------- partial implementation ends for enemy move to player
 // // Enemy moves towards player while avoiding an obstacle
 // // Calculate vector between player and target
-=======
+
 
 // // // Enemy moves towards player while avoiding an obstacle
 // // // Calculate vector between player and target
->>>>>>> bf38e9bbf4f22e0041fb464bdb3dd9483c65780f
 // var toPlayerX = playerPosX - enemyPosX;
 // var toPlayerY = playerPosY - enemyPosY;
 
@@ -456,10 +454,7 @@ console.log(JSON.stringify(mapData));
 
 //=============================================================================
 // Long Workpace
-<<<<<<< HEAD
-//<<<<<<< HEAD
-=======
->>>>>>> bf38e9bbf4f22e0041fb464bdb3dd9483c65780f
+
 
 // //home page
 // app.get('/', function(request, response)
@@ -496,53 +491,48 @@ console.log(JSON.stringify(mapData));
 // {
 //   response.render('pages/register');
 // });
-<<<<<<< HEAD
 //=======
-/*
 //home page
-app.get('/', function(request, response)
-{
-  response.render('pages/login');
-});
-//Login function
+// app.get('/', function(request, response)
+// {
+//   response.render('pages/login');
+// });
+// //Login function
 
-app.post('/checkAccount', (request, response)=>{
+// app.post('/checkAccount', (request, response)=>{
 
-  var uname = request.body.username;
-  var pw = request.body.password;
-  pool.query(
-    'SELECT password FROM account WHERE username=$1',[uname], (error,results)=>{
-      if (error)
-      {
-        throw(error);
-      }
-      var result = (results.rows == '') ? '':results.rows[0].password;
-      if (result == String(pw))
-      {
-        response.render('pages/index');
-      }
-      else {
-        var message ='Account is not existing';
-        console.log(message)
-        response.render('pages/login',message);
-      }
-    });
-}); // check account info
+//   var uname = request.body.username;
+//   var pw = request.body.password;
+//   pool.query(
+//     'SELECT password FROM account WHERE username=$1',[uname], (error,results)=>{
+//       if (error)
+//       {
+//         throw(error);
+//       }
+//       var result = (results.rows == '') ? '':results.rows[0].password;
+//       if (result == String(pw))
+//       {
+//         response.render('pages/index');
+//       }
+//       else {
+//         var message ='Account is not existing';
+//         console.log(message)
+//         response.render('pages/login',message);
+//       }
+//     });
+// }); // check account info
 
-//sign-up page
-app.get('/register', function(request,response)
-{
-  response.render('pages/register');
-});
+// //sign-up page
+// app.get('/register', function(request,response)
+// {
+//   response.render('pages/register');
+// });
 
-app.post('/register', (request,response)=>{
+// app.post('/register', (request,response)=>{
 
-  const uname = request.body.username;
-  const pw = request.body.pw;
-  const gmail = request.body.gmail;
->>>>>>> 03a00762f7fc91220342884d3d71d3de5b346b8a
-=======
->>>>>>> bf38e9bbf4f22e0041fb464bdb3dd9483c65780f
+//   const uname = request.body.username;
+//   const pw = request.body.pw;
+//   const gmail = request.body.gmail;
 
 // app.post('/register', (request,response)=>{
 
@@ -601,18 +591,7 @@ app.post('/register', (request,response)=>{
 //   });
 
 
-<<<<<<< HEAD
-//<<<<<<< HEAD
-// }); // create account
 
-=======
-}); // create account
-*/
-//>>>>>>> 03a00762f7fc91220342884d3d71d3de5b346b8a
-=======
-// }); // create account
-
->>>>>>> bf38e9bbf4f22e0041fb464bdb3dd9483c65780f
 
 //=============================================================================
 
