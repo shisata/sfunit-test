@@ -78,8 +78,6 @@ setInterval(function() {
   window.addEventListener('mousemove', function (e) {
     xPos = e.pageX;
     yPos = e.pageY;
-
-    //console.log(xPos)
   })
 
   var context = canvas.getContext('2d');
@@ -106,7 +104,6 @@ setInterval(function() {
     for (var id in enemies) {
 
       var enemy = enemies[id];
-      console.log(enemy);
       //Determines how the bullets look
       context.beginPath();
       context.arc(enemy.x, enemy.y, 6, 0, 2 * Math.PI);

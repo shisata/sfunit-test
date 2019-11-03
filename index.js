@@ -244,7 +244,6 @@ setInterval(function() {
   //Enemy-projectile collision handler
   for (var enemy in enemies) {
     for (var id in projectiles) {
-      console.log(enemy);
       if ( (Math.abs(enemies[enemy].x - projectiles[id].x) < 5) &&
            (Math.abs(enemies[enemy].y - projectiles[id].y) < 5) ) {
         enemies[enemy].health -= 1;
