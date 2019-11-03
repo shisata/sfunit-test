@@ -63,6 +63,7 @@ document.addEventListener('keyup', function(event) {
 
 socket.emit('new player');
 
+socket.emit("create map");
 setInterval(function() {
   socket.emit('movement', movement);
   socket.emit('shoot', shoot);

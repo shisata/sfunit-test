@@ -45,25 +45,24 @@ class MapObject{
 
 //a general class for Surfaces such as wall, floor, grass, glasses,etc
 class Surface extends MapObject{
-  constructor(collideable, destructible, interactable, textureSrc) {
+  constructor(collideable, destructible, interactable) {
     //always call constructor first to init variables
     super();
     this.collideable = collideable;
     this.destructible = destructible;
     this.interactable = interactable;
-
-    this.textureSrc = textureSrc;
   }
 }
 
 class Wall extends Surface{
   constructor(x, y , width, height){
     var source = null;
-    super(true, false, false, source);
+    super(true, false, false);
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
+    this.textureSrc = null;
   }
 }
 

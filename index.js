@@ -30,6 +30,7 @@ var express = require('express');
 var http = require('http');
 var path = require('path');
 var socketIO = require('socket.io');
+const fs = require('fs');
 var app = express();
 var server = http.Server(app);
 var io = socketIO(server);app.set('port', 5000);
@@ -74,6 +75,9 @@ enemyID = 0;
 
 //Creates a new player
 io.on('connection', function(socket) {
+
+  var mapInfo = [[],[]]; // stores info of every grid tile
+
   socket.on('new player', function() {
     if (players.numPlayers < 4) {
       players.numPlayers += 1;
@@ -87,6 +91,15 @@ io.on('connection', function(socket) {
         speed: 8
       };
     }
+  });
+
+  socket.on('create map', function(){
+    var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
+    var processor = require('./static/objects/jsonProcessor.js');
+    var mapData = processor.constructFromData(mapDataFromFile);
+    console.log(mapData);
+     // console.log(JSON.stringify(mapData); ///****
+    // // console.log(mapData.walls);
   });
 
   // Responds to a movement event
@@ -231,7 +244,8 @@ setInterval(function() {
   io.sockets.emit('state', players, projectiles, enemies);
 
   //passes the map data. [modified by: Hailey]
-  io.sockets.emit('mapData', mapData);
+  io.sockets.emit('mapData', {
+  });
 }, 1000 / 120);
 
 
@@ -421,13 +435,12 @@ console.log(mapData.furnitures[4].name );
 -->prints the x-axis of mapData's wall's 5th element.
 */
 
-const fs = require('fs');
-var mapDataFromFile
-  = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
-var processor = require('./static/objects/jsonProcessor.js');
-mapData = processor.constructFromData(mapDataFromFile);
 
-console.log(JSON.stringify(mapData));
+// var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
+// var processor = require('./static/objects/jsonProcessor.js');
+// mapData = processor.constructFromData(mapDataFromFile);
+// console.log(JSON.stringify(mapData));
+
 
 
 

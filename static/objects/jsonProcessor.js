@@ -18,34 +18,42 @@ var objects = require('./objects.js');
 // JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
 // var processor = require('./static/objects/jsonProcessor.js');
 // mapData = processor.constructFromData(mapDataFromFile);
-var constructFromData = function(mapDataFromFile){
-  console.log(mapDataFromFile);
-  var walls = [];
-  var furnitures = [];
-  var enemies = [];
-  var bullets = [];
-  var players = [];
+var constructFromData = function(jsonContent){
+  var walls = giveWallArray(jsonContent);
+  var furnitures = giveFurnitureArray(jsonContent);
+  var enemies = giveEnemyArray(jsonContent);
+  var players = givePlayerArray(jsonContent);
+  return [walls, furnitures, enemies, players];
+}
 
-/*
-  //Construct walls and insert them into container 'walls'
-  for (i = 0; i < mapDataFromFile.map.wall.length; i++) {
-    walls.push(objects.Wall(mapDataFromFile.map.wall[i].x,
-      mapDataFromFile.map.wall[i].y, mapDataFromFile.map.wall[i].width,
-      mapDataFromFile.map.wall[i].height, mapDataFromFile.map.wall[i].texture));
-    console.log(walls[i]);
+//// Support functions
+function giveWallArray(json){
+  var array = [];
+  for (i = 0; i < json.map.wall.length; i++) {
+    var x = json.map.wall[i].x;
+    var y = json.map.wall[i].y;
+    var width = json.map.wall[i].width;
+    var height = json.map.wall[i].height;
+    array.push(new objects.Wall(x, y, width, height));
   }
-  //Construct furnitures and insert them into container 'furnitures'
-  for (i = 0; i < mapDataFromFile.map.furniture.length; i++) {
-    furnitures.push(objects.Furniture(mapDataFromFile.map.furniture[i].name,
-      mapDataFromFile.map.furniture[i].x, mapDataFromFile.map.furniture[i].y,
-      mapDataFromFile.map.furniture[i].direction));
-  }*/
-  // TODO: enemies, bullets, players.
+  return array;
+}
 
-  //Damn I'm just hard-coding it [-Hailey]
-  walls.push(new objects.Wall(10, 10, 5, 5, ""));
-  walls.push(new objects.Wall(20, 10, 5, 5, ""));
+function giveFurnitureArray(json){
+  //same as giveWallArray()
+  var array = [];
+  return array;
+}
 
-  return [walls, furnitures, enemies, bullets, players];
+function giveEnemyArray(json){
+  //same as giveWallArray()
+  var array = [];
+  return array;
+}
+
+function givePlayerArray(json){
+  //same as giveWallArray()
+  var array = [];
+  return array;
 }
 module.exports.constructFromData = constructFromData;
