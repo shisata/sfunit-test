@@ -22,6 +22,9 @@
  *
  * ==========================================================================*/
 
+
+ //app designing
+
 // Dependencies
 var express = require('express');
 var http = require('http');
@@ -241,9 +244,12 @@ setInterval(function() {
   // console.log(enemies);
   io.sockets.emit('state', players, projectiles, enemies);
 
+// <<<<<<< HEAD
   //passes the map data. [modified by: Hailey]
   io.sockets.emit('mapData', {
   });
+// =======
+// >>>>>>> de4042118f9e82cf4ecf147d987d66862ba766f4
 }, 1000 / 120);
 
 
@@ -452,9 +458,9 @@ console.log(mapData.furnitures[4].name );
 //=============================================================================
 // Long Workpace
  //Parse URL-encoded bodies (sent by HTML form)
-app.use(express.urlencoded({extended:false}));
- //Parse JSON body( sent by API client)
-app.use(express.json());
+ app.use(express.urlencoded({extended:false}));
+// //Parse JSON body( sent by API client)
+ app.use(express.json());
 
 //home page
 app.get('/', function(request, response)
@@ -462,9 +468,10 @@ app.get('/', function(request, response)
   var message ={'message':''};
   response.render('pages/login',message);
 });
-
 //Login function
-app.post('/users', (request, response)=>{
+
+app.post('/checkAccount', (request, response)=>{
+
   var uname = request.body.username;
   var pw = request.body.password;
   pool.query(
@@ -483,12 +490,13 @@ app.post('/users', (request, response)=>{
         response.render('pages/login',message);
       }
     });
-});
+}); // check account info
 
 //sign-up page
 app.get('/register', function(request,response)
 {
-  response.render('pages/register');
+  var message ={'message':''};
+  response.render('pages/register',message);
 });
 
 app.post('/register', (request,response)=>{
@@ -508,8 +516,9 @@ app.post('/register', (request,response)=>{
       var result = {'rows': results.rows};
       if (result.rows.length !=0)
       {
+        var message = {'message':'Username is used'};
         console.log('USERNAME IS USED');
-        response.render('pages/register');
+        response.render('pages/register',message);
       }
       else {
         console.log('USERNAME CHECKED');
@@ -525,8 +534,9 @@ app.post('/register', (request,response)=>{
             var result2 = {'rows': results.rows};
             if (result2.rows.length !=0)
             {
+              var message = {'message':'Gmail is used'}
               console.log('GMAIL IS USED');
-              response.render('pages/register');
+              response.render('pages/register',message);
             }
             else {
               console.log('GMAIL CHECKED');
@@ -535,10 +545,11 @@ app.post('/register', (request,response)=>{
                 VALUES ('${uname}','${pw}','${gmail}');`;
               pool.query(text, (error, results) =>{
                 if (error){
-                  res.end(error);
+                  response.end(error);
                 };
                 console.log("INSERT ACCOUNT COMPLETED");
-                response.end('Sign-up Completed');
+                var message = {'message':'Sign-up Completed'};
+                response.render('pages/login',message)
               });
             };
           };
@@ -547,11 +558,6 @@ app.post('/register', (request,response)=>{
     };
   });
 });
-
-
-
-
-
 //=============================================================================
 
 
@@ -559,6 +565,7 @@ app.post('/register', (request,response)=>{
 
 //=============================================================================
 // Josh Workpace
+
 
 
 //=============================================================================
