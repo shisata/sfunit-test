@@ -63,6 +63,7 @@ document.addEventListener('keyup', function(event) {
 
 socket.emit('new player');
 
+socket.emit("create map");
 setInterval(function() {
   socket.emit('movement', movement);
   socket.emit('shoot', shoot);
@@ -82,7 +83,7 @@ setInterval(function() {
   })
 
   var context = canvas.getContext('2d');
-  socket.on('state', function(players, projectiles, enemies) {
+  socket.on('state', function(players, projectiles, enemies, mapData) {
     context.clearRect(0, 0, 800, 600);
     context.fillStyle = 'green';
     for (var id in players) {
@@ -113,10 +114,7 @@ setInterval(function() {
       context.fill();
     }
 
-  });
 
-  //Hailey: guess this should be integrated but let's try this first
-  socket.on('mapData', function(mapData) {
     //shows only wall now.
     context.fillStyle = "#B3B3B3"
     for (var i = 0; i < mapData[0].length; i++) {
@@ -126,6 +124,7 @@ setInterval(function() {
         mapData[0][0].height);
       context.fill();
     }
+
   });
 
   // Fazal' Workstation -------------------------------------------------------------------------

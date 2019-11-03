@@ -27,6 +27,7 @@ var express = require('express');
 var http = require('http');
 var path = require('path');
 var socketIO = require('socket.io');
+const fs = require('fs');
 var app = express();
 var server = http.Server(app);
 var io = socketIO(server);app.set('port', 5000);
@@ -36,10 +37,17 @@ var pool
 pool = new Pool({
   connectionString: process.env.DATABASE_URL
 })
+<<<<<<< HEAD
 app.use('/static', express.static(__dirname + '/static'));// Routing
 //app.get('/', function(request, response) {
 //response.sendFile(path.join(__dirname, 'index.html'));
 //});// Starts the server.
+=======
+// app.use('/static', express.static(__dirname + '/static'));// Routing
+// app.get('/', function(request, response) {
+// response.sendFile(path.join(__dirname, 'index.html'));
+// });// Starts the server.
+>>>>>>> b2a4c6cab6493fdd4846326e4460b26d79a27f2b
 server.listen(5000, function() {
   console.log('Starting server on port 5000');
 });
@@ -71,6 +79,9 @@ enemyID = 0;
 
 //Creates a new player
 io.on('connection', function(socket) {
+
+  var mapInfo = [[],[]]; // stores info of every grid tile
+
   socket.on('new player', function() {
     if (players.numPlayers < 4) {
       players.numPlayers += 1;
@@ -84,6 +95,15 @@ io.on('connection', function(socket) {
         speed: 8
       };
     }
+  });
+
+  socket.on('create map', function(){
+    var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
+    var processor = require('./static/objects/jsonProcessor.js');
+    var mapData = processor.constructFromData(mapDataFromFile);
+    console.log(mapData);
+     // console.log(JSON.stringify(mapData); ///****
+    // // console.log(mapData.walls);
   });
 
   // Responds to a movement event
@@ -228,12 +248,44 @@ setInterval(function() {
   io.sockets.emit('state', players, projectiles, enemies);
 
   //passes the map data. [modified by: Hailey]
-  io.sockets.emit('mapData', mapData);
+  io.sockets.emit('mapData', {
+  });
 }, 1000 / 120);
 
 
 //=============================================================================
 // Fazal Workspace
+
+// // Enemy moves towards player while avoiding an obstacle
+// // Calculate vector between player and target
+// var toPlayerX = playerPosX - enemyPosX;
+// var toPlayerY = playerPosY - enemyPosY;
+
+// // Calculate vector between mouse and target
+// var toMouseX = mousePosX - enemyPosX;
+// var toMouseY = mousePosY - enemyPosY;
+
+// // Calculate distance between player and enemy, mouse and enemy
+// var toPlayerLength = Math.sqrt(toPlayerX * toPlayerX + toPlayerY * toPlayerY);
+// var toMouseLength = Math.sqrt(toMouseX * toMouseX + toMouseY * toMouseY);
+
+// // Normalize vector player
+// toPlayerX = toPlayerX / toPlayerLength;
+// toPlayerY = toPlayerY / toPlayerLength;
+
+// // Normalize vector mouse
+// toMouseX = toMouseX / toMouseLength;
+// toMouseY = toMouseY / toMouseLength;
+
+// // Move enemy torwards player
+// enemyPosX += toPlayerX * speed;
+// enemyPosY += toPlayerY * speed;
+
+// // Move enemy away from obstacle (a bit slower than towards player)
+// enemyPosX -= toMouseX * (speed * 0.4);
+// enemyPosY -= toMouseY * (speed * 0.4);
+
+// --------------------------------------------------- partial implementation ends for enemy move to player
 
 //Function to return a vector from one point to the next
 // Code is in ES6(a js framework)
@@ -387,13 +439,12 @@ console.log(mapData.furnitures[4].name );
 -->prints the x-axis of mapData's wall's 5th element.
 */
 
-const fs = require('fs');
-var mapDataFromFile
-  = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
-var processor = require('./static/objects/jsonProcessor.js');
-mapData = processor.constructFromData(mapDataFromFile);
 
-console.log(JSON.stringify(mapData));
+// var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
+// var processor = require('./static/objects/jsonProcessor.js');
+// mapData = processor.constructFromData(mapDataFromFile);
+// console.log(JSON.stringify(mapData));
+
 
 
 
@@ -411,6 +462,17 @@ app.use(express.urlencoded({extended:false}));
  //Parse JSON body( sent by API client)
 app.use(express.json());
 
+<<<<<<< HEAD
+=======
+
+
+// //Parse URL-encoded bodies (sent by HTML form)
+// app.use(express.urlencoded({extended:false}));
+// //Parse JSON body( sent by API client)
+// app.use(express.json());
+
+// <<<<<<< HEAD
+>>>>>>> b2a4c6cab6493fdd4846326e4460b26d79a27f2b
 //home page
 app.get('/', function(request, response)
 {
@@ -504,7 +566,46 @@ app.post('/register', (request,response)=>{
 
 
 
+<<<<<<< HEAD
 
+=======
+// =======
+// //home page
+// app.get('/', function(request, respond)
+// {
+//   respond.render('pages/login');
+// });
+
+// //sign-up page
+// app.get('/register', function(request,respond)
+// {
+//   respond.render('pages/register');
+// });
+
+// // //Login function
+// app.post('/', function(request, respond)
+// {
+//   var uname = request.body.username;
+//   var pw = request.body.password;
+//   var query ="Select password FROM account WHERE username='"+uname+"'";
+//   console.log(query);
+//   pool.query(query, function(error,results)
+//   {
+//     if (error)
+//       respond.send('Error');
+//     else
+//     {
+//       if (results.rows == '' || results.rows[0].password != String(pw))
+//         respond.send('Not existing')
+//       else if (results.rows[0].password == String(pw))
+//       {
+//         respond.render('/index.html');
+//       }
+//     }
+//   });
+// });
+// >>>>>>> e1dcffd5f3bea4d9fee0991d52317286af41a6ac
+>>>>>>> b2a4c6cab6493fdd4846326e4460b26d79a27f2b
 
 //=============================================================================
 
