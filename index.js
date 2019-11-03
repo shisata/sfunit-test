@@ -22,9 +22,6 @@
  *
  * ==========================================================================*/
 
-
- //app designing
-
 // Dependencies
 var express = require('express');
 var http = require('http');
@@ -40,9 +37,9 @@ pool = new Pool({
   connectionString: process.env.DATABASE_URL
 })
 app.use('/static', express.static(__dirname + '/static'));// Routing
-app.get('/', function(request, response) {
-response.sendFile(path.join(__dirname, 'index.html'));
-});// Starts the server.
+//app.get('/', function(request, response) {
+//response.sendFile(path.join(__dirname, 'index.html'));
+//});// Starts the server.
 server.listen(5000, function() {
   console.log('Starting server on port 5000');
 });
@@ -409,24 +406,19 @@ console.log(JSON.stringify(mapData));
 
 //=============================================================================
 // Long Workpace
+ //Parse URL-encoded bodies (sent by HTML form)
+app.use(express.urlencoded({extended:false}));
+ //Parse JSON body( sent by API client)
+app.use(express.json());
 
-
-
-// //Parse URL-encoded bodies (sent by HTML form)
-// app.use(express.urlencoded({extended:false}));
-// //Parse JSON body( sent by API client)
-// app.use(express.json());
-
-<<<<<<< HEAD
 //home page
 app.get('/', function(request, response)
 {
   response.render('pages/login');
 });
+
 //Login function
-
-app.post('/checkAccount', (request, response)=>{
-
+app.post('/users', (request, response)=>{
   var uname = request.body.username;
   var pw = request.body.password;
   pool.query(
@@ -441,10 +433,11 @@ app.post('/checkAccount', (request, response)=>{
         response.render('pages/index');
       }
       else {
-        response.send('Account is not existing');
+        var message ='Account is not existing';
+        response.render('pages/login',message);
       }
     });
-}); // check account info
+});
 
 //sign-up page
 app.get('/register', function(request,response)
@@ -507,47 +500,11 @@ app.post('/register', (request,response)=>{
       }
     };
   });
+});
 
 
-}); // create account
 
 
-=======
-// //home page
-// app.get('/', function(request, respond)
-// {
-//   respond.render('pages/login');
-// });
-
-// //sign-up page
-// app.get('/register', function(request,respond)
-// {
-//   respond.render('pages/register');
-// });
-
-// // //Login function
-// app.post('/', function(request, respond)
-// {
-//   var uname = request.body.username;
-//   var pw = request.body.password;
-//   var query ="Select password FROM account WHERE username='"+uname+"'";
-//   console.log(query);
-//   pool.query(query, function(error,results)
-//   {
-//     if (error)
-//       respond.send('Error');
-//     else
-//     {
-//       if (results.rows == '' || results.rows[0].password != String(pw))
-//         respond.send('Not existing')
-//       else if (results.rows[0].password == String(pw))
-//       {
-//         respond.render('/index.html');
-//       }
-//     }
-//   });
-// });
->>>>>>> e1dcffd5f3bea4d9fee0991d52317286af41a6ac
 
 //=============================================================================
 
