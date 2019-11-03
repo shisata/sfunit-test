@@ -22,6 +22,9 @@
  *
  * ==========================================================================*/
 
+
+ //app designing
+
 // Dependencies
 var express = require('express');
 var http = require('http');
@@ -240,9 +243,12 @@ setInterval(function() {
   // console.log(enemies);
   io.sockets.emit('state', players, projectiles, enemies);
 
+// <<<<<<< HEAD
   //passes the map data. [modified by: Hailey]
   io.sockets.emit('mapData', {
   });
+// =======
+// >>>>>>> de4042118f9e82cf4ecf147d987d66862ba766f4
 }, 1000 / 120);
 
 
@@ -450,19 +456,16 @@ console.log(mapData.furnitures[4].name );
 
 //=============================================================================
 // Long Workpace
- //Parse URL-encoded bodies (sent by HTML form)
-app.use(express.urlencoded({extended:false}));
- //Parse JSON body( sent by API client)
-app.use(express.json());
 
 //home page
 app.get('/', function(request, response)
 {
   response.render('pages/login');
 });
-
 //Login function
-app.post('/users', (request, response)=>{
+
+app.post('/checkAccount', (request, response)=>{
+
   var uname = request.body.username;
   var pw = request.body.password;
   pool.query(
@@ -482,7 +485,7 @@ app.post('/users', (request, response)=>{
         response.render('pages/login',message);
       }
     });
-});
+}); // check account info
 
 //sign-up page
 app.get('/register', function(request,response)
@@ -545,9 +548,9 @@ app.post('/register', (request,response)=>{
       }
     };
   });
-});
 
 
+}); // create account
 
 
 //=============================================================================
@@ -557,6 +560,7 @@ app.post('/register', (request,response)=>{
 
 //=============================================================================
 // Josh Workpace
+
 
 
 //=============================================================================
