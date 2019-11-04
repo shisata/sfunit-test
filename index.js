@@ -74,7 +74,7 @@ var enemies = {
 }
 enemyID = 0;
 
-var mapImageSrc;
+var mapImageSrc = "";
 
 //Creates a new player
 io.on('connection', function(socket) {
@@ -82,7 +82,11 @@ io.on('connection', function(socket) {
   var mapInfo = [[],[]]; // stores info of every grid tile
 
   socket.on('new player', function() {
-    if (players.numPlayers < 4) {
+    console.log('socket event new player called');
+    //This condition is commented out because the 'disconnect' event is
+    //commented out too. 'disconnect' is having multiple-call problem and
+    //causing error for map-loading.
+    //if (players.numPlayers < 4) {
       players.numPlayers += 1;
       players[socket.id] = {
         playerID: players.numPlayers,
@@ -98,15 +102,22 @@ io.on('connection', function(socket) {
       // io.to(socket.id).emit("passId", socket.id);
       socket.emit("passId", socket.id);
 
-    }
+    //}
 
     //constructs the very initial map for the game.
+    //'disconnect' seems to have some problems. I'm fixing it to:
+    //create map WHENever
     if (players.numPlayers <= 1) {
       var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
       var processor = require('./static/objects/jsonProcessor.js');
       var mapData = processor.constructFromData(mapDataFromFile);
       //console.log(mapData);///////*******
       socket.emit('create map', mapData);
+      console.log('players.numPlayers: ', players.numPlayers, ', create map called');
+    }
+    else {
+      console.log('players.numPlayers: ', players.numPlayers);
+      socket.emit("deliverMapImageSrcToClient", mapImageSrc);
     }
   });
 
@@ -115,10 +126,13 @@ io.on('connection', function(socket) {
     socket.emit("passId", socket.id);
   });
   socket.on("deliverMapImageSrcToServer", function(imageSrc){
+    //console.log('deliverMapImageSrcToServer called');
     mapImageSrc = imageSrc;
   });
   socket.on("requestMapImageSrcFromServer", function(){
-    socket.emit("deliverMapImageToClient", mapImageSrc);
+    // console.log('imageSrc returned for request:', mapImageSrc);
+    // console.log('requestMapImageSrcFromServer called');
+    socket.emit("deliverMapImageSrcToClient", mapImageSrc);
   });
 
 
@@ -185,10 +199,11 @@ io.on('connection', function(socket) {
   });
 
   //Removes disconnected player
-  socket.on('disconnect', function() {
-    players[socket.id] = 0;
-    players.numPlayers -= 1;
-  });
+  // socket.on('disconnect', function() {
+  //   console.log('socket event disconnect called');
+  //   players[socket.id] = 0;
+  //   players.numPlayers -= 1;
+  // });
 //Collects client data at 60 events/second
 });
 
@@ -550,11 +565,19 @@ console.log(mapData.furnitures[4].name );
 
 //=============================================================================
 // Long Workpace
+<<<<<<< HEAD
 
 //  //Parse URL-encoded bodies (sent by HTML form)
 //  app.use(express.urlencoded({extended:false}));
 // // //Parse JSON body( sent by API client)
 //  app.use(express.json());
+=======
+/*
+ //Parse URL-encoded bodies (sent by HTML form)
+ app.use(express.urlencoded({extended:false}));
+// //Parse JSON body( sent by API client)
+ app.use(express.json());
+>>>>>>> f30419cff8dba8cd1d73cd56959079783060a050
 
 // //home page
 // app.get('/', function(request, response)
@@ -593,6 +616,7 @@ console.log(mapData.furnitures[4].name );
 //   response.render('pages/register',message);
 // });
 
+<<<<<<< HEAD
 // app.post('/register', (request,response)=>{
 
 //   const uname = request.body.username;
@@ -652,6 +676,62 @@ console.log(mapData.furnitures[4].name );
 //     };
 //   });
 // });
+=======
+  //Check username availability
+  console.log('CHECKING USERNAME');
+  var text = `SELECT * FROM account WHERE username='${uname}';`;
+  pool.query(text,(error,results)=>{
+    if (error){
+      throw (error);
+    }
+    else {
+      var result = {'rows': results.rows};
+      if (result.rows.length !=0)
+      {
+        var message = {'message':'Username is used'};
+        console.log('USERNAME IS USED');
+        response.render('pages/register',message);
+      }
+      else {
+        console.log('USERNAME CHECKED');
+
+        //Check gmail availability
+        console.log('CHECKING GMAIL');
+        var text = `SELECT * FROM account WHERE gmail='${gmail}';`;
+        pool.query(text,(error, results)=>{
+          if (error){
+            throw(error);
+          }
+          else {
+            var result2 = {'rows': results.rows};
+            if (result2.rows.length !=0)
+            {
+              var message = {'message':'Gmail is used'}
+              console.log('GMAIL IS USED');
+              response.render('pages/register',message);
+            }
+            else {
+              console.log('GMAIL CHECKED');
+              console.log('INSERTING...')
+              var text = `INSERT INTO account (username, password, gmail)
+                VALUES ('${uname}','${pw}','${gmail}');`;
+              pool.query(text, (error, results) =>{
+                if (error){
+                  response.end(error);
+                };
+                console.log("INSERT ACCOUNT COMPLETED");
+                var message = {'message':'Sign-up Completed'};
+                response.render('pages/login',message)
+              });
+            };
+          };
+        });
+      }
+    };
+  });
+});
+*/
+>>>>>>> f30419cff8dba8cd1d73cd56959079783060a050
 //=============================================================================
 
 
