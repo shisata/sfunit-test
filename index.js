@@ -135,11 +135,11 @@ io.on('connection', function(socket) {
   });
 
   //Removes disconnected player
-  // socket.on('disconnect', function() {
-  //   console.log('socket event disconnect called');
-  //   players[socket.id] = 0;
-  //   players.numPlayers -= 1;
-  // });
+  socket.on('disconnect', function() {
+    console.log('socket event disconnect called');
+    players[socket.id] = 0;
+    players.numPlayers -= 1;
+  });
 //Collects client data at 60 events/second
 });
 
@@ -332,10 +332,10 @@ function moveEnemies() {
         //Deplete health
         players[closestPlayer].health -= .2;
         //Kill player
-        // if (players[closestPlayer].health < 0) {
-        //   players[closestPlayer] = 0;
-        //   players.numPlayers -= 1;
-        // }
+        if (players[closestPlayer].health < 0) {
+          players[closestPlayer] = 0;
+          players.numPlayers -= 1;
+        }
         //Dont move any closer
         sign = 0;
       }
