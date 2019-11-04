@@ -59,7 +59,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //Players object will contain all information about each player's position,
 //health, etc.
 var players = {
-  numPlayers: 0  //Length will keep track of the number of players
+  numPlayers: 0 
 };
 
 //Projectiles object will keep track of active projectiles
@@ -87,22 +87,8 @@ io.on('connection', function(socket) {
     //commented out too. 'disconnect' is having multiple-call problem and
     //causing error for map-loading.
     //if (players.numPlayers < 4) {
-      players.numPlayers += 1;
-      players[socket.id] = {
-        playerID: players.numPlayers,
-        x: 300,
-        y: 300,
-        health: 4.33,
-        level: 1,
-        damage: 5,
-        speed: 8
-      };
-
-      console.log('id:',socket.id);
-      // io.to(socket.id).emit("passId", socket.id);
-      socket.emit("passId", socket.id);
-
-    //}
+    createPlayer(socket.id);
+    socket.emit("passId", socket.id);
 
     //constructs the very initial map for the game.
     //'disconnect' seems to have some problems. I'm fixing it to:
@@ -135,92 +121,105 @@ io.on('connection', function(socket) {
     socket.emit("deliverMapImageSrcToClient", mapImageSrc);
   });
 
-
-
   // Responds to a movement event
   socket.on('movement', function(data) {
     var player = players[socket.id] || {};
-
-    //Modified the values here to reflect player speed - GG 2019.10.26 17:30
-    if (data.left) {
-      player.x -= player.speed;
-    }
-    if (data.up) {
-      player.y -= player.speed;
-    }
-    if (data.right) {
-      player.x += player.speed;
-    }
-    if (data.down) {
-      player.y += player.speed;
-    }
-
-    console.log(player.x);
-    console.log(player.y);
+    movePlayer(player, data);
   });
 
   //Code block to respond to shooting
   socket.on('shoot', function(data) {
     if (data.shootBullet) {
-      projectiles.numProjectiles++;
-
-
-      mouseX = data.x;
-      mouseY = data.y;
-      playerX = players[socket.id].x - data.middleX;
-      playerY = players[socket.id].y - data.middleY;
-
-      dx = mouseX - playerX;
-      dy = mouseY - playerY;
-      console.log("[", dx, ",", dy, "]");
-
-      theta = Math.atan(dx / dy);
-
-      velX = players[socket.id].speed * Math.sin(theta);
-      velY = players[socket.id].speed * Math.cos(theta);
-      if (dy < 0) {
-        velY *= -1;
-        velX *= -1;
-      }
-
-      projectiles[bulletCount] = {
-        x: players[socket.id].x + (4 * velX),
-        y: players[socket.id].y + (4 * velY),
-        vx: velX,
-        vy: velY
-      };
-
-      bulletCount++;
-      //reset bullet count
-      if (bulletCount > 100) {
-        bulletCount = 0;
-      }
+      generateProjectile(socket.id, data);
     }
   });
 
   //Removes disconnected player
-  // socket.on('disconnect', function() {
-  //   console.log('socket event disconnect called');
-  //   players[socket.id] = 0;
-  //   players.numPlayers -= 1;
-  // });
+  socket.on('disconnect', function() {
+    console.log('socket event disconnect called');
+    players[socket.id] = 0;
+    players.numPlayers -= 1;
+  });
 //Collects client data at 60 events/second
 });
 
-// newly spawned objects start at Y=25
-var spawnLineY = 25;
+setInterval(function() {
+  moveProjectiles();
+  moveEnemies();
+  handleBulletCollisions();
+  generateEnemies();
+  io.sockets.emit('state', players, projectiles, enemies);
+}, 1000 / 120);
 
-// spawn a new object every 1500ms
-var spawnRate = 5000;
 
-// set how fast the objects will fall
-var spawnRateOfDescent = 0.50;
+//=============================================================================
+//Functions
 
-// when was the last object spawned
-var lastSpawn = -1;
+//Creates a new player
+function createPlayer(id) {
+  players.numPlayers += 1;
+  players[id] = {
+    playerID: players.numPlayers,
+    x: 300,
+    y: 300,
+    health: 4.33,
+    level: 1,
+    damage: 5,
+    speed: 8
+  };
+}
 
-// save the starting time (used to calc elapsed time)
-var startTime = Date.now();
+//Moves a player in response to keyboard input
+function movePlayer(player, data) {
+  //Modified the values here to reflect player speed - GG 2019.10.26 17:30
+  if (data.left) {
+    player.x -= player.speed;
+  }
+  if (data.up) {
+    player.y -= player.speed;
+  }
+  if (data.right) {
+    player.x += player.speed;
+  }
+  if (data.down) {
+    player.y += player.speed;
+  }
+}
+
+//Generates a projectile on shoot input
+function generateProjectile(id, data) {
+  projectiles.numProjectiles++;
+
+  mouseX = data.x;
+  mouseY = data.y;
+  playerX = players[id].x - data.middleX;
+  playerY = players[id].y - data.middleY;
+
+  dx = mouseX - playerX;
+  dy = mouseY - playerY;
+
+  theta = Math.atan(dx / dy);
+
+  velX = players[id].speed * Math.sin(theta);
+  velY = players[id].speed * Math.cos(theta);
+  if (dy < 0) {
+    velY *= -1;
+    velX *= -1;
+  }
+
+  projectiles[bulletCount] = {
+    x: players[id].x + (4 * velX),
+    y: players[id].y + (4 * velY),
+    vx: velX,
+    vy: velY
+  };
+
+  bulletCount++;
+  //reset bullet count
+  if (bulletCount > 100) {
+    bulletCount = 0;
+  }
+}
 
 //Spawn a random enemy
 function spawnRandomObject() {
@@ -245,8 +244,14 @@ function spawnRandomObject() {
   enemyID++;
 }
 
-function generateEnemies() {
+// when was the last object spawned
+var lastSpawn = -1;
 
+//Generate enemies
+function generateEnemies() {
+  // spawn a new object every 1500ms
+  var spawnRate = 2000;
+  
   // get the elapsed time
   var time = Date.now();
 
@@ -257,11 +262,8 @@ function generateEnemies() {
   }
 }
 
-
-
-setInterval(function() {
-
-  //Projectile movement handler
+//Move projectiles along the screen
+function moveProjectiles() {
   for (var id in projectiles) {
     projectiles[id].x += projectiles[id].vx;
     projectiles[id].y += projectiles[id].vy;
@@ -270,10 +272,14 @@ setInterval(function() {
       projectiles[id].vy = 0;
     }
   }
-  //Enemy movement handler
-  for (var id in enemies) {
+}
+
+//Move enemies towards the nearest player
+function moveEnemies() {
+   //Enemy movement handler
+   for (var id in enemies) {
     //Find closest players
-    if (players.numPlayers > 0) {
+    if (players.numPlayers > 0 && enemies.numEnemies > 0) {
       var closestPlayer;
       var closestPlayerDistance = Infinity;
       for (var player in players) {
@@ -315,6 +321,10 @@ setInterval(function() {
       enemies[id].y += enemies[id].vy;
     }
   }
+}
+
+//Handles bullet collisions
+function handleBulletCollisions() {
   //Player-projectile collision handler
   for (var player in players) {
     for (var id in projectiles) {
@@ -344,13 +354,7 @@ setInterval(function() {
       }
     }
   }
-  //Spawn enemies
-  generateEnemies();
-  // console.log(enemies);
-  io.sockets.emit('state', players, projectiles, enemies);
-
-}, 1000 / 120);
-
+}
 
 //=============================================================================
 // Fazal Workspace
