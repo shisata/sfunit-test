@@ -1,6 +1,6 @@
 var socket = io();
 socket.on('message', function(data) {
-  console.log(data);
+  // console.log(data);
 });
 
 var movement = {
@@ -67,7 +67,6 @@ socket.emit("create map");
 setInterval(function() {
   socket.emit('movement', movement);
   socket.emit('shoot', shoot);
-  socket.emit('spawn', enemies);
 }, 1000 / 60);
 
   var canvas = document.getElementById('canvas');
@@ -75,10 +74,12 @@ setInterval(function() {
   canvas.height = 600;
   // canvas.cursor = "none"; //hide the original cursor
 
-  window.addEventListener('mousemove', function (e) {
-    xPos = e.pageX;
-    yPos = e.pageY;
-  })
+window.addEventListener('mousemove', function (e) {
+  xPos = e.pageX;
+  yPos = e.pageY;
+  console.log(xPos);
+  console.log(yPos);
+});
 
   var context = canvas.getContext('2d');
   socket.on('state', function(players, projectiles, enemies, mapData) {
@@ -116,7 +117,7 @@ setInterval(function() {
     context.fillStyle = "#B3B3B3"
     for (var i = 0; i < mapData[0].length; i++) {
       context.beginPath();
-      console.log(mapData[0][i].x);
+      // console.log(mapData[0][i].x);
       context.rect(mapData[0][i].x, mapData[0][i].y, mapData[0][i].width,
         mapData[0][i].height);
       context.fill();

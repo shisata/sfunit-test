@@ -192,11 +192,11 @@ function spawnRandomObject() {
 
   // add the new object to the objects[] array
   enemies[enemyID] = {
-    // type: t,
-    // set x randomly but at least 15px off the canvas edges
     x: Math.random() * 250,
-    // set y to start on the line where objects are spawned
     y: Math.random() * 250,
+    vx: 5,
+    vy: 5,
+    speed: .2,
     health: 4
   }
 
@@ -229,6 +229,37 @@ setInterval(function() {
       projectiles[id].vy = 0;
     }
   }
+  //Enemy movement handler
+  for (var id in enemies) {
+    //Find closest players
+    var closestPlayer;
+    var closestPlayerDistance = Infinity;
+    for (var player in players) {
+      var distX = players[player].x - enemies[id].x;
+      var distY = players[player].y - enemies[id].y;
+      var distance = Math.sqrt( distX * distX + distY * distY );
+      if (distance < closestPlayerDistance) {
+        closestPlayer = player;
+        closestPlayerDistance = distance;
+      }
+    }
+    //Move to closest player
+    if (players.numPlayers) {
+      distX = enemies[id].x - players[closestPlayer].x;
+      distY = enemies[id].y - players[closestPlayer].y;
+      var attackTheta = Math.atan(distX / distY);
+      var sign = 1;
+      // if (distY < 0) {
+      //   sign = -1;
+      // }
+      enemies[id].vx =  enemies[id].speed * Math.sin(attackTheta);
+      enemies[id].vy =  enemies[id].speed * Math.cos(attackTheta);
+      enemies[id].x += enemies[id].vx;
+      enemies[id].y += enemies[id].vy;
+    }
+  }
+
+
   //Player-projectile collision handler
   for (var player in players) {
     for (var id in projectiles) {
