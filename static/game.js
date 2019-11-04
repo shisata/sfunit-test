@@ -121,7 +121,7 @@ window.addEventListener('mousemove', function (e) {
       socket.emit("requestMapImageSrcFromServer");
       return;
     }
-    context.clearRect(startX, startY, canvasW, canvasW);
+    context.clearRect(startX, startY, canvasW, canvasH);
 
     var middleX = players[myId].x - (canvasW)/2;
     var middleY = players[myId].y - (canvasH)/2;
