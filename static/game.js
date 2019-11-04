@@ -95,8 +95,10 @@ setInterval(function() {
 }, 1000 / 60);
 
   var canvas = document.getElementById('canvas');
-  canvas.width = 800;
-  canvas.height = 600;
+  var canvasW = 2560;
+  var canvasH = 1440;
+  canvas.width = canvasW;
+  canvas.height = canvasH;
   // canvas.cursor = "none"; //hide the original cursor
 
 window.addEventListener('mousemove', function (e) {
@@ -116,7 +118,7 @@ window.addEventListener('mousemove', function (e) {
       socket.emit("requestMapImageSrcFromServer");
       return;
     }
-    context.clearRect(0, 0, 800, 600);
+    context.clearRect(0, 0, canvasW, canvasW);
 
     var middleX = players[myId].x - (canvas.width)/2;
     var middleY = players[myId].y - (canvas.height)/2;
@@ -132,7 +134,7 @@ window.addEventListener('mousemove', function (e) {
       var player = players[id];
       //Determines how the characters look
       context.beginPath();
-      context.arc(player.x - middleX, player.y - middleY, 10, 0, 2 * Math.PI);
+      context.arc(player.x - middleX, player.y - middleY, GRID_SIZE/2 , 0, 2 * Math.PI);
       context.fill();
     }
 
@@ -148,9 +150,9 @@ window.addEventListener('mousemove', function (e) {
     for (var id in enemies) {
 
       var enemy = enemies[id];
-      //Determines how the bullets look
+      //Determines how the bullets look // old radius = 6
       context.beginPath();
-      context.arc(enemy.x - middleX, enemy.y - middleY, 6, 0, 2 * Math.PI);
+      context.arc(enemy.x - middleX, enemy.y - middleY, GRID_SIZE/2, 0, 2 * Math.PI);
       context.fillStyle = 'red';
       context.fill();
     }

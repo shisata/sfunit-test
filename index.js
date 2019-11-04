@@ -159,8 +159,8 @@ function createPlayer(id) {
   players.numPlayers += 1;
   players[id] = {
     playerID: players.numPlayers,
-    x: 300,
-    y: 300,
+    x: 375,
+    y: 150,
     health: 4.33,
     level: 1,
     damage: 5,
@@ -186,16 +186,17 @@ function movePlayer(player, data) {
   if (data.down) {
     player.y += player.speed;
   }
-  if(hasCollision(player)){
+
+  if(hasCollision(player.x, player.y)){
     player.x = originX;
     player.y = originY
   }
 }
 
 //check if there is collision  at direction
-function hasCollision(player){
-  var gridX = Math.floor(player.x / GRID_SIZE);
-  var gridY = Math.floor(player.y / GRID_SIZE);
+function hasCollision(x, y){
+  var gridX = Math.floor(x / GRID_SIZE);
+  var gridY = Math.floor(y / GRID_SIZE);
   if(mapData[gridX][gridY] != null && mapData[gridX][gridY].collision == true){
     console.log("collision " + gridX + ", " + gridY)
     return true;
