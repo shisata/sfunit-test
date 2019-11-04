@@ -159,8 +159,8 @@ function createPlayer(id) {
   players.numPlayers += 1;
   players[id] = {
     playerID: players.numPlayers,
-    x: 375,
-    y: 150,
+    x: 500,
+    y: 300,
     health: 4.33,
     level: 1,
     damage: 5,

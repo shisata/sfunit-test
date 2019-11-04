@@ -95,6 +95,8 @@ setInterval(function() {
 }, 1000 / 60);
 
   var canvas = document.getElementById('canvas');
+  var startX = 0;
+  var startY = 0;
   var canvasW = 2560;
   var canvasH = 1440;
   canvas.width = canvasW;
@@ -118,16 +120,16 @@ window.addEventListener('mousemove', function (e) {
       socket.emit("requestMapImageSrcFromServer");
       return;
     }
-    context.clearRect(0, 0, canvasW, canvasW);
+    context.clearRect(startX, startY, canvasW, canvasW);
 
-    var middleX = players[myId].x - (canvas.width)/2;
-    var middleY = players[myId].y - (canvas.height)/2;
+    var middleX = players[myId].x - (canvasW)/2;
+    var middleY = players[myId].y - (canvasH)/2;
     shoot.middleX = middleX;
     shoot.middleY = middleY;
 
     //drawing the map from mapURL
     context.drawImage(mapImage, middleX, middleY,
-      canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
+      canvasW, canvasH, 0, 0, canvasW, canvasH);
 
     context.fillStyle = 'green';
     for (var id in players) {
@@ -177,7 +179,7 @@ function processMapDrawing(mapData){
   //shows only wall now.
    // TODO: change this to variable, not constant literal!
   //const margin = 300;
-  context.clearRect(0, 0, 800, 600);
+  context.clearRect(startX, startY, canvasW, canvasH);
   /*
   aqImage = new Image();
   aqImage.src = '../image/aq.jpeg';
