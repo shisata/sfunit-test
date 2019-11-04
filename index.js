@@ -187,10 +187,11 @@ function movePlayer(player, data) {
   if (data.down) {
     player.y += player.speed;
   }
-
-  if(hasCollision(player.x, player.y)){
-    player.x = originX;
-    player.y = originY
+  if(player != undefined){
+    if(hasCollision(player.x, player.y)){
+      player.x = originX;
+      player.y = originY
+    }
   }
 }
 
