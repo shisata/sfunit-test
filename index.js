@@ -270,11 +270,15 @@ function spawnRandomObject() {
 
 // when was the last object spawned
 var lastSpawn = -1;
+var spawnRate = 2000;
 
 //Generate enemies
 function generateEnemies() {
-  // spawn a new object every 1500ms
-  var spawnRate = 2000;
+  
+  // spawn a new object
+  if (spawnRate > 1000) {
+    spawnRate = spawnRate -= 1;
+  }
 
   // get the elapsed time
   var time = Date.now();
@@ -329,12 +333,13 @@ function moveEnemies() {
       if ( Math.abs(distX) < 12 && Math.abs(distY) < 12 ) {
         // console.log("distX ", distX, "distY, ", distY);
         //Deplete health
-        players[closestPlayer].health -= .2;
+        players[closestPlayer].health -= .05;
         //Kill player
         if (players[closestPlayer].health < 0) {
           players[closestPlayer] = 0;
           players.numPlayers -= 1;
         }
+
         //Dont move any closer
         sign = 0;
       }
