@@ -146,7 +146,7 @@ window.addEventListener('mousemove', function (e) {
       //Determines how the bullets look
       context.beginPath();
       context.arc(projectile.x - middleX, projectile.y - middleY, 2, 0, 2 * Math.PI);
-      context.fillStyle = 'black';
+      context.fillStyle = 'white';
       context.fill();
     }
 
