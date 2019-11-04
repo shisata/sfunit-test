@@ -78,8 +78,6 @@ setInterval(function() {
   window.addEventListener('mousemove', function (e) {
     xPos = e.pageX;
     yPos = e.pageY;
-
-    //console.log(xPos)
   })
 
   var context = canvas.getContext('2d');
@@ -106,7 +104,6 @@ setInterval(function() {
     for (var id in enemies) {
 
       var enemy = enemies[id];
-      console.log(enemy);
       //Determines how the bullets look
       context.beginPath();
       context.arc(enemy.x, enemy.y, 6, 0, 2 * Math.PI);
@@ -119,9 +116,9 @@ setInterval(function() {
     context.fillStyle = "#B3B3B3"
     for (var i = 0; i < mapData[0].length; i++) {
       context.beginPath();
-      console.log(mapData[0][0].x);
-      context.rect(mapData[0][0].x, mapData[0][0].y, mapData[0][0].width,
-        mapData[0][0].height);
+      console.log(mapData[0][i].x);
+      context.rect(mapData[0][i].x, mapData[0][i].y, mapData[0][i].width,
+        mapData[0][i].height);
       context.fill();
     }
 

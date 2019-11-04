@@ -94,14 +94,14 @@ io.on('connection', function(socket) {
     }
   });
 
-  socket.on('create map', function(){
-    var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
-    var processor = require('./static/objects/jsonProcessor.js');
-    var mapData = processor.constructFromData(mapDataFromFile);
-    console.log(mapData);
-     // console.log(JSON.stringify(mapData); ///****
-    // // console.log(mapData.walls);
-  });
+  // socket.on('create map', function(){
+  //   var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
+  //   var processor = require('./static/objects/jsonProcessor.js');
+  //   var mapData = processor.constructFromData(mapDataFromFile);
+  //   console.log(mapData);
+  //    // console.log(JSON.stringify(mapData); ///****
+  //   // // console.log(mapData.walls);
+  // });
 
   // Responds to a movement event
   socket.on('movement', function(data) {
@@ -170,7 +170,7 @@ io.on('connection', function(socket) {
 var spawnLineY = 25;
 
 // spawn a new object every 1500ms
-var spawnRate = 1500;
+var spawnRate = 5000;
 
 // set how fast the objects will fall
 var spawnRateOfDescent = 0.50;
@@ -196,8 +196,10 @@ function spawnRandomObject() {
     // set x randomly but at least 15px off the canvas edges
     x: Math.random() * 250,
     // set y to start on the line where objects are spawned
-    y: Math.random() * 250
+    y: Math.random() * 250,
+    health: 4
   }
+
   enemies.numEnemies++;
   enemyID++;
 }
@@ -218,7 +220,7 @@ function generateEnemies() {
 
 setInterval(function() {
 
-  //Projectile handler
+  //Projectile movement handler
   for (var id in projectiles) {
     projectiles[id].x += projectiles[id].vx;
     projectiles[id].y += projectiles[id].vy;
@@ -227,7 +229,7 @@ setInterval(function() {
       projectiles[id].vy = 0;
     }
   }
-  //Collision handler
+  //Player-projectile collision handler
   for (var player in players) {
     for (var id in projectiles) {
       if ( (Math.abs(players[player].x - projectiles[id].x) < 2) &&
@@ -240,48 +242,63 @@ setInterval(function() {
       }
     }
   }
+  //Enemy-projectile collision handler
+  for (var enemy in enemies) {
+    for (var id in projectiles) {
+      if ( (Math.abs(enemies[enemy].x - projectiles[id].x) < 5) &&
+           (Math.abs(enemies[enemy].y - projectiles[id].y) < 5) ) {
+        enemies[enemy].health -= 1;
+        if (enemies[enemy].health < 0) {
+          var temp = enemies[enemyID -= 1];
+          enemies[enemyID] = enemies[enemy];
+          enemies[enemy] = temp;
+          enemies[enemyID] = 0;
+          enemies.numEnemies -= 1;
+        }
+      }
+    }
+  }
+  //Spawn enemies
   generateEnemies();
   // console.log(enemies);
-  io.sockets.emit('state', players, projectiles, enemies);
+  io.sockets.emit('state', players, projectiles, enemies, mapData);
 
-// <<<<<<< HEAD
-  //passes the map data. [modified by: Hailey]
-  io.sockets.emit('mapData', {
-  });
-// =======
-// >>>>>>> de4042118f9e82cf4ecf147d987d66862ba766f4
 }, 1000 / 120);
 
 
 //=============================================================================
 // Fazal Workspace
-
+// --------------------------------------------------- partial implementation ends for enemy move to player
 // // Enemy moves towards player while avoiding an obstacle
 // // Calculate vector between player and target
+
+
+// // // Enemy moves towards player while avoiding an obstacle
+// // // Calculate vector between player and target
 // var toPlayerX = playerPosX - enemyPosX;
 // var toPlayerY = playerPosY - enemyPosY;
 
-// // Calculate vector between mouse and target
+// // // Calculate vector between mouse and target
 // var toMouseX = mousePosX - enemyPosX;
 // var toMouseY = mousePosY - enemyPosY;
 
-// // Calculate distance between player and enemy, mouse and enemy
+// // // Calculate distance between player and enemy, mouse and enemy
 // var toPlayerLength = Math.sqrt(toPlayerX * toPlayerX + toPlayerY * toPlayerY);
 // var toMouseLength = Math.sqrt(toMouseX * toMouseX + toMouseY * toMouseY);
 
-// // Normalize vector player
+// // // Normalize vector player
 // toPlayerX = toPlayerX / toPlayerLength;
 // toPlayerY = toPlayerY / toPlayerLength;
 
-// // Normalize vector mouse
+// // // Normalize vector mouse
 // toMouseX = toMouseX / toMouseLength;
 // toMouseY = toMouseY / toMouseLength;
 
-// // Move enemy torwards player
+// // // Move enemy torwards player
 // enemyPosX += toPlayerX * speed;
 // enemyPosY += toPlayerY * speed;
 
-// // Move enemy away from obstacle (a bit slower than towards player)
+// // // Move enemy away from obstacle (a bit slower than towards player)
 // enemyPosX -= toMouseX * (speed * 0.4);
 // enemyPosY -= toMouseY * (speed * 0.4);
 
@@ -440,10 +457,10 @@ console.log(mapData.furnitures[4].name );
 */
 
 
-// var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
-// var processor = require('./static/objects/jsonProcessor.js');
-// mapData = processor.constructFromData(mapDataFromFile);
-// console.log(JSON.stringify(mapData));
+var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
+var processor = require('./static/objects/jsonProcessor.js');
+mapData = processor.constructFromData(mapDataFromFile);
+console.log(JSON.stringify(mapData));
 
 
 
