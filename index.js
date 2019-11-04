@@ -90,12 +90,6 @@ io.on('connection', function(socket) {
     createPlayer(socket.id);
     socket.emit("passId", socket.id);
 
-
-    socket.on('requestPassId', function(){
-      socket.emit("passId", socket.id);
-    });
-
-
     //constructs the very initial map for the game.
     //'disconnect' seems to have some problems. I'm fixing it to:
     //create map WHENever
