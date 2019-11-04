@@ -42,9 +42,9 @@ pool = new Pool({
 });
 
 app.use('/static', express.static(__dirname + '/static'));// Routing
-//app.get('/', function(request, response) {
-//response.sendFile(path.join(__dirname, 'index.html'));
-//});// Starts the server.
+app.get('/', function(request, response) {
+response.sendFile(path.join(__dirname, 'index.html'));
+});// Starts the server.
 server.listen(5000, function() {
   console.log('Starting server on port 5000');
 });
@@ -474,6 +474,7 @@ console.log(JSON.stringify(mapData));
 
 //=============================================================================
 // Long Workpace
+/*
  //Parse URL-encoded bodies (sent by HTML form)
  app.use(express.urlencoded({extended:false}));
 // //Parse JSON body( sent by API client)
@@ -575,6 +576,7 @@ app.post('/register', (request,response)=>{
     };
   });
 });
+*/
 //=============================================================================
 
 
