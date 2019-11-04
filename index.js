@@ -163,8 +163,8 @@ io.on('connection', function(socket) {
 
       mouseX = data.x;
       mouseY = data.y;
-      playerX = players[socket.id].x;
-      playerY = players[socket.id].y;
+      playerX = players[socket.id].x - data.middleX;
+      playerY = players[socket.id].y - data.middleY;
 
       dx = mouseX - playerX;
       dy = mouseY - playerY;

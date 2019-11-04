@@ -22,7 +22,9 @@ var movement = {
 var shoot = {
     shootBullet: false,
     x: 0,
-    y: 0
+    y: 0,
+    middleX: 0,
+    middleY: 0
 }
 
 var xPos = 0;
@@ -115,11 +117,13 @@ window.addEventListener('mousemove', function (e) {
     }
     context.clearRect(0, 0, 800, 600);
 
-    // var middleX = players[myId].x - (canvas.width)/2;
-    // var middleY = players[myId].y - (canvas.height)/2;
+    var middleX = players[myId].x - (canvas.width)/2;
+    var middleY = players[myId].y - (canvas.height)/2;
+    shoot.middleX = middleX;
+    shoot.middleY = middleY;
 
     //drawing the map from mapURL
-    context.drawImage(mapImage, 0, 0,
+    context.drawImage(mapImage, middleX, middleY,
       canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
 
     context.fillStyle = 'green';
@@ -127,7 +131,7 @@ window.addEventListener('mousemove', function (e) {
       var player = players[id];
       //Determines how the characters look
       context.beginPath();
-      context.arc(player.x, player.y, 10, 0, 2 * Math.PI);
+      context.arc(player.x - middleX, player.y - middleY, 10, 0, 2 * Math.PI);
       context.fill();
     }
 
@@ -135,7 +139,7 @@ window.addEventListener('mousemove', function (e) {
       var projectile = projectiles[id];
       //Determines how the bullets look
       context.beginPath();
-      context.arc(projectile.x, projectile.y, 2, 0, 2 * Math.PI);
+      context.arc(projectile.x - middleX, projectile.y - middleY, 2, 0, 2 * Math.PI);
       context.fillStyle = 'black';
       context.fill();
     }
@@ -145,7 +149,7 @@ window.addEventListener('mousemove', function (e) {
       var enemy = enemies[id];
       //Determines how the bullets look
       context.beginPath();
-      context.arc(enemy.x, enemy.y, 6, 0, 2 * Math.PI);
+      context.arc(enemy.x - middleX, enemy.y - middleY, 6, 0, 2 * Math.PI);
       context.fillStyle = 'red';
       context.fill();
     }
@@ -163,6 +167,7 @@ window.addEventListener('mousemove', function (e) {
     */
     //shows only wall now.
      // TODO: change this to variable, not constant literal!
+    //const margin = 300;
     context.clearRect(0, 0, 800, 600);
     /*
     aqImage = new Image();
