@@ -275,7 +275,7 @@ var spawnRate = 2000;
 
 //Generate enemies
 function generateEnemies() {
-  
+
   // spawn a new object
   if (spawnRate > 1000) {
     spawnRate = spawnRate -= 1;
