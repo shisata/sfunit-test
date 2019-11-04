@@ -74,6 +74,8 @@ var enemies = {
 }
 enemyID = 0;
 
+var mapImageSrc;
+
 //Creates a new player
 io.on('connection', function(socket) {
 
@@ -91,17 +93,35 @@ io.on('connection', function(socket) {
         damage: 5,
         speed: 8
       };
+
+      console.log('id:',socket.id);
+      // io.to(socket.id).emit("passId", socket.id);
+      socket.emit("passId", socket.id);
+
+    }
+
+    //constructs the very initial map for the game.
+    if (players.numPlayers <= 1) {
+      var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
+      var processor = require('./static/objects/jsonProcessor.js');
+      var mapData = processor.constructFromData(mapDataFromFile);
+      //console.log(mapData);///////*******
+      socket.emit('create map', mapData);
     }
   });
 
-  // socket.on('create map', function(){
-  //   var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
-  //   var processor = require('./static/objects/jsonProcessor.js');
-  //   var mapData = processor.constructFromData(mapDataFromFile);
-  //   console.log(mapData);
-  //    // console.log(JSON.stringify(mapData); ///****
-  //   // // console.log(mapData.walls);
-  // });
+  //socket on functions for ID, Map, etc.
+  socket.on('requestPassId', function(){
+    socket.emit("passId", socket.id);
+  });
+  socket.on("deliverMapImageSrcToServer", function(imageSrc){
+    mapImageSrc = imageSrc;
+  });
+  socket.on("requestMapImageSrcFromServer", function(){
+    socket.emit("deliverMapImageToClient", mapImageSrc);
+  });
+
+
 
   // Responds to a movement event
   socket.on('movement', function(data) {
@@ -292,7 +312,7 @@ setInterval(function() {
   //Spawn enemies
   generateEnemies();
   // console.log(enemies);
-  io.sockets.emit('state', players, projectiles, enemies, mapData);
+  io.sockets.emit('state', players, projectiles, enemies);
 
 }, 1000 / 120);
 
@@ -487,11 +507,11 @@ console.log(mapData.furnitures[4].name );
 -->prints the x-axis of mapData's wall's 5th element.
 */
 
-
-var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
-var processor = require('./static/objects/jsonProcessor.js');
-mapData = processor.constructFromData(mapDataFromFile);
-console.log(JSON.stringify(mapData));
+//
+// var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
+// var processor = require('./static/objects/jsonProcessor.js');
+// mapData = processor.constructFromData(mapDataFromFile);
+// console.log(JSON.stringify(mapData));
 
 
 
