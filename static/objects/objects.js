@@ -27,7 +27,8 @@ will create a variable 'wall1' constructed with class 'Wall'.
 */
 
 class MapObject{
-  constructor(collision, interaction, destruction, textureSrc){
+  constructor(name, collision, interaction, destruction, textureSrc){
+    this.name = name;
     //boolean
     this.collision = collision;// check collision
     this.interaction = interaction;// check interactable
@@ -41,7 +42,7 @@ class MapObject{
 class Wall extends MapObject{
   constructor(){
     var source = null;
-    super(true, false, false, source);
+    super("wall", true, false, false, source);
     //might functions for interactions, destructions
   }
 }
@@ -49,7 +50,7 @@ class Wall extends MapObject{
 class Furniture extends MapObject{ // lets name this as furniture FOR NOW
   constructor(){
     var source = null;
-    super(true, true, true, source);
+    super("furniture", true, true, true, source);
     //default direction is facing south
     this.direction = 's';
   }

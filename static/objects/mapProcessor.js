@@ -44,7 +44,7 @@ function findLargestPosition(json){
     if(lastY > largestY){
       largestY = lastY
     }
-    //console.log(obj.constructor.name);
+    //console.log(obj.name);
   }
   // console.log("Largest position: " + largestX + ", " + largestY);///****
   return [largestX, largestY];
@@ -89,10 +89,8 @@ function insertWallIntoArray(mapData, x, y, width, height){
   // 	for (var mapX = 0; mapX < mapData.length; mapX++){
   //     if (mapData[mapX][mapY] == ''){
   //       line += "0";
-  //     }else if(mapData[mapX][mapY].constructor.name == "Wall"){
+  //     }else if(mapData[mapX][mapY].name == "wall"){
   //       line += "1";
-  //     }else if(mapData[mapX][mapY].constructor.name == "wall"){
-  //       line += "2";
   //     }else{
   //       line += "!";
   //     }
@@ -111,7 +109,7 @@ function giveWallArray(json){
     var width = json.map.wall[i].width;
     var height = json.map.wall[i].height;
     var obj = new objects.Wall(x, y, width, height);
-    //console.log(obj.constructor.name);
+    //console.log(obj.name);
     array.push(obj);
   }
   return array;

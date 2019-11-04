@@ -101,8 +101,8 @@ setInterval(function() {
 window.addEventListener('mousemove', function (e) {
   xPos = e.pageX;
   yPos = e.pageY;
-  console.log(xPos);
-  console.log(yPos);
+  // console.log(xPos);
+  // console.log(yPos);
 });
 
   var context = canvas.getContext('2d');
@@ -176,20 +176,103 @@ window.addEventListener('mousemove', function (e) {
       context.drawImage(aqImage, 0, 0);
     }*/
     context.fillStyle = "#B3B3B3"
-    for (var i = 0; i < mapData[0].length; i++) {
-      context.beginPath();
-      // console.log(mapData[0][i].x);
-      context.rect(mapData[0][i].x, mapData[0][i].y, mapData[0][i].width,
-        mapData[0][i].height);
-      context.fill();
-    }
+    const GRID_SIZE = 20; ///temporary variable
+    for (var x = 0; x < mapData.length; x++) {
+      var line = "";
+      for (var y = 0; y < mapData[mapData.length - 1].length; y++){
+        // console.log("\tMapdata[" + x + "][" + y + "]"); ////*****
+        if(mapData[x][y] != '')
+        {
+          context.beginPath();
+          context.rect(x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+          context.fill();
+        }
 
+        if (mapData[x][y] == ''){
+          line += "0";
+        }else if(mapData[x][y].name == "wall"){
+          line += "1";
+        }else{
+          line += "!";
+        }
+      }
+      console.log(line);
+      // context.beginPath();
+      // // console.log(mapData[0][i].x);
+      // context.rect(mapData[0][i].x, mapData[0][i].y, mapData[0][i].width,
+      //   mapData[0][i].height);
+      // context.fill();
+    }
+    console.log(mapData);
     mapImage.src = canvas.toDataURL();
-    console.log('socket event create map called: URL set to', mapImage.src);
+    // console.log('socket event create map called: URL set to', mapImage.src);
 
     socket.emit("deliverMapImageSrcToServer", mapImage.src);
 
   });
+
+
+
+
+// Support Functions ------------------------------------
+function processMapDrawing(mapData){
+  //called ONLY when numPlayers: 0 -> 1.
+  //draws the whole canvas, and saves to images file.
+  /*
+  This creates the map to 'image', hence the collision control is separate
+  this map. when there is a revision to map (e.g. door open)
+  */
+  //shows only wall now.
+   // TODO: change this to variable, not constant literal!
+  //const margin = 300;
+  context.clearRect(0, 0, 800, 600);
+  /*
+  aqImage = new Image();
+  aqImage.src = '../image/aq.jpeg';
+  aqImage.onload = function(){
+    context.drawImage(aqImage, 0, 0);
+  }*/
+
+  const GRID_SIZE = 10; ///temporary variable
+  for (var x = 0; x < mapData.length; x++) {
+    var line = "";
+    for (var y = 0; y < mapData[mapData.length - 1].length; y++){
+      // console.log("\tMapdata[" + x + "][" + y + "]"); ////*****
+      if(mapData[x][y].name == "wall")
+      {
+        context.fillStyle = "#B3B3B3"
+        context.beginPath();
+        context.rect(x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+        context.fill();
+      }else if(mapData[x][y] == undefined){
+        context.fillStyle = "#FFFFFF"
+        context.beginPath();
+        context.rect(x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+        context.fill();
+      }
+
+      if (mapData[x][y] == ''){
+        line += "0";
+      }else if(mapData[x][y].name == "wall"){
+        line += "1";
+      }else{
+        line += "!";
+      }
+    }
+    console.log(line);
+    // context.beginPath();
+    // // console.log(mapData[0][i].x);
+    // context.rect(mapData[0][i].x, mapData[0][i].y, mapData[0][i].width,
+    //   mapData[0][i].height);
+    // context.fill();
+  }
+
+  mapImage.src = canvas.toDataURL();
+  // console.log('socket event create map called: URL set to', mapImage.src);
+
+  socket.emit("deliverMapImageSrcToServer", mapImage.src);
+
+}
 
   // Fazal' Workstation -------------------------------------------------------------------------
   // var enemyContext = canvas.getContext('2d');

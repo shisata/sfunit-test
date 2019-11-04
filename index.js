@@ -94,7 +94,7 @@ io.on('connection', function(socket) {
       var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
       var processor = require('./static/objects/mapProcessor.js');
       var mapData = processor.constructFromData(mapDataFromFile);
-      const GRID_SIZE = 20;
+      // const GRID_SIZE = 20;
       //console.log(mapData);///////*******
       socket.emit('create map', mapData);
       console.log('players.numPlayers: ', players.numPlayers, ', create map called');
