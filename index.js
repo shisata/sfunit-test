@@ -198,7 +198,7 @@ function movePlayer(player, data) {
 function hasCollision(x, y){
   var gridX = Math.floor(x / GRID_SIZE);
   var gridY = Math.floor(y / GRID_SIZE);
-  if(mapData[gridX][gridY] == null){
+  if(!mapData){
     return false;
   }else if(mapData[gridX][gridY].collision == true){
     console.log("collision " + gridX + ", " + gridY)
