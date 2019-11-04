@@ -29,6 +29,10 @@ var xPos = 0;
 var yPos = 0;
 
 var mapImage = new Image();
+mapImageSrc = "";
+socket.on("deliverMapImageSrcToClient", function(image){
+  mapImage.src = image;
+});
 
 document.addEventListener('keydown', function(event) {
   switch (event.keyCode) {
@@ -95,9 +99,12 @@ setInterval(function() {
   var context = canvas.getContext('2d');
   socket.on('state', function(players, projectiles, enemies) {
     if (myId == "") {
-      socket.on('requestPassId');
+      socket.emit('requestPassId');
       return;
     }
+    // if (mapImage.src == "") {
+    //   socket.emit("requestMapImageSrcFromServer");
+    // }
     context.clearRect(0, 0, 800, 600);
 
     var middleX = players[myId].x - (canvas.width)/2;
@@ -166,6 +173,8 @@ setInterval(function() {
 
     mapImage.src = canvas.toDataURL();
     console.log('socket event create map called');
+
+    socket.emit("deliverMapImageSrcToServer", mapImage.src);
 
   });
 

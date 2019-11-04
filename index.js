@@ -74,6 +74,8 @@ var enemies = {
 }
 enemyID = 0;
 
+var mapImageSrc;
+
 //Creates a new player
 io.on('connection', function(socket) {
 
@@ -98,12 +100,6 @@ io.on('connection', function(socket) {
 
     }
 
-
-    socket.on('requestPassId', function(){
-      socket.emit("passId", socket.id);
-    });
-
-
     //constructs the very initial map for the game.
     if (players.numPlayers <= 1) {
       var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
@@ -114,6 +110,16 @@ io.on('connection', function(socket) {
     }
   });
 
+  //socket on functions for ID, Map, etc.
+  socket.on('requestPassId', function(){
+    socket.emit("passId", socket.id);
+  });
+  socket.on("deliverMapImageSrcToServer", function(imageSrc){
+    mapImageSrc = imageSrc;
+  });
+  socket.on("requestMapImageSrcFromServer", function(){
+    socket.emit("deliverMapImageToClient", mapImageSrc);
+  });
 
 
 
