@@ -42,9 +42,9 @@ pool = new Pool({
 });
 
 app.use('/static', express.static(__dirname + '/static'));// Routing
-app.get('/', function(request, response) {
-response.sendFile(path.join(__dirname, 'index.html'));
-});// Starts the server.
+//app.get('/', function(request, response) {
+//response.sendFile(path.join(__dirname, 'index.html'));
+//});// Starts the server.
 server.listen(5000, function() {
   console.log('Starting server on port 5000');
 });
@@ -59,7 +59,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //Players object will contain all information about each player's position,
 //health, etc.
 var players = {
-  numPlayers: 0 
+  numPlayers: 0
 };
 
 //Projectiles object will keep track of active projectiles
@@ -251,7 +251,7 @@ var lastSpawn = -1;
 function generateEnemies() {
   // spawn a new object every 1500ms
   var spawnRate = 2000;
-  
+
   // get the elapsed time
   var time = Date.now();
 
@@ -570,169 +570,104 @@ console.log(mapData.furnitures[4].name );
 //=============================================================================
 // Long Workpace
 
-//  //Parse URL-encoded bodies (sent by HTML form)
-//  app.use(express.urlencoded({extended:false}));
-// // //Parse JSON body( sent by API client)
-//  app.use(express.json());
-/*
- //Parse URL-encoded bodies (sent by HTML form)
- app.use(express.urlencoded({extended:false}));
-// //Parse JSON body( sent by API client)
- app.use(express.json());
->>>>>>> f30419cff8dba8cd1d73cd56959079783060a050
+//Parse URL-encoded bodies (sent by HTML form)
+app.use(express.urlencoded({extended:false}));
+//Parse JSON body( sent by API client)
+app.use(express.json());
 
-// //home page
-// app.get('/', function(request, response)
-// {
-//   var message ={'message':''};
-//   response.render('pages/login',message);
-// });
-// //Login function
-
-// app.post('/checkAccount', (request, response)=>{
-
-//   var uname = request.body.username;
-//   var pw = request.body.password;
-//   pool.query(
-//     'SELECT password FROM account WHERE username=$1',[uname], (error,results)=>{
-//       if (error)
-//       {
-//         throw(error);
-//       }
-//       var result = (results.rows == '') ? '':results.rows[0].password;
-//       if (result == String(pw))
-//       {
-//         response.render('pages/index');
-//       }
-//       else {
-//         var message ={'message':'Account is not existing'};
-//         response.render('pages/login',message);
-//       }
-//     });
-// }); // check account info
-
-// //sign-up page
-// app.get('/register', function(request,response)
-// {
-//   var message ={'message':''};
-//   response.render('pages/register',message);
-// });
-
-<<<<<<< HEAD
-// app.post('/register', (request,response)=>{
-
-//   const uname = request.body.username;
-//   const pw = request.body.pw;
-//   const gmail = request.body.gmail;
-
-//   //Check username availability
-//   console.log('CHECKING USERNAME');
-//   var text = `SELECT * FROM account WHERE username='${uname}';`;
-//   pool.query(text,(error,results)=>{
-//     if (error){
-//       throw (error);
-//     }
-//     else {
-//       var result = {'rows': results.rows};
-//       if (result.rows.length !=0)
-//       {
-//         var message = {'message':'Username is used'};
-//         console.log('USERNAME IS USED');
-//         response.render('pages/register',message);
-//       }
-//       else {
-//         console.log('USERNAME CHECKED');
-
-//         //Check gmail availability
-//         console.log('CHECKING GMAIL');
-//         var text = `SELECT * FROM account WHERE gmail='${gmail}';`;
-//         pool.query(text,(error, results)=>{
-//           if (error){
-//             throw(error);
-//           }
-//           else {
-//             var result2 = {'rows': results.rows};
-//             if (result2.rows.length !=0)
-//             {
-//               var message = {'message':'Gmail is used'}
-//               console.log('GMAIL IS USED');
-//               response.render('pages/register',message);
-//             }
-//             else {
-//               console.log('GMAIL CHECKED');
-//               console.log('INSERTING...')
-//               var text = `INSERT INTO account (username, password, gmail)
-//                 VALUES ('${uname}','${pw}','${gmail}');`;
-//               pool.query(text, (error, results) =>{
-//                 if (error){
-//                   response.end(error);
-//                 };
-//                 console.log("INSERT ACCOUNT COMPLETED");
-//                 var message = {'message':'Sign-up Completed'};
-//                 response.render('pages/login',message)
-//               });
-//             };
-//           };
-//         });
-//       }
-//     };
-//   });
-// });
-=======
-  //Check username availability
-  console.log('CHECKING USERNAME');
-  var text = `SELECT * FROM account WHERE username='${uname}';`;
-  pool.query(text,(error,results)=>{
-    if (error){
-      throw (error);
-    }
-    else {
-      var result = {'rows': results.rows};
-      if (result.rows.length !=0)
-      {
-        var message = {'message':'Username is used'};
-        console.log('USERNAME IS USED');
-        response.render('pages/register',message);
-      }
-      else {
-        console.log('USERNAME CHECKED');
-
-        //Check gmail availability
-        console.log('CHECKING GMAIL');
-        var text = `SELECT * FROM account WHERE gmail='${gmail}';`;
-        pool.query(text,(error, results)=>{
-          if (error){
-            throw(error);
-          }
-          else {
-            var result2 = {'rows': results.rows};
-            if (result2.rows.length !=0)
-            {
-              var message = {'message':'Gmail is used'}
-              console.log('GMAIL IS USED');
-              response.render('pages/register',message);
-            }
-            else {
-              console.log('GMAIL CHECKED');
-              console.log('INSERTING...')
-              var text = `INSERT INTO account (username, password, gmail)
-                VALUES ('${uname}','${pw}','${gmail}');`;
-              pool.query(text, (error, results) =>{
-                if (error){
-                  response.end(error);
-                };
-                console.log("INSERT ACCOUNT COMPLETED");
-                var message = {'message':'Sign-up Completed'};
-                response.render('pages/login',message)
-              });
-            };
-          };
-        });
-      }
-    };
-  });
+//home page
+app.get('/', function(request, response)
+{
+   var message ={'message':''};
+   response.render('pages/login',message);
 });
-*/
+
+ //Login function
+ app.post('/checkAccount', (request, response)=>{
+   var uname = request.body.username;
+   var pw = request.body.password;
+   pool.query(
+     'SELECT password FROM account WHERE username=$1',[uname], (error,results)=>{
+       if (error)
+       {
+         throw(error);
+       }
+       var result = (results.rows == '') ? '':results.rows[0].password;
+       if (result == String(pw))
+       {
+         response.render('pages/index');
+       }
+       else {
+         var message ={'message':'Account is not existing'};
+         response.render('pages/login',message);
+       }
+     });
+}); // check account info
+
+//sign-up page
+app.get('/register', function(request,response)
+{
+  var message ={'message':''};
+  response.render('pages/register',message);
+});
+
+app.post('/register', (request,response)=>{
+   const uname = request.body.username;
+   const pw = request.body.pw;
+   const gmail = request.body.gmail;
+
+   //Check username availability
+   console.log('CHECKING USERNAME');
+   var text = `SELECT * FROM account WHERE username='${uname}';`;
+   pool.query(text,(error,results)=>{
+     if (error){
+       throw (error);
+     }
+     else {
+       var result = {'rows': results.rows};
+       if (result.rows.length !=0)
+       {
+         var message = {'message':'Username is used'};
+         console.log('USERNAME IS USED');
+         response.render('pages/register',message);
+       }
+       else {
+         console.log('USERNAME CHECKED');
+         //Check gmail availability
+         console.log('CHECKING GMAIL');
+         var text = `SELECT * FROM account WHERE gmail='${gmail}';`;
+         pool.query(text,(error, results)=>{
+           if (error){
+             throw(error);
+           }
+           else {
+             var result2 = {'rows': results.rows};
+             if (result2.rows.length !=0)
+             {
+               var message = {'message':'Gmail is used'}
+               console.log('GMAIL IS USED');
+               response.render('pages/register',message);
+             }
+             else {
+               console.log('GMAIL CHECKED');
+               console.log('INSERTING...')
+               var text = `INSERT INTO account (username, password, gmail)
+                 VALUES ('${uname}','${pw}','${gmail}');`;
+               pool.query(text, (error, results) =>{
+                 if (error){
+                   response.end(error);
+                 };
+                 console.log("INSERT ACCOUNT COMPLETED");
+                 var message = {'message':'Sign-up Completed'};
+                 response.render('pages/login',message)
+               });
+             };
+           };
+         });
+       }
+     };
+   });
+});
 //=============================================================================
 
 
