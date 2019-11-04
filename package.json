@@ -1,19 +1,10 @@
 {
-  "name": "CMPT276 - S.F.U",
-  "version": "0.3.0",
-  "description": "A sample Node.js app using Express 4",
-  "engines": {
-    "node": "10.x"
-  },
+  "name": "sfu-cmpt276",
+  "version": "1.0.0",
+  "description": "Fazal Dad Warraich <br /> Georgios Giovanis <br /> Hyeyoung Ahn <br /> Khanh Long Tran <br /> Quoc tuong Tran",
   "main": "index.js",
-  "scripts": {
-    "start": "node index.js",
-    "test": "node test.js"
-  },
   "dependencies": {
-    "alert-node": "^2.0.1",
     "body-parser": "^1.19.0",
-    "dependencies": "0.0.1",
     "ejs": "^2.7.1",
     "express": "^4.17.1",
     "fs": "0.0.1-security",
@@ -24,17 +15,14 @@
     "request": "^2.88.0",
     "socket.io": "^2.3.0"
   },
-  "devDependencies": {
-    "tape": "^4.7.0"
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/heroku/node-js-getting-started"
+    "url": "git@csil-git1.cs.surrey.sfu.ca:ggiovani/sfu-cmpt276.git"
   },
-  "keywords": [
-    "node",
-    "heroku",
-    "express"
-  ],
-  "license": "MIT"
+  "author": "",
+  "license": "ISC"
 }
