@@ -164,7 +164,7 @@ io.on('connection', function(socket) {
     if (data.shootBullet) {
       projectiles.numProjectiles++;
 
-      
+
       mouseX = data.x;
       mouseY = data.y;
       playerX = players[socket.id].x - data.middleX;
@@ -299,7 +299,7 @@ setInterval(function() {
       if ( Math.abs(distX) < 12 && Math.abs(distY) < 12 ) {
         // console.log("distX ", distX, "distY, ", distY);
         //Deplete health
-        players[closestPlayer].health -= .2; 
+        players[closestPlayer].health -= .2;
         //Kill player
         // if (players[closestPlayer].health < 0) {
         //   players[closestPlayer] = 0;
@@ -565,13 +565,11 @@ console.log(mapData.furnitures[4].name );
 
 //=============================================================================
 // Long Workpace
-<<<<<<< HEAD
 
 //  //Parse URL-encoded bodies (sent by HTML form)
 //  app.use(express.urlencoded({extended:false}));
 // // //Parse JSON body( sent by API client)
 //  app.use(express.json());
-=======
 /*
  //Parse URL-encoded bodies (sent by HTML form)
  app.use(express.urlencoded({extended:false}));
@@ -731,7 +729,6 @@ console.log(mapData.furnitures[4].name );
   });
 });
 */
->>>>>>> f30419cff8dba8cd1d73cd56959079783060a050
 //=============================================================================
 
 
