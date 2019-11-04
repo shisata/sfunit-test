@@ -76,10 +76,11 @@ enemyID = 0;
 
 var mapImageSrc = "";
 var mapData; // 2d array of the map
-const GRID_SIZE = 12; // each grid size for map
+const GRID_SIZE = 10; // each grid size for map
 
 //Creates a new player
 io.on('connection', function(socket) {
+  socket.emit('grid-size', GRID_SIZE);
   socket.on('new player', function() {
     console.log('socket event new player called');
     //This condition is commented out because the 'disconnect' event is
@@ -159,8 +160,8 @@ function createPlayer(id) {
   players.numPlayers += 1;
   players[id] = {
     playerID: players.numPlayers,
-    x: 500,
-    y: 300,
+    x: 10*GRID_SIZE,
+    y: 10*GRID_SIZE,
     health: 4.33,
     level: 1,
     damage: 5,
@@ -173,7 +174,7 @@ function movePlayer(player, data) {
   //Modified the values here to reflect player speed - GG 2019.10.26 17:30
   var originX = player.x;
   var originY = player.y;
-  console.log(player.x + ", " + player.y)
+  console.log(player.x + ", " + player.y)////*****
   if (data.left) {
     player.x -= player.speed;
   }
@@ -197,7 +198,9 @@ function movePlayer(player, data) {
 function hasCollision(x, y){
   var gridX = Math.floor(x / GRID_SIZE);
   var gridY = Math.floor(y / GRID_SIZE);
-  if(mapData[gridX][gridY] != null && mapData[gridX][gridY].collision == true){
+  if(mapData[gridX][gridY] == null){
+    return false;
+  }else if(mapData[gridX][gridY].collision == true){
     console.log("collision " + gridX + ", " + gridY)
     return true;
   }

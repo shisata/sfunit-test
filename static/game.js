@@ -29,7 +29,7 @@ var shoot = {
 
 var xPos = 0;
 var yPos = 0;
-const GRID_SIZE = 12; ///temporary variable
+var GRID_SIZE; ///temporary variable
 
 var mapImage = new Image();
 mapImage.src = "";
@@ -85,9 +85,10 @@ document.addEventListener('keyup', function(event) {
       break;
   }
 });
-
+socket.on('grid-size', function(gridSize){
+  GRID_SIZE = gridSize;
+})
 socket.emit('new player');
-
 
 setInterval(function() {
   socket.emit('movement', movement);
@@ -186,7 +187,6 @@ function processMapDrawing(mapData){
   aqImage.onload = function(){
     context.drawImage(aqImage, 0, 0);
   }*/
-  context.fillStyle = "#B3B3B3"
 
   for (var x = 0; x < mapData.length; x++) {
     var line = "";
@@ -194,11 +194,16 @@ function processMapDrawing(mapData){
       // console.log("\tMapdata[" + x + "][" + y + "]"); ////*****
       if(mapData[x][y] != '')
       {
+        // var source = mapData[x][y].textureSrc;
+        // console.log(source)
+        // var pattern = ctx.createPattern(source, "repeat");
         context.beginPath();
         context.rect(x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+        context.fillStyle =" #B3B3B3";
         context.fill();
       }
 
+      ////******
       if (mapData[x][y] == ''){
         line += "0";
       }else if(mapData[x][y].name == "wall"){
