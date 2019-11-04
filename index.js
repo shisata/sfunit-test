@@ -75,6 +75,8 @@ var enemies = {
 enemyID = 0;
 
 var mapImageSrc = "";
+var mapData; // 2d array of the map
+const GRID_SIZE = 20; // each grid size for map
 
 //Creates a new player
 io.on('connection', function(socket) {
@@ -93,8 +95,7 @@ io.on('connection', function(socket) {
     if (players.numPlayers <= 1) {
       var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
       var processor = require('./static/objects/mapProcessor.js');
-      var mapData = processor.constructFromData(mapDataFromFile);
-      // const GRID_SIZE = 20;
+      mapData = processor.constructFromData(mapDataFromFile);
       //console.log(mapData);///////*******
       socket.emit('create map', mapData);
       console.log('players.numPlayers: ', players.numPlayers, ', create map called');
@@ -163,13 +164,16 @@ function createPlayer(id) {
     health: 4.33,
     level: 1,
     damage: 5,
-    speed: 8
+    speed: 3
   };
 }
 
 //Moves a player in response to keyboard input
 function movePlayer(player, data) {
   //Modified the values here to reflect player speed - GG 2019.10.26 17:30
+  var originX = player.x;
+  var originY = player.y;
+  console.log(player.x + ", " + player.y)
   if (data.left) {
     player.x -= player.speed;
   }
@@ -182,6 +186,21 @@ function movePlayer(player, data) {
   if (data.down) {
     player.y += player.speed;
   }
+  if(hasCollision(player)){
+    player.x = originX;
+    player.y = originY
+  }
+}
+
+//check if there is collision  at direction
+function hasCollision(player){
+  var gridX = Math.floor(player.x / GRID_SIZE);
+  var gridY = Math.floor(player.y / GRID_SIZE);
+  if(mapData[gridX][gridY] != null && mapData[gridX][gridY].collision == true){
+    console.log("collision " + gridX + ", " + gridY)
+    return true;
+  }
+  return false;
 }
 
 //Generates a projectile on shoot input
