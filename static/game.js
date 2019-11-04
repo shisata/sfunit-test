@@ -29,7 +29,7 @@ var shoot = {
 
 var xPos = 0;
 var yPos = 0;
-const GRID_SIZE = 20; ///temporary variable
+const GRID_SIZE = 12; ///temporary variable
 
 var mapImage = new Image();
 mapImage.src = "";
@@ -97,8 +97,8 @@ setInterval(function() {
   var canvas = document.getElementById('canvas');
   var startX = 0;
   var startY = 0;
-  var canvasW = 2560;
-  var canvasH = 1440;
+  var canvasW = 1280;
+  var canvasH = 720;
   canvas.width = canvasW;
   canvas.height = canvasH;
   // canvas.cursor = "none"; //hide the original cursor

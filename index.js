@@ -76,7 +76,7 @@ enemyID = 0;
 
 var mapImageSrc = "";
 var mapData; // 2d array of the map
-const GRID_SIZE = 20; // each grid size for map
+const GRID_SIZE = 12; // each grid size for map
 
 //Creates a new player
 io.on('connection', function(socket) {
