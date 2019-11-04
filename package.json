@@ -13,6 +13,7 @@
   "dependencies": {
     "alert-node": "^2.0.1",
     "body-parser": "^1.19.0",
+    "dependencies": "0.0.1",
     "ejs": "^2.7.1",
     "express": "^4.17.1",
     "fs": "0.0.1-security",
@@ -20,10 +21,10 @@
     "http": "0.0.0",
     "pg": "^7.12.1",
     "pkg": "^4.4.0",
+    "request": "^2.88.0",
     "socket.io": "^2.3.0"
   },
   "devDependencies": {
-    "request": "^2.81.0",
     "tape": "^4.7.0"
   },
   "repository": {

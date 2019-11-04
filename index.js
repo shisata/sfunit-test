@@ -42,9 +42,9 @@ pool = new Pool({
 });
 
 app.use('/static', express.static(__dirname + '/static'));// Routing
-//app.get('/', function(request, response) {
-//response.sendFile(path.join(__dirname, 'index.html'));
-//});// Starts the server.
+app.get('/', function(request, response) {
+response.sendFile(path.join(__dirname, 'index.html'));
+});// Starts the server.
 server.listen(5000, function() {
   console.log('Starting server on port 5000');
 });
@@ -78,9 +78,6 @@ var mapImageSrc = "";
 
 //Creates a new player
 io.on('connection', function(socket) {
-
-  var mapInfo = [[],[]]; // stores info of every grid tile
-
   socket.on('new player', function() {
     console.log('socket event new player called');
     //This condition is commented out because the 'disconnect' event is
@@ -95,8 +92,9 @@ io.on('connection', function(socket) {
     //create map WHENever
     if (players.numPlayers <= 1) {
       var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
-      var processor = require('./static/objects/jsonProcessor.js');
+      var processor = require('./static/objects/mapProcessor.js');
       var mapData = processor.constructFromData(mapDataFromFile);
+      const GRID_SIZE = 20;
       //console.log(mapData);///////*******
       socket.emit('create map', mapData);
       console.log('players.numPlayers: ', players.numPlayers, ', create map called');
@@ -556,7 +554,7 @@ console.log(mapData.furnitures[4].name );
 
 //
 // var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
-// var processor = require('./static/objects/jsonProcessor.js');
+// var processor = require('./static/objects/mapProcessor.js');
 // mapData = processor.constructFromData(mapDataFromFile);
 // console.log(JSON.stringify(mapData));
 
@@ -579,11 +577,11 @@ app.use(express.urlencoded({extended:false}));
 app.use(express.json());
 
 //home page
-app.get('/', function(request, response)
-{
-   var message ={'message':''};
-   response.render('pages/login',message);
-});
+// app.get('/', function(request, response)
+// {
+//    var message ={'message':''};
+//    response.render('pages/login',message);
+// });
 
  //Login function
  app.post('/checkAccount', (request, response)=>{
@@ -678,9 +676,5 @@ app.post('/register', (request,response)=>{
 
 //=============================================================================
 // Josh Workpace
-
-function initMapArray(mapData){
-
-}
 
 //=============================================================================
