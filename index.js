@@ -74,6 +74,8 @@ var enemies = {
 }
 enemyID = 0;
 
+var mapImageSrc;
+
 //Creates a new player
 io.on('connection', function(socket) {
 
@@ -91,17 +93,35 @@ io.on('connection', function(socket) {
         damage: 5,
         speed: 8
       };
+
+      console.log('id:',socket.id);
+      // io.to(socket.id).emit("passId", socket.id);
+      socket.emit("passId", socket.id);
+
+    }
+
+    //constructs the very initial map for the game.
+    if (players.numPlayers <= 1) {
+      var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
+      var processor = require('./static/objects/jsonProcessor.js');
+      var mapData = processor.constructFromData(mapDataFromFile);
+      //console.log(mapData);///////*******
+      socket.emit('create map', mapData);
     }
   });
 
-  // socket.on('create map', function(){
-  //   var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
-  //   var processor = require('./static/objects/jsonProcessor.js');
-  //   var mapData = processor.constructFromData(mapDataFromFile);
-  //   console.log(mapData);
-  //    // console.log(JSON.stringify(mapData); ///****
-  //   // // console.log(mapData.walls);
-  // });
+  //socket on functions for ID, Map, etc.
+  socket.on('requestPassId', function(){
+    socket.emit("passId", socket.id);
+  });
+  socket.on("deliverMapImageSrcToServer", function(imageSrc){
+    mapImageSrc = imageSrc;
+  });
+  socket.on("requestMapImageSrcFromServer", function(){
+    socket.emit("deliverMapImageToClient", mapImageSrc);
+  });
+
+
 
   // Responds to a movement event
   socket.on('movement', function(data) {
@@ -192,11 +212,11 @@ function spawnRandomObject() {
 
   // add the new object to the objects[] array
   enemies[enemyID] = {
-    // type: t,
-    // set x randomly but at least 15px off the canvas edges
     x: Math.random() * 250,
-    // set y to start on the line where objects are spawned
     y: Math.random() * 250,
+    vx: 5,
+    vy: 5,
+    speed: .2,
     health: 4
   }
 
@@ -229,6 +249,37 @@ setInterval(function() {
       projectiles[id].vy = 0;
     }
   }
+  //Enemy movement handler
+  for (var id in enemies) {
+    //Find closest players
+    var closestPlayer;
+    var closestPlayerDistance = Infinity;
+    for (var player in players) {
+      var distX = players[player].x - enemies[id].x;
+      var distY = players[player].y - enemies[id].y;
+      var distance = Math.sqrt( distX * distX + distY * distY );
+      if (distance < closestPlayerDistance) {
+        closestPlayer = player;
+        closestPlayerDistance = distance;
+      }
+    }
+    //Move to closest player
+    if (players.numPlayers) {
+      distX = enemies[id].x - players[closestPlayer].x;
+      distY = enemies[id].y - players[closestPlayer].y;
+      var attackTheta = Math.atan(distX / distY);
+      var sign = 1;
+      // if (distY < 0) {
+      //   sign = -1;
+      // }
+      enemies[id].vx =  enemies[id].speed * Math.sin(attackTheta);
+      enemies[id].vy =  enemies[id].speed * Math.cos(attackTheta);
+      enemies[id].x += enemies[id].vx;
+      enemies[id].y += enemies[id].vy;
+    }
+  }
+
+
   //Player-projectile collision handler
   for (var player in players) {
     for (var id in projectiles) {
@@ -261,7 +312,7 @@ setInterval(function() {
   //Spawn enemies
   generateEnemies();
   // console.log(enemies);
-  io.sockets.emit('state', players, projectiles, enemies, mapData);
+  io.sockets.emit('state', players, projectiles, enemies);
 
 }, 1000 / 120);
 
@@ -456,11 +507,11 @@ console.log(mapData.furnitures[4].name );
 -->prints the x-axis of mapData's wall's 5th element.
 */
 
-
-var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
-var processor = require('./static/objects/jsonProcessor.js');
-mapData = processor.constructFromData(mapDataFromFile);
-console.log(JSON.stringify(mapData));
+//
+// var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
+// var processor = require('./static/objects/jsonProcessor.js');
+// mapData = processor.constructFromData(mapDataFromFile);
+// console.log(JSON.stringify(mapData));
 
 
 

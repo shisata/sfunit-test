@@ -1,6 +1,16 @@
 var socket = io();
 socket.on('message', function(data) {
-  console.log(data);
+  // console.log(data);
+});
+
+//socket id of the client. players[myId] will return the specific player's data.
+var myId = "";
+socket.on("passId", function(id){
+  console.log('socket passId called');
+  console.log(id);
+  if (myId == "") {
+    myId = id;
+  }
 });
 
 var movement = {
@@ -17,6 +27,12 @@ var shoot = {
 
 var xPos = 0;
 var yPos = 0;
+
+var mapImage = new Image();
+mapImageSrc = "";
+socket.on("deliverMapImageSrcToClient", function(image){
+  mapImage.src = image;
+});
 
 document.addEventListener('keydown', function(event) {
   switch (event.keyCode) {
@@ -63,11 +79,10 @@ document.addEventListener('keyup', function(event) {
 
 socket.emit('new player');
 
-socket.emit("create map");
+
 setInterval(function() {
   socket.emit('movement', movement);
   socket.emit('shoot', shoot);
-  socket.emit('spawn', enemies);
 }, 1000 / 60);
 
   var canvas = document.getElementById('canvas');
@@ -75,20 +90,37 @@ setInterval(function() {
   canvas.height = 600;
   // canvas.cursor = "none"; //hide the original cursor
 
-  window.addEventListener('mousemove', function (e) {
-    xPos = e.pageX;
-    yPos = e.pageY;
-  })
+window.addEventListener('mousemove', function (e) {
+  xPos = e.pageX;
+  yPos = e.pageY;
+  console.log(xPos);
+  console.log(yPos);
+});
 
   var context = canvas.getContext('2d');
-  socket.on('state', function(players, projectiles, enemies, mapData) {
+  socket.on('state', function(players, projectiles, enemies) {
+    if (myId == "") {
+      socket.emit('requestPassId');
+      return;
+    }
+    // if (mapImage.src == "") {
+    //   socket.emit("requestMapImageSrcFromServer");
+    // }
     context.clearRect(0, 0, 800, 600);
+
+    var middleX = players[myId].x - (canvas.width)/2;
+    var middleY = players[myId].y - (canvas.height)/2;
+
+    //drawing the map from mapURL
+    context.drawImage(mapImage, middleX, middleY,
+      canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
+
     context.fillStyle = 'green';
     for (var id in players) {
       var player = players[id];
       //Determines how the characters look
       context.beginPath();
-      context.arc(player.x, player.y, 10, 0, 2 * Math.PI);
+      context.arc(player.x - middleX, player.y - middleY, 10, 0, 2 * Math.PI);
       context.fill();
     }
 
@@ -96,7 +128,7 @@ setInterval(function() {
       var projectile = projectiles[id];
       //Determines how the bullets look
       context.beginPath();
-      context.arc(projectile.x, projectile.y, 2, 0, 2 * Math.PI);
+      context.arc(projectile.x-middleX, projectile.y-middleY, 2, 0, 2 * Math.PI);
       context.fillStyle = 'black';
       context.fill();
     }
@@ -106,21 +138,44 @@ setInterval(function() {
       var enemy = enemies[id];
       //Determines how the bullets look
       context.beginPath();
-      context.arc(enemy.x, enemy.y, 6, 0, 2 * Math.PI);
+      context.arc(enemy.x-middleX, enemy.y-middleY, 6, 0, 2 * Math.PI);
       context.fillStyle = 'red';
       context.fill();
     }
 
 
+  });
+
+
+  socket.on("create map", function(mapData){
+    //called ONLY when numPlayers: 0 -> 1.
+    //draws the whole canvas, and saves to images file.
+    /*
+    This creates the map to 'image', hence the collision control is separate
+    this map. when there is a revision to map (e.g. door open)
+    */
     //shows only wall now.
+     // TODO: change this to variable, not constant literal!
+    context.clearRect(0, 0, 800, 600);
+    /*
+    aqImage = new Image();
+    aqImage.src = '../image/aq.jpeg';
+    aqImage.onload = function(){
+      context.drawImage(aqImage, 0, 0);
+    }*/
     context.fillStyle = "#B3B3B3"
     for (var i = 0; i < mapData[0].length; i++) {
       context.beginPath();
-      console.log(mapData[0][i].x);
+      // console.log(mapData[0][i].x);
       context.rect(mapData[0][i].x, mapData[0][i].y, mapData[0][i].width,
         mapData[0][i].height);
       context.fill();
     }
+
+    mapImage.src = canvas.toDataURL();
+    console.log('socket event create map called');
+
+    socket.emit("deliverMapImageSrcToServer", mapImage.src);
 
   });
 

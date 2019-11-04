@@ -5,12 +5,11 @@ body{
 
 #canvas{
     /* padding-right: 0;
-    padding-right: 0;
+    padding-left: 0;
     margin-right: auto;
-    margin-right: auto;
+    margin-left: auto;
     display: block;
     width: 800px; */
     background-color: aqua;
-    background-image: url('../image/aq.jpeg');
+    /*background-image: url('../image/aq.jpeg');*/
 }
-
