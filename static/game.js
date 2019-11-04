@@ -22,16 +22,24 @@ var movement = {
 var shoot = {
     shootBullet: false,
     x: 0,
-    y: 0
+    y: 0,
+    middleX: 0,
+    middleY: 0
 }
 
 var xPos = 0;
 var yPos = 0;
 
 var mapImage = new Image();
-mapImageSrc = "";
-socket.on("deliverMapImageSrcToClient", function(image){
-  mapImage.src = image;
+mapImage.src = "";
+var mapImageLoaded = false;
+socket.on("deliverMapImageSrcToClient", function(imageSrc){
+  // console.log('deliverMapImageSrcToClient called');
+  if (!mapImageLoaded && imageSrc != "") {
+    mapImage.src = imageSrc;
+    mapImageLoaded = true;
+  }
+  //console.log('image source set to:', mapImage.src);
 });
 
 document.addEventListener('keydown', function(event) {
@@ -103,13 +111,16 @@ window.addEventListener('mousemove', function (e) {
       socket.emit('requestPassId');
       return;
     }
-    // if (mapImage.src == "") {
-    //   socket.emit("requestMapImageSrcFromServer");
-    // }
+    if (mapImage.src == "") {
+      socket.emit("requestMapImageSrcFromServer");
+      return;
+    }
     context.clearRect(0, 0, 800, 600);
 
     var middleX = players[myId].x - (canvas.width)/2;
     var middleY = players[myId].y - (canvas.height)/2;
+    shoot.middleX = middleX;
+    shoot.middleY = middleY;
 
     //drawing the map from mapURL
     context.drawImage(mapImage, middleX, middleY,
@@ -128,7 +139,7 @@ window.addEventListener('mousemove', function (e) {
       var projectile = projectiles[id];
       //Determines how the bullets look
       context.beginPath();
-      context.arc(projectile.x-middleX, projectile.y-middleY, 2, 0, 2 * Math.PI);
+      context.arc(projectile.x - middleX, projectile.y - middleY, 2, 0, 2 * Math.PI);
       context.fillStyle = 'black';
       context.fill();
     }
@@ -138,7 +149,7 @@ window.addEventListener('mousemove', function (e) {
       var enemy = enemies[id];
       //Determines how the bullets look
       context.beginPath();
-      context.arc(enemy.x-middleX, enemy.y-middleY, 6, 0, 2 * Math.PI);
+      context.arc(enemy.x - middleX, enemy.y - middleY, 6, 0, 2 * Math.PI);
       context.fillStyle = 'red';
       context.fill();
     }
@@ -156,6 +167,7 @@ window.addEventListener('mousemove', function (e) {
     */
     //shows only wall now.
      // TODO: change this to variable, not constant literal!
+    //const margin = 300;
     context.clearRect(0, 0, 800, 600);
     /*
     aqImage = new Image();
@@ -173,7 +185,7 @@ window.addEventListener('mousemove', function (e) {
     }
 
     mapImage.src = canvas.toDataURL();
-    console.log('socket event create map called');
+    console.log('socket event create map called: URL set to', mapImage.src);
 
     socket.emit("deliverMapImageSrcToServer", mapImage.src);
 

@@ -42,9 +42,9 @@ pool = new Pool({
 });
 
 app.use('/static', express.static(__dirname + '/static'));// Routing
-app.get('/', function(request, response) {
-response.sendFile(path.join(__dirname, 'index.html'));
-});// Starts the server.
+//app.get('/', function(request, response) {
+//response.sendFile(path.join(__dirname, 'index.html'));
+//});// Starts the server.
 server.listen(5000, function() {
   console.log('Starting server on port 5000');
 });
@@ -59,7 +59,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //Players object will contain all information about each player's position,
 //health, etc.
 var players = {
-  numPlayers: 0  //Length will keep track of the number of players
+  numPlayers: 0
 };
 
 //Projectiles object will keep track of active projectiles
@@ -74,29 +74,21 @@ var enemies = {
 }
 enemyID = 0;
 
+var mapImageSrc = "";
+
 //Creates a new player
 io.on('connection', function(socket) {
 
   var mapInfo = [[],[]]; // stores info of every grid tile
 
   socket.on('new player', function() {
-    if (players.numPlayers < 4) {
-      players.numPlayers += 1;
-      players[socket.id] = {
-        playerID: players.numPlayers,
-        x: 300,
-        y: 300,
-        health: 4.33,
-        level: 1,
-        damage: 5,
-        speed: 8
-      };
-
-      console.log('id:',socket.id);
-      // io.to(socket.id).emit("passId", socket.id);
-      socket.emit("passId", socket.id);
-
-    }
+    console.log('socket event new player called');
+    //This condition is commented out because the 'disconnect' event is
+    //commented out too. 'disconnect' is having multiple-call problem and
+    //causing error for map-loading.
+    //if (players.numPlayers < 4) {
+    createPlayer(socket.id);
+    socket.emit("passId", socket.id);
 
 
     socket.on('requestPassId', function(){
@@ -105,95 +97,135 @@ io.on('connection', function(socket) {
 
 
     //constructs the very initial map for the game.
+    //'disconnect' seems to have some problems. I'm fixing it to:
+    //create map WHENever
     if (players.numPlayers <= 1) {
       var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
       var processor = require('./static/objects/jsonProcessor.js');
       var mapData = processor.constructFromData(mapDataFromFile);
       //console.log(mapData);///////*******
       socket.emit('create map', mapData);
+      console.log('players.numPlayers: ', players.numPlayers, ', create map called');
+    }
+    else {
+      console.log('players.numPlayers: ', players.numPlayers);
+      socket.emit("deliverMapImageSrcToClient", mapImageSrc);
     }
   });
 
-
-
+  //socket on functions for ID, Map, etc.
+  socket.on('requestPassId', function(){
+    socket.emit("passId", socket.id);
+  });
+  socket.on("deliverMapImageSrcToServer", function(imageSrc){
+    //console.log('deliverMapImageSrcToServer called');
+    mapImageSrc = imageSrc;
+  });
+  socket.on("requestMapImageSrcFromServer", function(){
+    // console.log('imageSrc returned for request:', mapImageSrc);
+    // console.log('requestMapImageSrcFromServer called');
+    socket.emit("deliverMapImageSrcToClient", mapImageSrc);
+  });
 
   // Responds to a movement event
   socket.on('movement', function(data) {
     var player = players[socket.id] || {};
-
-    //Modified the values here to reflect player speed - GG 2019.10.26 17:30
-    if (data.left) {
-      player.x -= player.speed;
-    }
-    if (data.up) {
-      player.y -= player.speed;
-    }
-    if (data.right) {
-      player.x += player.speed;
-    }
-    if (data.down) {
-      player.y += player.speed;
-    }
+    movePlayer(player, data);
   });
 
   //Code block to respond to shooting
   socket.on('shoot', function(data) {
     if (data.shootBullet) {
-      projectiles.numProjectiles++;
-
-      mouseX = data.x;
-      mouseY = data.y;
-      playerX = players[socket.id].x;
-      playerY = players[socket.id].y;
-
-      dx = mouseX - playerX;
-      dy = mouseY - playerY;
-      theta = Math.atan(dx / dy);
-
-      velX = players[socket.id].speed * Math.sin(theta);
-      velY = players[socket.id].speed * Math.cos(theta);
-      if (dy < 0) {
-        velY *= -1;
-        velX *= -1;
-      }
-
-      projectiles[bulletCount] = {
-        x: players[socket.id].x + (4 * velX),
-        y: players[socket.id].y + (4 * velY),
-        vx: velX,
-        vy: velY
-      };
-
-      bulletCount++;
-      //reset bullet count
-      if (bulletCount > 100) {
-        bulletCount = 0;
-      }
+      generateProjectile(socket.id, data);
     }
   });
 
   //Removes disconnected player
-  socket.on('disconnect', function() {
-    players[socket.id] = 0;
-    players.numPlayers -= 1;
-  });
+  // socket.on('disconnect', function() {
+  //   console.log('socket event disconnect called');
+  //   players[socket.id] = 0;
+  //   players.numPlayers -= 1;
+  // });
 //Collects client data at 60 events/second
 });
 
-// newly spawned objects start at Y=25
-var spawnLineY = 25;
+setInterval(function() {
+  moveProjectiles();
+  moveEnemies();
+  handleBulletCollisions();
+  generateEnemies();
+  io.sockets.emit('state', players, projectiles, enemies);
+}, 1000 / 120);
 
-// spawn a new object every 1500ms
-var spawnRate = 5000;
 
-// set how fast the objects will fall
-var spawnRateOfDescent = 0.50;
+//=============================================================================
+//Functions
 
-// when was the last object spawned
-var lastSpawn = -1;
+//Creates a new player
+function createPlayer(id) {
+  players.numPlayers += 1;
+  players[id] = {
+    playerID: players.numPlayers,
+    x: 300,
+    y: 300,
+    health: 4.33,
+    level: 1,
+    damage: 5,
+    speed: 8
+  };
+}
 
-// save the starting time (used to calc elapsed time)
-var startTime = Date.now();
+//Moves a player in response to keyboard input
+function movePlayer(player, data) {
+  //Modified the values here to reflect player speed - GG 2019.10.26 17:30
+  if (data.left) {
+    player.x -= player.speed;
+  }
+  if (data.up) {
+    player.y -= player.speed;
+  }
+  if (data.right) {
+    player.x += player.speed;
+  }
+  if (data.down) {
+    player.y += player.speed;
+  }
+}
+
+//Generates a projectile on shoot input
+function generateProjectile(id, data) {
+  projectiles.numProjectiles++;
+
+  mouseX = data.x;
+  mouseY = data.y;
+  playerX = players[id].x - data.middleX;
+  playerY = players[id].y - data.middleY;
+
+  dx = mouseX - playerX;
+  dy = mouseY - playerY;
+
+  theta = Math.atan(dx / dy);
+
+  velX = players[id].speed * Math.sin(theta);
+  velY = players[id].speed * Math.cos(theta);
+  if (dy < 0) {
+    velY *= -1;
+    velX *= -1;
+  }
+
+  projectiles[bulletCount] = {
+    x: players[id].x + (4 * velX),
+    y: players[id].y + (4 * velY),
+    vx: velX,
+    vy: velY
+  };
+
+  bulletCount++;
+  //reset bullet count
+  if (bulletCount > 100) {
+    bulletCount = 0;
+  }
+}
 
 //Spawn a random enemy
 function spawnRandomObject() {
@@ -211,6 +243,9 @@ function spawnRandomObject() {
     x: Math.random() * 250,
     // set y to start on the line where objects are spawned
     y: Math.random() * 250,
+    vx: 5,
+    vy: 5,
+    speed: .5,
     health: 4
   }
 
@@ -218,7 +253,13 @@ function spawnRandomObject() {
   enemyID++;
 }
 
+// when was the last object spawned
+var lastSpawn = -1;
+
+//Generate enemies
 function generateEnemies() {
+  // spawn a new object every 1500ms
+  var spawnRate = 2000;
 
   // get the elapsed time
   var time = Date.now();
@@ -230,11 +271,8 @@ function generateEnemies() {
   }
 }
 
-
-
-setInterval(function() {
-
-  //Projectile movement handler
+//Move projectiles along the screen
+function moveProjectiles() {
   for (var id in projectiles) {
     projectiles[id].x += projectiles[id].vx;
     projectiles[id].y += projectiles[id].vy;
@@ -243,6 +281,59 @@ setInterval(function() {
       projectiles[id].vy = 0;
     }
   }
+}
+
+//Move enemies towards the nearest player
+function moveEnemies() {
+   //Enemy movement handler
+   for (var id in enemies) {
+    //Find closest players
+    if (players.numPlayers > 0 && enemies.numEnemies > 0) {
+      var closestPlayer;
+      var closestPlayerDistance = Infinity;
+      for (var player in players) {
+        var distX = players[player].x - enemies[id].x;
+        var distY = players[player].y - enemies[id].y;
+        var distance = Math.sqrt( distX * distX + distY * distY );
+        if (distance < closestPlayerDistance) {
+          closestPlayer = player;
+          closestPlayerDistance = distance;
+        }
+      }
+      //Move to closest player
+      distX = enemies[id].x - players[closestPlayer].x;
+      distY = enemies[id].y - players[closestPlayer].y;
+
+      var attackTheta = Math.atan(distX / distY);
+
+      var sign = -1; // -1
+      if (enemies[id].y < players[closestPlayer].y) {
+        sign = 1; // 1
+      }
+
+      if ( Math.abs(distX) < 12 && Math.abs(distY) < 12 ) {
+        // console.log("distX ", distX, "distY, ", distY);
+        //Deplete health
+        players[closestPlayer].health -= .2;
+        //Kill player
+        // if (players[closestPlayer].health < 0) {
+        //   players[closestPlayer] = 0;
+        //   players.numPlayers -= 1;
+        // }
+        //Dont move any closer
+        sign = 0;
+      }
+
+      enemies[id].vx =  enemies[id].speed * Math.sin(attackTheta) * sign;
+      enemies[id].vy =  enemies[id].speed * Math.cos(attackTheta) * sign;
+      enemies[id].x += enemies[id].vx;
+      enemies[id].y += enemies[id].vy;
+    }
+  }
+}
+
+//Handles bullet collisions
+function handleBulletCollisions() {
   //Player-projectile collision handler
   for (var player in players) {
     for (var id in projectiles) {
@@ -272,13 +363,7 @@ setInterval(function() {
       }
     }
   }
-  //Spawn enemies
-  generateEnemies();
-  // console.log(enemies);
-  io.sockets.emit('state', players, projectiles, enemies);
-
-}, 1000 / 120);
-
+}
 
 //=============================================================================
 // Fazal Workspace
@@ -453,6 +538,11 @@ setInterval(function() {
 // });
 
 
+
+
+
+
+
 //=============================================================================
 
 
@@ -488,40 +578,39 @@ console.log(mapData.furnitures[4].name );
 
 //=============================================================================
 // Long Workpace
-/*
- //Parse URL-encoded bodies (sent by HTML form)
- app.use(express.urlencoded({extended:false}));
-// //Parse JSON body( sent by API client)
- app.use(express.json());
+
+//Parse URL-encoded bodies (sent by HTML form)
+app.use(express.urlencoded({extended:false}));
+//Parse JSON body( sent by API client)
+app.use(express.json());
 
 //home page
 app.get('/', function(request, response)
 {
-  var message ={'message':''};
-  response.render('pages/login',message);
+   var message ={'message':''};
+   response.render('pages/login',message);
 });
-//Login function
 
-app.post('/checkAccount', (request, response)=>{
-
-  var uname = request.body.username;
-  var pw = request.body.password;
-  pool.query(
-    'SELECT password FROM account WHERE username=$1',[uname], (error,results)=>{
-      if (error)
-      {
-        throw(error);
-      }
-      var result = (results.rows == '') ? '':results.rows[0].password;
-      if (result == String(pw))
-      {
-        response.render('pages/index');
-      }
-      else {
-        var message ={'message':'Account is not existing'};
-        response.render('pages/login',message);
-      }
-    });
+ //Login function
+ app.post('/checkAccount', (request, response)=>{
+   var uname = request.body.username;
+   var pw = request.body.password;
+   pool.query(
+     'SELECT password FROM account WHERE username=$1',[uname], (error,results)=>{
+       if (error)
+       {
+         throw(error);
+       }
+       var result = (results.rows == '') ? '':results.rows[0].password;
+       if (result == String(pw))
+       {
+         response.render('pages/index');
+       }
+       else {
+         var message ={'message':'Account is not existing'};
+         response.render('pages/login',message);
+       }
+     });
 }); // check account info
 
 //sign-up page
@@ -532,65 +621,62 @@ app.get('/register', function(request,response)
 });
 
 app.post('/register', (request,response)=>{
+   const uname = request.body.username;
+   const pw = request.body.pw;
+   const gmail = request.body.gmail;
 
-  const uname = request.body.username;
-  const pw = request.body.pw;
-  const gmail = request.body.gmail;
-
-  //Check username availability
-  console.log('CHECKING USERNAME');
-  var text = `SELECT * FROM account WHERE username='${uname}';`;
-  pool.query(text,(error,results)=>{
-    if (error){
-      throw (error);
-    }
-    else {
-      var result = {'rows': results.rows};
-      if (result.rows.length !=0)
-      {
-        var message = {'message':'Username is used'};
-        console.log('USERNAME IS USED');
-        response.render('pages/register',message);
-      }
-      else {
-        console.log('USERNAME CHECKED');
-
-        //Check gmail availability
-        console.log('CHECKING GMAIL');
-        var text = `SELECT * FROM account WHERE gmail='${gmail}';`;
-        pool.query(text,(error, results)=>{
-          if (error){
-            throw(error);
-          }
-          else {
-            var result2 = {'rows': results.rows};
-            if (result2.rows.length !=0)
-            {
-              var message = {'message':'Gmail is used'}
-              console.log('GMAIL IS USED');
-              response.render('pages/register',message);
-            }
-            else {
-              console.log('GMAIL CHECKED');
-              console.log('INSERTING...')
-              var text = `INSERT INTO account (username, password, gmail)
-                VALUES ('${uname}','${pw}','${gmail}');`;
-              pool.query(text, (error, results) =>{
-                if (error){
-                  response.end(error);
-                };
-                console.log("INSERT ACCOUNT COMPLETED");
-                var message = {'message':'Sign-up Completed'};
-                response.render('pages/login',message)
-              });
-            };
-          };
-        });
-      }
-    };
-  });
+   //Check username availability
+   console.log('CHECKING USERNAME');
+   var text = `SELECT * FROM account WHERE username='${uname}';`;
+   pool.query(text,(error,results)=>{
+     if (error){
+       throw (error);
+     }
+     else {
+       var result = {'rows': results.rows};
+       if (result.rows.length !=0)
+       {
+         var message = {'message':'Username is used'};
+         console.log('USERNAME IS USED');
+         response.render('pages/register',message);
+       }
+       else {
+         console.log('USERNAME CHECKED');
+         //Check gmail availability
+         console.log('CHECKING GMAIL');
+         var text = `SELECT * FROM account WHERE gmail='${gmail}';`;
+         pool.query(text,(error, results)=>{
+           if (error){
+             throw(error);
+           }
+           else {
+             var result2 = {'rows': results.rows};
+             if (result2.rows.length !=0)
+             {
+               var message = {'message':'Gmail is used'}
+               console.log('GMAIL IS USED');
+               response.render('pages/register',message);
+             }
+             else {
+               console.log('GMAIL CHECKED');
+               console.log('INSERTING...')
+               var text = `INSERT INTO account (username, password, gmail)
+                 VALUES ('${uname}','${pw}','${gmail}');`;
+               pool.query(text, (error, results) =>{
+                 if (error){
+                   response.end(error);
+                 };
+                 console.log("INSERT ACCOUNT COMPLETED");
+                 var message = {'message':'Sign-up Completed'};
+                 response.render('pages/login',message)
+               });
+             };
+           };
+         });
+       }
+     };
+   });
 });
-*/
 //=============================================================================
 
 
