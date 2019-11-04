@@ -42,9 +42,9 @@ pool = new Pool({
 });
 
 app.use('/static', express.static(__dirname + '/static'));// Routing
-//app.get('/', function(request, response) {
-//response.sendFile(path.join(__dirname, 'index.html'));
-//});// Starts the server.
+app.get('/', function(request, response) {
+response.sendFile(path.join(__dirname, 'index.html'));
+});// Starts the server.
 server.listen(5000, function() {
   console.log('Starting server on port 5000');
 });
@@ -74,7 +74,7 @@ var enemies = {
 }
 enemyID = 0;
 
-var mapImageSrc;
+var mapImageSrc = "";
 
 //Creates a new player
 io.on('connection', function(socket) {
@@ -82,7 +82,11 @@ io.on('connection', function(socket) {
   var mapInfo = [[],[]]; // stores info of every grid tile
 
   socket.on('new player', function() {
-    if (players.numPlayers < 4) {
+    console.log('socket event new player called');
+    //This condition is commented out because the 'disconnect' event is
+    //commented out too. 'disconnect' is having multiple-call problem and
+    //causing error for map-loading.
+    //if (players.numPlayers < 4) {
       players.numPlayers += 1;
       players[socket.id] = {
         playerID: players.numPlayers,
@@ -98,15 +102,22 @@ io.on('connection', function(socket) {
       // io.to(socket.id).emit("passId", socket.id);
       socket.emit("passId", socket.id);
 
-    }
+    //}
 
     //constructs the very initial map for the game.
+    //'disconnect' seems to have some problems. I'm fixing it to:
+    //create map WHENever
     if (players.numPlayers <= 1) {
       var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
       var processor = require('./static/objects/jsonProcessor.js');
       var mapData = processor.constructFromData(mapDataFromFile);
       //console.log(mapData);///////*******
       socket.emit('create map', mapData);
+      console.log('players.numPlayers: ', players.numPlayers, ', create map called');
+    }
+    else {
+      console.log('players.numPlayers: ', players.numPlayers);
+      socket.emit("deliverMapImageSrcToClient", mapImageSrc);
     }
   });
 
@@ -115,10 +126,13 @@ io.on('connection', function(socket) {
     socket.emit("passId", socket.id);
   });
   socket.on("deliverMapImageSrcToServer", function(imageSrc){
+    //console.log('deliverMapImageSrcToServer called');
     mapImageSrc = imageSrc;
   });
   socket.on("requestMapImageSrcFromServer", function(){
-    socket.emit("deliverMapImageToClient", mapImageSrc);
+    // console.log('imageSrc returned for request:', mapImageSrc);
+    // console.log('requestMapImageSrcFromServer called');
+    socket.emit("deliverMapImageSrcToClient", mapImageSrc);
   });
 
 
@@ -179,10 +193,11 @@ io.on('connection', function(socket) {
   });
 
   //Removes disconnected player
-  socket.on('disconnect', function() {
-    players[socket.id] = 0;
-    players.numPlayers -= 1;
-  });
+  // socket.on('disconnect', function() {
+  //   console.log('socket event disconnect called');
+  //   players[socket.id] = 0;
+  //   players.numPlayers -= 1;
+  // });
 //Collects client data at 60 events/second
 });
 
@@ -525,7 +540,7 @@ console.log(mapData.furnitures[4].name );
 
 //=============================================================================
 // Long Workpace
-
+/*
  //Parse URL-encoded bodies (sent by HTML form)
  app.use(express.urlencoded({extended:false}));
 // //Parse JSON body( sent by API client)
@@ -627,6 +642,7 @@ app.post('/register', (request,response)=>{
     };
   });
 });
+*/
 //=============================================================================
 
 

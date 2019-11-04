@@ -29,9 +29,15 @@ var xPos = 0;
 var yPos = 0;
 
 var mapImage = new Image();
-mapImageSrc = "";
-socket.on("deliverMapImageSrcToClient", function(image){
-  mapImage.src = image;
+mapImage.src = "";
+var mapImageLoaded = false;
+socket.on("deliverMapImageSrcToClient", function(imageSrc){
+  console.log('deliverMapImageSrcToClient called');
+  if (!mapImageLoaded && imageSrc != "") {
+    mapImage.src = imageSrc;
+    mapImageLoaded = true;
+  }
+  //console.log('image source set to:', mapImage.src);
 });
 
 document.addEventListener('keydown', function(event) {
@@ -103,9 +109,10 @@ window.addEventListener('mousemove', function (e) {
       socket.emit('requestPassId');
       return;
     }
-    // if (mapImage.src == "") {
-    //   socket.emit("requestMapImageSrcFromServer");
-    // }
+    if (mapImage.src == "") {
+      socket.emit("requestMapImageSrcFromServer");
+      return;
+    }
     context.clearRect(0, 0, 800, 600);
 
     var middleX = players[myId].x - (canvas.width)/2;
@@ -173,7 +180,7 @@ window.addEventListener('mousemove', function (e) {
     }
 
     mapImage.src = canvas.toDataURL();
-    console.log('socket event create map called');
+    console.log('socket event create map called: URL set to', mapImage.src);
 
     socket.emit("deliverMapImageSrcToServer", mapImage.src);
 
