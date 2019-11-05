@@ -301,8 +301,14 @@ function generateEnemies() {
 //Move projectiles along the screen
 function moveProjectiles() {
   for (var id in projectiles) {
+    var originX = projectiles[id].x;
+    var originY = projectiles[id].y;
     projectiles[id].x += projectiles[id].vx;
     projectiles[id].y += projectiles[id].vy;
+    if(hasCollision(projectiles[id].x, projectiles[id].y)){
+      projectiles[id].x = originX;
+      projectiles[id].y = originY;
+    }
     if (projectiles[id].x > 1100 || projectiles[id].y > 1100) {
       projectiles[id].vx = 0;
       projectiles[id].vy = 0;
