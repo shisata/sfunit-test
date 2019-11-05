@@ -137,11 +137,11 @@ io.on('connection', function(socket) {
   });
 
   //Removes disconnected player
-  // socket.on('disconnect', function() {
-  //   console.log('socket event disconnect called');
-  //   players[socket.id] = 0;
-  //   players.numPlayers -= 1;
-  // });
+  socket.on('disconnect', function() {
+    console.log('socket event disconnect called');
+    players[socket.id] = 0;
+    players.numPlayers -= 1;
+  });
 //Collects client data at 60 events/second
 });
 
