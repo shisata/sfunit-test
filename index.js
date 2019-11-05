@@ -261,8 +261,10 @@ function spawnRandomObject() {
 
   // add the new object to the objects[] array
   if(players.numPlayers != 0){
-    var initX = Math.random() * 50 * GRID_SIZE;
-    var initY = Math.random() * 50 * GRID_SIZE;
+    var randomX = Math.random() % 3;
+    var randomY = Math.random() % 3;
+    var initX = 20 * GRID_SIZE + randomX;
+    var initY = 20 * GRID_SIZE + randomY;
     if(!hasCollision(initX, initY)){
       enemies[enemyID] = {
         // type: t,
