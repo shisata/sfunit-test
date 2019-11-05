@@ -33,7 +33,9 @@ var socketIO = require('socket.io');
 const fs = require('fs');
 var app = express();
 var server = http.Server(app);
-var io = socketIO(server);app.set('port', 5000);
+app.set('port', 5000);
+const PORT = process.env.PORT || 5000
+// var io = socketIO(server);app.set('port', 5000);
 //database
 const { Pool } = require('pg')
 var pool
@@ -45,7 +47,7 @@ app.use('/static', express.static(__dirname + '/static'));// Routing
 app.get('/', function(request, response) {
 response.sendFile(path.join(__dirname, 'index.html'));
 });// Starts the server.
-server.listen(5000, function() {
+server.listen(PORT, function() {
   console.log('Starting server on port 5000');
 });
 
@@ -135,11 +137,11 @@ io.on('connection', function(socket) {
   });
 
   //Removes disconnected player
-  socket.on('disconnect', function() {
-    console.log('socket event disconnect called');
-    players[socket.id] = 0;
-    players.numPlayers -= 1;
-  });
+  // socket.on('disconnect', function() {
+  //   console.log('socket event disconnect called');
+  //   players[socket.id] = 0;
+  //   players.numPlayers -= 1;
+  // });
 //Collects client data at 60 events/second
 });
 
