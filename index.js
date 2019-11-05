@@ -44,9 +44,9 @@ pool = new Pool({
 });
 
 app.use('/static', express.static(__dirname + '/static'));// Ring
-// app.get('/', function(request, response) {
-// response.sendFile(path.join(__dirname, 'index.html'));
-// });// Starts the server.
+app.get('/', function(request, response) {
+response.sendFile(path.join(__dirname, 'index.html'));
+});// Starts the server.
 server.listen(PORT, function() {
   console.log('Starting server on port 5000');
 });
@@ -206,7 +206,8 @@ function hasCollision(x, y){
   var gridY = Math.floor(y / GRID_SIZE);
   if(mapData == undefined || mapData[gridX] == undefined
     || mapData[gridX][gridY] == undefined){
-    return false;
+    console.log("collision " + gridX + ", " + gridY)
+    return true;
   }else if(mapData[gridX][gridY].collision == true){
     console.log("collision " + gridX + ", " + gridY)
     return true;
@@ -357,8 +358,14 @@ function moveEnemies() {
 
       enemies[id].vx =  enemies[id].speed * Math.sin(attackTheta) * sign;
       enemies[id].vy =  enemies[id].speed * Math.cos(attackTheta) * sign;
+      var originX = enemies[id].x;
+      var originY = enemies[id].y;
       enemies[id].x += enemies[id].vx;
       enemies[id].y += enemies[id].vy;
+      if(hasCollision(enemies[id].x, enemies[id].y)){
+        enemies[id].x = originX;
+        enemies[id].y = originY;
+      }
     }
   }
 }
