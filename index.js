@@ -260,20 +260,24 @@ function spawnRandomObject() {
   // create A and if the random# is .50-1.00 we create B
 
   // add the new object to the objects[] array
-  enemies[enemyID] = {
-    // type: t,
-    // set x randomly but at least 15px off the canvas edges
-    x: Math.random() * 250,
-    // set y to start on the line where objects are spawned
-    y: Math.random() * 250,
-    vx: 5,
-    vy: 5,
-    speed: .5,
-    health: 4
-  }
+  var x = Math.random() * 250,
+  var y = Math.random() * 250,
+  if(!hasCollision(x, y)){
+    enemies[enemyID] = {
+      // type: t,
+      // set x randomly but at least 15px off the canvas edges
+      x: Math.random() * 250,
+      // set y to start on the line where objects are spawned
+      y: Math.random() * 250,
+      vx: 5,
+      vy: 5,
+      speed: .5,
+      health: 4
+    }
 
-  enemies.numEnemies++;
-  enemyID++;
+    enemies.numEnemies++;
+    enemyID++;
+  }
 }
 
 // when was the last object spawned
@@ -301,17 +305,19 @@ function generateEnemies() {
 //Move projectiles along the screen
 function moveProjectiles() {
   for (var id in projectiles) {
-    var originX = projectiles[id].x;
-    var originY = projectiles[id].y;
-    projectiles[id].x += projectiles[id].vx;
-    projectiles[id].y += projectiles[id].vy;
-    if(hasCollision(projectiles[id].x, projectiles[id].y)){
-      projectiles[id].x = originX;
-      projectiles[id].y = originY;
-    }
-    if (projectiles[id].x > 1100 || projectiles[id].y > 1100) {
-      projectiles[id].vx = 0;
-      projectiles[id].vy = 0;
+    if (projectiles[id]) {
+      var originX = projectiles[id].x;
+      var originY = projectiles[id].y;
+      projectiles[id].x += projectiles[id].vx;
+      projectiles[id].y += projectiles[id].vy;
+      if(hasCollision(projectiles[id].x, projectiles[id].y)){
+        deleteBullet(id);
+      }
+      //Delete stale projectiles
+      if ( (projectiles[id].x > 1100) || (projectiles[id].y > 1100) ||
+          (projectiles[id].x < -1100) || (projectiles[id].y < -1100)) {
+          deleteBullet(id);
+      }
     }
   }
 }
@@ -339,9 +345,9 @@ function moveEnemies() {
 
       var attackTheta = Math.atan(distX / distY);
 
-      var sign = -1; // -1
+      var sign = -1;
       if (enemies[id].y < players[closestPlayer].y) {
-        sign = 1; // 1
+        sign = 1;
       }
 
       if ( Math.abs(distX) < 12 && Math.abs(distY) < 12 ) {
@@ -377,32 +383,44 @@ function handleBulletCollisions() {
   //Player-projectile collision handler
   for (var player in players) {
     for (var id in projectiles) {
-      if ( (Math.abs(players[player].x - projectiles[id].x) < 2) &&
-           (Math.abs(players[player].y - projectiles[id].y) < 2) ) {
-        players[player].health -= 1;
-        // if (players[player].health < 0) {
-        //   players[player] = 0;
-        //   players.numPlayers -= 1;
-        // }
+      if (projectiles[id]) {
+        if ( (Math.abs(players[player].x - projectiles[id].x) < 2) &&
+            (Math.abs(players[player].y - projectiles[id].y) < 2) ) {
+          players[player].health -= 1;
+          // if (players[player].health < 0) {
+          //   players[player] = 0;
+          //   players.numPlayers -= 1;
+          // }
+        }
       }
     }
   }
   //Enemy-projectile collision handler
   for (var enemy in enemies) {
     for (var id in projectiles) {
-      if ( (Math.abs(enemies[enemy].x - projectiles[id].x) < 5) &&
-           (Math.abs(enemies[enemy].y - projectiles[id].y) < 5) ) {
-             enemies[enemy].health -= 1;
-             if (enemies[enemy].health < 0) {
-               var temp = enemies[enemyID -= 1];
-               enemies[enemyID] = enemies[enemy];
-               enemies[enemy] = temp;
-               enemies[enemyID] = 0;
-               enemies.numEnemies -= 1;
-             }
+      if (projectiles[id]) {
+        if ( (Math.abs(enemies[enemy].x - projectiles[id].x) < 5) &&
+            (Math.abs(enemies[enemy].y - projectiles[id].y) < 5) ) {
+              enemies[enemy].health -= 1;
+              if (enemies[enemy].health < 0) {
+                var temp = enemies[enemyID -= 1];
+                enemies[enemyID] = enemies[enemy];
+                enemies[enemy] = temp;
+                enemies[enemyID] = 0;
+                enemies.numEnemies -= 1;
+              }
+        }
       }
     }
   }
+}
+
+function deleteBullet(id) {
+  var temp = projectiles[bulletCount -= 1];
+  projectiles[bulletCount] = projectiles[id];
+  projectiles[id] = temp;
+  projectiles[bulletCount] = 0;
+  projectiles.numProjectiles -= 1;
 }
 //=============================================================================
 // Fazal Workspace
