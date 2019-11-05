@@ -260,7 +260,7 @@ function spawnRandomObject() {
   // create A and if the random# is .50-1.00 we create B
 
   // add the new object to the objects[] array
-  if (enemies.numEnemies < 5) {
+  if (players.numPlayers != 0) {
     enemies[enemyID] = {
       // type: t,
       // set x randomly but at least 15px off the canvas edges
