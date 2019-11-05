@@ -165,8 +165,8 @@ function createPlayer(id) {
   players.numPlayers += 1;
   players[id] = {
     playerID: players.numPlayers,
-    x: 10*GRID_SIZE,
-    y: 10*GRID_SIZE,
+    x: 10 * GRID_SIZE,
+    y: 10 * GRID_SIZE,
     health: 4.33,
     level: 1,
     damage: 5,
@@ -206,10 +206,10 @@ function hasCollision(x, y){
   var gridY = Math.floor(y / GRID_SIZE);
   if(mapData == undefined || mapData[gridX] == undefined
     || mapData[gridX][gridY] == undefined){
-    console.log("collision " + gridX + ", " + gridY)
-    return true;
+    // console.log("collision " + gridX + ", " + gridY)
+    return false;
   }else if(mapData[gridX][gridY].collision == true){
-    console.log("collision " + gridX + ", " + gridY)
+    // console.log("collision " + gridX + ", " + gridY)
     return true;
   }
   return false;
@@ -260,21 +260,21 @@ function spawnRandomObject() {
   // create A and if the random# is .50-1.00 we create B
 
   // add the new object to the objects[] array
-  var x = Math.random() * 250,
-  var y = Math.random() * 250,
-  if(!hasCollision(x, y)){
+  var initX = Math.random() * 50 * GRID_SIZE;
+  var initY = Math.random() * 50 * GRID_SIZE;
+  if(!hasCollision(initX, initY)){
     enemies[enemyID] = {
       // type: t,
       // set x randomly but at least 15px off the canvas edges
-      x: Math.random() * 250,
+      x: initX,
       // set y to start on the line where objects are spawned
-      y: Math.random() * 250,
+      y: initY,
       vx: 5,
       vy: 5,
       speed: .5,
       health: 4
     }
-
+    console.log(enemies[enemyID])
     enemies.numEnemies++;
     enemyID++;
   }
@@ -306,20 +306,35 @@ function generateEnemies() {
 function moveProjectiles() {
   for (var id in projectiles) {
     if (projectiles[id]) {
+      var delBullet = false;
       var originX = projectiles[id].x;
       var originY = projectiles[id].y;
       projectiles[id].x += projectiles[id].vx;
       projectiles[id].y += projectiles[id].vy;
       if(hasCollision(projectiles[id].x, projectiles[id].y)){
-        deleteBullet(id);
+        projectiles[id].x = originX;
+        projectiles[id].y = originY;
+        delBullet = true;
+        // deleteBullet(id);
       }
       //Delete stale projectiles
       if ( (projectiles[id].x > 1100) || (projectiles[id].y > 1100) ||
           (projectiles[id].x < -1100) || (projectiles[id].y < -1100)) {
-          deleteBullet(id);
+          delBullet = true;
+      }
+      if(delBullet == true){
+        deleteBullet(id);
       }
     }
   }
+}
+
+function deleteBullet(id) {
+  var temp = projectiles[bulletCount -= 1];
+  projectiles[bulletCount] = projectiles[id];
+  projectiles[id] = temp;
+  projectiles[bulletCount] = 0;
+  projectiles.numProjectiles -= 1;
 }
 
 //Move enemies towards the nearest player
@@ -415,13 +430,6 @@ function handleBulletCollisions() {
   }
 }
 
-function deleteBullet(id) {
-  var temp = projectiles[bulletCount -= 1];
-  projectiles[bulletCount] = projectiles[id];
-  projectiles[id] = temp;
-  projectiles[bulletCount] = 0;
-  projectiles.numProjectiles -= 1;
-}
 //=============================================================================
 // Fazal Workspace
 // --------------------------------------------------- partial implementation ends for enemy move to player
