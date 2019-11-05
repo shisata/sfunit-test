@@ -264,9 +264,9 @@ function spawnRandomObject() {
     enemies[enemyID] = {
       // type: t,
       // set x randomly but at least 15px off the canvas edges
-      x: Math.random() * 250,
+      x: Math.random() * 350,
       // set y to start on the line where objects are spawned
-      y: Math.random() * 250,
+      y: Math.random() * 300,
       vx: 5,
       vy: 5,
       speed: .5,
