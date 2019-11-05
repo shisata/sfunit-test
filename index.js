@@ -35,7 +35,7 @@ var app = express();
 var server = http.Server(app);
 app.set('port', 5000);
 const PORT = process.env.PORT || 5000
-// var io = socketIO(server);app.set('port', 5000);
+var io = socketIO(server);
 //database
 const { Pool } = require('pg')
 var pool
