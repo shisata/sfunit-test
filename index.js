@@ -320,7 +320,7 @@ function moveEnemies() {
    //Enemy movement handler
    for (var id in enemies) {
     //Find closest players
-    if (players.numPlayers > 0 && enemies.numEnemies > 0) {
+    if ( (players.numPlayers > 0) && (enemies.numEnemies > 0) ) {
       var closestPlayer;
       var closestPlayerDistance = Infinity;
       for (var player in players) {
