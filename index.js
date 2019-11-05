@@ -43,10 +43,10 @@ pool = new Pool({
   connectionString: process.env.DATABASE_URL
 });
 
-app.use('/static', express.static(__dirname + '/static'));// Routing
-app.get('/', function(request, response) {
-response.sendFile(path.join(__dirname, 'index.html'));
-});// Starts the server.
+app.use('/static', express.static(__dirname + '/static'));// Ring
+// app.get('/', function(request, response) {
+// response.sendFile(path.join(__dirname, 'index.html'));
+// });// Starts the server.
 server.listen(PORT, function() {
   console.log('Starting server on port 5000');
 });
@@ -609,11 +609,11 @@ app.use(express.urlencoded({extended:false}));
 app.use(express.json());
 
 //home page
-// app.get('/', function(request, response)
-// {
-//    var message ={'message':''};
-//    response.render('pages/login',message);
-// });
+app.get('/', function(request, response)
+{
+   var message ={'message':''};
+   response.render('pages/login',message);
+});
 
  //Login function
  app.post('/checkAccount', (request, response)=>{
