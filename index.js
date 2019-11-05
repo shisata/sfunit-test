@@ -260,20 +260,21 @@ function spawnRandomObject() {
   // create A and if the random# is .50-1.00 we create B
 
   // add the new object to the objects[] array
-  enemies[enemyID] = {
-    // type: t,
-    // set x randomly but at least 15px off the canvas edges
-    x: Math.random() * 250,
-    // set y to start on the line where objects are spawned
-    y: Math.random() * 250,
-    vx: 5,
-    vy: 5,
-    speed: .5,
-    health: 4
+  if (enemies.numEnemies < 5) {
+    enemies[enemyID] = {
+      // type: t,
+      // set x randomly but at least 15px off the canvas edges
+      x: Math.random() * 250,
+      // set y to start on the line where objects are spawned
+      y: Math.random() * 250,
+      vx: 5,
+      vy: 5,
+      speed: .5,
+      health: 4
+    }
+    enemies.numEnemies++;
+    enemyID++;
   }
-
-  enemies.numEnemies++;
-  enemyID++;
 }
 
 // when was the last object spawned
