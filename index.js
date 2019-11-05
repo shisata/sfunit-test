@@ -260,23 +260,25 @@ function spawnRandomObject() {
   // create A and if the random# is .50-1.00 we create B
 
   // add the new object to the objects[] array
-  var initX = Math.random() * 50 * GRID_SIZE;
-  var initY = Math.random() * 50 * GRID_SIZE;
-  if(!hasCollision(initX, initY)){
-    enemies[enemyID] = {
-      // type: t,
-      // set x randomly but at least 15px off the canvas edges
-      x: initX,
-      // set y to start on the line where objects are spawned
-      y: initY,
-      vx: 5,
-      vy: 5,
-      speed: .5,
-      health: 4
+  if(players.numPlayers != 0){
+    var initX = Math.random() * 50 * GRID_SIZE;
+    var initY = Math.random() * 50 * GRID_SIZE;
+    if(!hasCollision(initX, initY)){
+      enemies[enemyID] = {
+        // type: t,
+        // set x randomly but at least 15px off the canvas edges
+        x: initX,
+        // set y to start on the line where objects are spawned
+        y: initY,
+        vx: 5,
+        vy: 5,
+        speed: .5,
+        health: 4
+      }
+      console.log(enemies[enemyID]);
+      enemies.numEnemies++;
+      enemyID++;
     }
-    console.log(enemies[enemyID])
-    enemies.numEnemies++;
-    enemyID++;
   }
 }
 
