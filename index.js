@@ -364,10 +364,10 @@ function handleBulletCollisions() {
       if ( (Math.abs(players[player].x - projectiles[id].x) < 2) &&
            (Math.abs(players[player].y - projectiles[id].y) < 2) ) {
         players[player].health -= 1;
-        if (players[player].health < 0) {
-          players[player] = 0;
-          players.numPlayers -= 1;
-        }
+        // if (players[player].health < 0) {
+        //   players[player] = 0;
+        //   players.numPlayers -= 1;
+        // }
       }
     }
   }
