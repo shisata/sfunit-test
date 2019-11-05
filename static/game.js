@@ -104,7 +104,6 @@ function makeSound(sound){
   }
 }
 socket.on('sound', function(sound){
-  makeSound(sound);
 });
 
 socket.on('grid-size', function(gridSize){
@@ -115,6 +114,7 @@ socket.emit('new player');
 setInterval(function() {
   socket.emit('movement', movement);
   socket.emit('shoot', shoot);
+  makeSound("bang");
 }, 1000 / 60);
 
   var canvas = document.getElementById('canvas');

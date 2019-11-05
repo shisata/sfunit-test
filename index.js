@@ -149,11 +149,14 @@ io.on('connection', function(socket) {
 });
 
 setInterval(function() {
-  moveProjectiles();
-  moveEnemies();
-  handleBulletCollisions();
-  generateEnemies();
-  io.sockets.emit('state', players, projectiles, enemies);
+  if(players.numPlayers > 0){
+    console.log("interval player")
+    moveProjectiles();
+    moveEnemies();
+    handleBulletCollisions();
+    generateEnemies();
+    io.sockets.emit('state', players, projectiles, enemies);
+  }
 }, 1000 / 120);
 
 
