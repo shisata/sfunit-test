@@ -33,7 +33,9 @@ var socketIO = require('socket.io');
 const fs = require('fs');
 var app = express();
 var server = http.Server(app);
-var io = socketIO(server);app.set('port', 5000);
+app.set('port', 5000);
+const PORT = process.env.PORT || 5000
+var io = socketIO(server);
 //database
 const { Pool } = require('pg')
 var pool
@@ -41,11 +43,11 @@ pool = new Pool({
   connectionString: process.env.DATABASE_URL
 });
 
-app.use('/static', express.static(__dirname + '/static'));// Routing
-app.get('/', function(request, response) {
-response.sendFile(path.join(__dirname, 'index.html'));
-});// Starts the server.
-server.listen(5000, function() {
+app.use('/static', express.static(__dirname + '/static'));// Ring
+// app.get('/', function(request, response) {
+// response.sendFile(path.join(__dirname, 'index.html'));
+// });// Starts the server.
+server.listen(PORT, function() {
   console.log('Starting server on port 5000');
 });
 
@@ -177,7 +179,7 @@ function movePlayer(player, data) {
   //Modified the values here to reflect player speed - GG 2019.10.26 17:30
   var originX = player.x;
   var originY = player.y;
-  console.log(player.x + ", " + player.y)////*****
+  //console.log(player.x + ", " + player.y)////*****
   if (data.left) {
     player.x -= player.speed;
   }
@@ -202,7 +204,8 @@ function movePlayer(player, data) {
 function hasCollision(x, y){
   var gridX = Math.floor(x / GRID_SIZE);
   var gridY = Math.floor(y / GRID_SIZE);
-  if(!mapData){
+  if(mapData == undefined || mapData[gridX] == undefined
+    || mapData[gridX][gridY] == undefined){
     return false;
   }else if(mapData[gridX][gridY].collision == true){
     console.log("collision " + gridX + ", " + gridY)
@@ -274,11 +277,15 @@ function spawnRandomObject() {
 
 // when was the last object spawned
 var lastSpawn = -1;
+var spawnRate = 2000;
 
 //Generate enemies
 function generateEnemies() {
-  // spawn a new object every 1500ms
-  var spawnRate = 2000;
+
+  // spawn a new object
+  if (spawnRate > 1000) {
+    spawnRate = spawnRate -= 1;
+  }
 
   // get the elapsed time
   var time = Date.now();
@@ -333,12 +340,13 @@ function moveEnemies() {
       if ( Math.abs(distX) < 12 && Math.abs(distY) < 12 ) {
         // console.log("distX ", distX, "distY, ", distY);
         //Deplete health
-        players[closestPlayer].health -= .2;
+        players[closestPlayer].health -= .05;
         //Kill player
         // if (players[closestPlayer].health < 0) {
         //   players[closestPlayer] = 0;
         //   players.numPlayers -= 1;
         // }
+
         //Dont move any closer
         sign = 0;
       }
@@ -359,10 +367,10 @@ function handleBulletCollisions() {
       if ( (Math.abs(players[player].x - projectiles[id].x) < 2) &&
            (Math.abs(players[player].y - projectiles[id].y) < 2) ) {
         players[player].health -= 1;
-        if (players[player].health < 0) {
-          players[player] = 0;
-          players.numPlayers -= 1;
-        }
+        // if (players[player].health < 0) {
+        //   players[player] = 0;
+        //   players.numPlayers -= 1;
+        // }
       }
     }
   }
@@ -603,22 +611,50 @@ app.use(express.urlencoded({extended:false}));
 app.use(express.json());
 
 //home page
-// app.get('/', function(request, response)
-// {
-//    var message ={'message':''};
-//    response.render('pages/login',message);
-// });
+app.get('/', function(request, response)
+{
+   var message ={'message':''};
+   response.render('pages/login',message);
+});
 
  //Login function
  app.post('/checkAccount', (request, response)=>{
-   var uname = request.body.username;
-   var pw = request.body.password;
+  var uname = request.body.username;
+  var pw = request.body.password;
+
+  //Admin user
+  if (uname == "ADMIN301254694") {
+    pool.query('SELECT password FROM account WHERE username=$1',[uname], (error,results)=>{
+      if (error) {
+        throw(error);
+      }
+      //Check for password match
+      var result = (results.rows == '') ? '':results.rows[0].password;
+      if (result == String(pw)) {
+        //Password matched, extract all table information
+        pool.query("SELECT * FROM account;", (error,results) => {
+          if (error) {
+            throw(error);
+          }
+          var results = {'rows': results.rows };
+          response.render('pages/admin', results);
+        });
+      }
+      //Password does not match
+      else {
+        var message ={'message':'Account is not existing'};
+        response.render('pages/login', message);
+      }
+    });
+  }
+  else {
    pool.query(
      'SELECT password FROM account WHERE username=$1',[uname], (error,results)=>{
        if (error)
        {
          throw(error);
        }
+
        var result = (results.rows == '') ? '':results.rows[0].password;
        if (result == String(pw))
        {
@@ -629,7 +665,8 @@ app.use(express.json());
          response.render('pages/login',message);
        }
      });
-}); // check account info
+  }
+});
 
 //sign-up page
 app.get('/register', function(request,response)
