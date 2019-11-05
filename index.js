@@ -206,7 +206,8 @@ function hasCollision(x, y){
   var gridY = Math.floor(y / GRID_SIZE);
   if(mapData == undefined || mapData[gridX] == undefined
     || mapData[gridX][gridY] == undefined){
-    return false;
+    console.log("collision " + gridX + ", " + gridY)
+    return true;
   }else if(mapData[gridX][gridY].collision == true){
     console.log("collision " + gridX + ", " + gridY)
     return true;
