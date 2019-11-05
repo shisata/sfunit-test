@@ -176,7 +176,7 @@ function movePlayer(player, data) {
   //Modified the values here to reflect player speed - GG 2019.10.26 17:30
   var originX = player.x;
   var originY = player.y;
-  console.log(player.x + ", " + player.y)////*****
+  //console.log(player.x + ", " + player.y)////*****
   if (data.left) {
     player.x -= player.speed;
   }
@@ -201,7 +201,8 @@ function movePlayer(player, data) {
 function hasCollision(x, y){
   var gridX = Math.floor(x / GRID_SIZE);
   var gridY = Math.floor(y / GRID_SIZE);
-  if(!mapData){
+  if(mapData == undefined || mapData[gridX] == undefined
+    || mapData[gridX][gridY] == undefined){
     return false;
   }else if(mapData[gridX][gridY].collision == true){
     console.log("collision " + gridX + ", " + gridY)
@@ -338,10 +339,10 @@ function moveEnemies() {
         //Deplete health
         players[closestPlayer].health -= .05;
         //Kill player
-        if (players[closestPlayer].health < 0) {
-          players[closestPlayer] = 0;
-          players.numPlayers -= 1;
-        }
+        // if (players[closestPlayer].health < 0) {
+        //   players[closestPlayer] = 0;
+        //   players.numPlayers -= 1;
+        // }
 
         //Dont move any closer
         sign = 0;
