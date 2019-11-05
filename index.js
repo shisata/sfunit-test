@@ -354,8 +354,14 @@ function moveEnemies() {
 
       enemies[id].vx =  enemies[id].speed * Math.sin(attackTheta) * sign;
       enemies[id].vy =  enemies[id].speed * Math.cos(attackTheta) * sign;
+      var originX = enemies[id].x;
+      var originY = enemies[id].y;
       enemies[id].x += enemies[id].vx;
       enemies[id].y += enemies[id].vy;
+      if(hasCollision(enemies[id].x, enemies[id].y)){
+        enemies[id].x = originX;
+        enemies[id].y = originY;
+      }
     }
   }
 }
