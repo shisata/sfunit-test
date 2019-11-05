@@ -27,6 +27,11 @@ var shoot = {
     middleY: 0
 }
 
+var hit = new Audio("HITMARKER.mp3");
+var bang = new Audio("batman punch.wav")
+hit.type = 'audio/mp3'
+bang.type = 'audio/wav';
+
 var xPos = 0;
 var yPos = 0;
 var GRID_SIZE; ///temporary variable
@@ -42,6 +47,7 @@ socket.on("deliverMapImageSrcToClient", function(imageSrc){
   }
   //console.log('image source set to:', mapImage.src);
 });
+
 
 document.addEventListener('keydown', function(event) {
   switch (event.keyCode) {
@@ -85,6 +91,22 @@ document.addEventListener('keyup', function(event) {
       break;
   }
 });
+
+function makeSound(sound){
+  switch (sound){
+    case "hit":
+      hit.play();
+      break;
+    case "bang":
+      bang.play();
+      break;
+    break;
+  }
+}
+socket.on('sound', function(sound){
+  makeSound(sound);
+});
+
 socket.on('grid-size', function(gridSize){
   GRID_SIZE = gridSize;
 })

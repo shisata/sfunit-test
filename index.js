@@ -132,16 +132,19 @@ io.on('connection', function(socket) {
   //Code block to respond to shooting
   socket.on('shoot', function(data) {
     if (data.shootBullet) {
+      // console.log("emit sound");
+      // var sound = "bang";
+      // socket.emit('sound', sound);
       generateProjectile(socket.id, data);
     }
   });
 
   //Removes disconnected player
-  socket.on('disconnect', function() {
-    console.log('socket event disconnect called');
-    players[socket.id] = 0;
-    players.numPlayers -= 1;
-  });
+  // socket.on('disconnect', function() {
+  //   console.log('socket event disconnect called');
+  //   players[socket.id] = 0;
+  //   players.numPlayers -= 1;
+  // });
 //Collects client data at 60 events/second
 });
 
@@ -376,19 +379,18 @@ function handleBulletCollisions() {
     for (var id in projectiles) {
       if ( (Math.abs(enemies[enemy].x - projectiles[id].x) < 5) &&
            (Math.abs(enemies[enemy].y - projectiles[id].y) < 5) ) {
-        enemies[enemy].health -= 1;
-        if (enemies[enemy].health < 0) {
-          var temp = enemies[enemyID -= 1];
-          enemies[enemyID] = enemies[enemy];
-          enemies[enemy] = temp;
-          enemies[enemyID] = 0;
-          enemies.numEnemies -= 1;
-        }
+             enemies[enemy].health -= 1;
+             if (enemies[enemy].health < 0) {
+               var temp = enemies[enemyID -= 1];
+               enemies[enemyID] = enemies[enemy];
+               enemies[enemy] = temp;
+               enemies[enemyID] = 0;
+               enemies.numEnemies -= 1;
+             }
       }
     }
   }
 }
-
 //=============================================================================
 // Fazal Workspace
 // --------------------------------------------------- partial implementation ends for enemy move to player
@@ -634,7 +636,7 @@ app.get('/', function(request, response)
           if (error) {
             throw(error);
           }
-          var results = {'rows': results.rows }; 
+          var results = {'rows': results.rows };
           response.render('pages/admin', results);
         });
       }
