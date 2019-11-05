@@ -9,6 +9,6 @@ Quoc tuong Tran - 301297287
 Iteration 1 instructions:
 
     To access administration account:
-        username: Admin301254694
+        username: ADMIN301254694
         password: 301254694
         
