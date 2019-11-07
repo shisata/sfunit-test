@@ -120,8 +120,8 @@ setInterval(function() {
   var canvas = document.getElementById('canvas');
   var startX = 0;
   var startY = 0;
-  var canvasW = 1280;
-  var canvasH = 720;
+  var canvasW = 800;
+  var canvasH = 600;
   canvas.width = canvasW;
   canvas.height = canvasH;
   // canvas.cursor = "none"; //hide the original cursor
@@ -202,7 +202,12 @@ function processMapDrawing(mapData){
   //shows only wall now.
    // TODO: change this to variable, not constant literal!
   //const margin = 300;
-  context.clearRect(startX, startY, canvasW, canvasH);
+  var allMap = document.createElement("canvas");
+  allMap.width = 500*GRID_SIZE;
+  allMap.height = 500*GRID_SIZE;
+  var allMapCtx = allMap.getContext('2d');
+
+  //context.clearRect(startX, startY, canvasW, canvasH);
   /*
   aqImage = new Image();
   aqImage.src = '../image/aq.jpeg';
@@ -219,10 +224,10 @@ function processMapDrawing(mapData){
         // var source = mapData[x][y].textureSrc;
         // console.log(source)
         // var pattern = ctx.createPattern(source, "repeat");
-        context.beginPath();
-        context.rect(x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
-        context.fillStyle =" #B3B3B3";
-        context.fill();
+        allMapCtx.beginPath();
+        allMapCtx.rect(x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+        allMapCtx.fillStyle =" #B3B3B3";
+        allMapCtx.fill();
       }
 
       ////******
@@ -234,12 +239,13 @@ function processMapDrawing(mapData){
         line += "!";
       }
     }
-    console.log(line);//////*****
+    //console.log(line);//////*****
   }
-  console.log(mapData);/////*****
-  mapImage.src = canvas.toDataURL();
+  //console.log(mapData);/////*****
+  mapImage.src = allMap.toDataURL();
   console.log('socket event create map called: URL set to', mapImage.src);/////*****
   socket.emit("deliverMapImageSrcToServer", mapImage.src);
+  delete allMap;
 }
 
   // Fazal' Workstation -------------------------------------------------------------------------

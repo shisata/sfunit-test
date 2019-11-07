@@ -166,7 +166,7 @@ function createPlayer(id) {
   players[id] = {
     playerID: players.numPlayers,
     x: 10 * GRID_SIZE,
-    y: 10 * GRID_SIZE,
+    y: 8 * GRID_SIZE,
     health: 4.33,
     level: 1,
     damage: 5,
@@ -303,6 +303,7 @@ function generateEnemies() {
   if (time > (lastSpawn + spawnRate)) {
     lastSpawn = time;
     spawnRandomObject();
+    console.log('emeny spawned. spawnRate: ', spawnRate);
   }
 }
 
