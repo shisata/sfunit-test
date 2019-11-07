@@ -96,7 +96,7 @@ io.on('connection', function(socket) {
     //'disconnect' seems to have some problems. I'm fixing it to:
     //create map WHENever
     if (players.numPlayers <= 1) {
-      var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
+      var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap2.json', 'utf8'));
       var processor = require('./static/objects/mapProcessor.js');
       mapData = processor.constructFromData(mapDataFromFile);
       //console.log(mapData);///////*******
