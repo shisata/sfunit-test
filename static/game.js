@@ -29,7 +29,7 @@ var shoot = {
 
 var hit = new Audio("HITMARKER.mp3");
 var bang = new Audio("batman punch.wav")
-hit.type = 'audio/mp3'
+hit.type = 'audio/mp3';
 bang.type = 'audio/wav';
 
 var xPos = 0;
@@ -115,6 +115,7 @@ socket.emit('new player');
 setInterval(function() {
   socket.emit('movement', movement);
   socket.emit('shoot', shoot);
+  makeSound("bang");
 }, 1000 / 60);
 
   var canvas = document.getElementById('canvas');
