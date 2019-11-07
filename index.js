@@ -44,9 +44,9 @@ pool = new Pool({
 });
 
 app.use('/static', express.static(__dirname + '/static'));// Ring
-app.get('/', function(request, response) {
-response.sendFile(path.join(__dirname, 'index.html'));
-});// Starts the server.
+// app.get('/', function(request, response) {
+// response.sendFile(path.join(__dirname, 'index.html'));
+// });// Starts the server.
 server.listen(PORT, function() {
   console.log('Starting server on port 5000');
 });
@@ -263,27 +263,20 @@ function spawnRandomObject() {
   // create A and if the random# is .50-1.00 we create B
 
   // add the new object to the objects[] array
-  if(players.numPlayers != 0){
-    var randomX = Math.random() % 3;
-    var randomY = Math.random() % 3;
-    var initX = 20 * GRID_SIZE + randomX;
-    var initY = 20 * GRID_SIZE + randomY;
-    if(!hasCollision(initX, initY)){
-      enemies[enemyID] = {
-        // type: t,
-        // set x randomly but at least 15px off the canvas edges
-        x: initX,
-        // set y to start on the line where objects are spawned
-        y: initY,
-        vx: 5,
-        vy: 5,
-        speed: .5,
-        health: 4
-      }
-      console.log(enemies[enemyID]);
-      enemies.numEnemies++;
-      enemyID++;
+  if (enemies.numEnemies < 10) {
+    enemies[enemyID] = {
+      // type: t,
+      // set x randomly but at least 15px off the canvas edges
+      x: Math.random() * 350,
+      // set y to start on the line where objects are spawned
+      y: Math.random() * 300,
+      vx: 5,
+      vy: 5,
+      speed: .5,
+      health: 4
     }
+    enemies.numEnemies++;
+    enemyID++;
   }
 }
 
@@ -349,9 +342,8 @@ function moveEnemies() {
    //Enemy movement handler
    for (var id in enemies) {
     //Find closest players
-
-    if (players.numPlayers > 0 && enemies.numEnemies > 0) {
-      console.log("detect players and has enemies z")
+    if ( players.numPlayers > 0 ) {
+    // if ( (players.numPlayers > 0) && (enemies.numEnemies > 0) ) {
       var closestPlayer;
       var closestPlayerDistance = Infinity;
       for (var player in players) {
