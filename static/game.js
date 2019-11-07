@@ -186,6 +186,10 @@ window.addEventListener('mousemove', function (e) {
       context.fill();
     }
 
+    context.fillStyle = "white";
+    context.font = "15px Arial";
+    context.fillText("x: " + players[myId].x + ", y: " + players[myId].y, canvasW-100, canvasH-10);
+
 
   });
 
