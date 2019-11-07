@@ -150,9 +150,13 @@ window.addEventListener('mousemove', function (e) {
     shoot.middleX = middleX;
     shoot.middleY = middleY;
 
+    //'zoom' functionality. It's not done yet! Please just leave it =1..
+    //It only works on map-drawing, NOT collision.
+    var zoom = 1;
+
     //drawing the map from mapURL
     context.drawImage(mapImage, middleX, middleY,
-      canvasW, canvasH, 0, 0, canvasW, canvasH);
+      canvasW, canvasH, 0, 0, canvasW*zoom, canvasH*zoom);
 
     context.fillStyle = 'green';
     for (var id in players) {
