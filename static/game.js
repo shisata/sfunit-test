@@ -29,7 +29,7 @@ var shoot = {
 
 var hit = new Audio("HITMARKER.mp3");
 var bang = new Audio("batman punch.wav")
-hit.type = 'audio/mp3'
+hit.type = 'audio/mp3';
 bang.type = 'audio/wav';
 
 var xPos = 0;
@@ -104,6 +104,7 @@ function makeSound(sound){
   }
 }
 socket.on('sound', function(sound){
+  makeSound(sound);
 });
 
 socket.on('grid-size', function(gridSize){
