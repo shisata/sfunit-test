@@ -22,9 +22,6 @@
  *
  * ==========================================================================*/
 
-
- //app designing
-
 // Dependencies
 var express = require('express');
 var http = require('http');
@@ -654,8 +651,8 @@ app.get('/', function(request, response)
    response.render('pages/login',message);
 });
 
- //Login function
- app.post('/checkAccount', (request, response)=>{
+//Login function
+app.post('/checkAccount', (request, response)=>{
   var uname = request.body.username;
   var pw = request.body.password;
 
