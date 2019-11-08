@@ -191,7 +191,7 @@ window.addEventListener('mousemove', function (e) {
     context.fillStyle = "white";
     context.font = "15px Arial";
     context.fillText("x: " + (players[myId].x/GRID_SIZE) + ", y: " + (players[myId].y/GRID_SIZE), canvasW-120, canvasH-10);
-    context.fillText("Mouse: x: " + (xPos) + ", y: " + (yPos), canvasW-180, canvasH-30);
+    context.fillText("Mouse: x: " + (xPos+middleX)/GRID_SIZE + ", y: " + (yPos+middleY)/GRID_SIZE, canvasW-180, canvasH-30);
   });
 
 
