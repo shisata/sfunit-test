@@ -305,7 +305,7 @@ function generateEnemies() {
   if (time > (lastSpawn + spawnRate)) {
     lastSpawn = time;
     spawnRandomObject();
-    console.log('emeny spawned. spawnRate: ', spawnRate);
+    //console.log('emeny spawned. spawnRate: ', spawnRate);
   }
 }
 
@@ -349,7 +349,7 @@ function moveEnemies() {
    //Enemy movement handler
    for (var id in enemies) {
     //Find closest players
-    if ( players.length > 0 ) {
+    if ( players.numPlayers > 0 ) {
     // if ( (players.numPlayers > 0) && (enemies.numEnemies > 0) ) {
       var closestPlayer;
       var closestPlayerDistance = Infinity;
@@ -363,6 +363,9 @@ function moveEnemies() {
         }
       }
       if (players[closestPlayer] == undefined) {
+        console.log("players[closestPlayer] is undefined. Ignoring",
+          "moveEnemies() logic instead of letting program crash.",
+          "Please check the logic.");
         return;
       }
       //Move to closest player
