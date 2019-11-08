@@ -322,8 +322,8 @@ function moveProjectiles() {
         // deleteBullet(id);
       }
       //Delete stale projectiles
-      if ( (projectiles[id].x > 1100) || (projectiles[id].y > 1100) ||
-          (projectiles[id].x < -1100) || (projectiles[id].y < -1100)) {
+      if ( (projectiles[id].x > 5000) || (projectiles[id].y > 5000) ||
+          (projectiles[id].x < -5000) || (projectiles[id].y < -5000)) {
           delBullet = true;
       }
       if(delBullet == true){
