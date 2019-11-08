@@ -44,9 +44,9 @@ pool = new Pool({
 });
 
 app.use('/static', express.static(__dirname + '/static'));// Ring
-// app.get('/', function(request, response) {
-// response.sendFile(path.join(__dirname, 'index.html'));
-// });// Starts the server.
+app.get('/', function(request, response) {
+response.sendFile(path.join(__dirname, 'index.html'));
+});// Starts the server.
 server.listen(PORT, function() {
   console.log('Starting server on port 5000');
 });
@@ -142,7 +142,13 @@ io.on('connection', function(socket) {
   //Removes disconnected player
   socket.on('disconnect', function() {
     console.log('socket event disconnect called');
-    players[socket.id] = 0;
+    if (players[socket.id] == undefined) {
+      //if the socket id is not valid, ignore the disconnect signal
+      console.log('invalid disconnect call: ignoring...')
+      return;
+    }
+    //players[socket.id] = 0;
+    delete players[socket.id];
     players.numPlayers -= 1;
   });
 //Collects client data at 60 events/second
@@ -150,7 +156,7 @@ io.on('connection', function(socket) {
 
 setInterval(function() {
   if(players.numPlayers > 0){
-    console.log("interval player")
+  //  console.log("interval player")
     moveProjectiles();
     moveEnemies();
     handleBulletCollisions();
@@ -343,7 +349,7 @@ function moveEnemies() {
    //Enemy movement handler
    for (var id in enemies) {
     //Find closest players
-    if ( players.numPlayers > 0 ) {
+    if ( players.length > 0 ) {
     // if ( (players.numPlayers > 0) && (enemies.numEnemies > 0) ) {
       var closestPlayer;
       var closestPlayerDistance = Infinity;
@@ -355,6 +361,9 @@ function moveEnemies() {
           closestPlayer = player;
           closestPlayerDistance = distance;
         }
+      }
+      if (players[closestPlayer] == undefined) {
+        return;
       }
       //Move to closest player
       distX = enemies[id].x - players[closestPlayer].x;
@@ -645,7 +654,7 @@ console.log(mapData.furnitures[4].name );
 
 //=============================================================================
 // Long Workpace
-
+/*
 //Parse URL-encoded bodies (sent by HTML form)
 app.use(express.urlencoded({extended:false}));
 //Parse JSON body( sent by API client)
@@ -772,7 +781,7 @@ app.post('/register', (request,response)=>{
        }
      };
    });
-});
+});*/
 //=============================================================================
 
 
