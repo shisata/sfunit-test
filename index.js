@@ -707,7 +707,7 @@ app.post('/checkAccount', (request, response)=>{
        var result = (results.rows == '') ? '':results.rows[0].password;
        if (result == String(pw))
        {
-         response.render('pages/matchmaking');
+         response.render('pages/index');
        }
        else {
          var message ={'message':'Account is not existing'};
