@@ -34,7 +34,7 @@ bang.type = 'audio/wav';
 
 var xPos = 0;
 var yPos = 0;
-var GRID_SIZE; ///temporary variable
+var GRID_SIZE = 10; ///temporary variable
 
 var mapImage = new Image();
 mapImage.src = "";
@@ -92,20 +92,20 @@ document.addEventListener('keyup', function(event) {
   }
 });
 
-function makeSound(sound){
-  switch (sound){
-    case "hit":
-      hit.play();
-      break;
-    case "bang":
-      bang.play();
-      break;
-    break;
-  }
-}
-socket.on('sound', function(sound){
-  makeSound(sound);
-});
+// function makeSound(sound){
+//   switch (sound){
+//     case "hit":
+//       hit.play();
+//       break;
+//     case "bang":
+//       bang.play();
+//       break;
+//     break;
+//   }
+// }
+// socket.on('sound', function(sound){
+//   makeSound(sound);
+// });
 
 socket.on('grid-size', function(gridSize){
   GRID_SIZE = gridSize;
@@ -115,7 +115,7 @@ socket.emit('new player');
 setInterval(function() {
   socket.emit('movement', movement);
   socket.emit('shoot', shoot);
-  makeSound("bang");
+  //makeSound("bang");
 }, 1000 / 60);
 
   var canvas = document.getElementById('canvas');
@@ -136,6 +136,7 @@ window.addEventListener('mousemove', function (e) {
 
   var context = canvas.getContext('2d');
   socket.on('state', function(players, projectiles, enemies) {
+    //console.log("socket event state called");
     if (myId == "") {
       socket.emit('requestPassId');
       return;
@@ -189,9 +190,7 @@ window.addEventListener('mousemove', function (e) {
 
     context.fillStyle = "white";
     context.font = "15px Arial";
-    context.fillText("x: " + players[myId].x + ", y: " + players[myId].y, canvasW-100, canvasH-10);
-
-
+    context.fillText("x: " + (players[myId].x/GRID_SIZE) + ", y: " + (players[myId].y/GRID_SIZE), canvasW-120, canvasH-10);
   });
 
 

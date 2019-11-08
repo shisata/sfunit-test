@@ -175,8 +175,8 @@ function createPlayer(id) {
   players[id] = {
     playerID: players.numPlayers,
     x: 160 * GRID_SIZE,
-    y: 9 * GRID_SIZE,
-    health: 4.33,
+    y: 59 * GRID_SIZE,
+    healsth: 4.33,
     level: 1,
     damage: 5,
     speed: 3

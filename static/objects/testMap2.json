@@ -5,109 +5,129 @@
     "wall": [
       {
         "x": 150,
-        "y": 0,
-        "width": 50,
-        "height": 2
+        "y": 40,
+        "width": 65,
+        "height": 2,
+        "memo":"AQ top wall"
       },
       {
         "x": 150,
-        "y": 49,
-        "width": 50,
-        "height": 2
+        "y": 104,
+        "width": 9,
+        "height": 2,
+        "memo":"AQ bottom wall 1"
+      },
+      {
+        "x": 170,
+        "y": 104,
+        "width": 45,
+        "height": 2,
+        "memo":"AQ bottom wall 2"
       },
       {
         "x": 150,
-        "y": 0,
+        "y": 40,
         "width": 4,
-        "height": 30
+        "height": 40,
+        "memo":"AQ left wall - up"
       },
       {
         "x": 150,
-        "y": 35,
+        "y": 85,
         "width": 4,
-        "height": 15
+        "height": 20,
+        "memo":"AQ left wall - bottom"
       },
       {
-        "x": 200,
-        "y": 0,
+        "x": 215,
+        "y": 40,
         "width": 4,
-        "height": 20
-      },
-      {
-        "x": 200,
-        "y": 30,
-        "width": 4,
-        "height": 20
-      },
-      {
-        "x": 200,
-        "y": 20,
-        "width": 10,
-        "height": 2
-      },
-      {
-        "x": 200,
-        "y": 30,
-        "width": 10,
-        "height": 2
-      },
-      {
-        "x": 209,
-        "y": 20,
-        "width": 2,
-        "height": 15
-      },
-      {
-        "x": 165,
-        "y": 15,
-        "width": 1,
-        "height": 15
-      },
-      {
-        "x": 180,
-        "y": 15,
-        "width": 1,
-        "height": 15
-      },
-      {
-        "x": 174,
-        "y": 24,
-        "width": 5,
-        "height": 5
+        "height": 66,
+        "memo":"AQ right wall"
       },
       {
         "x": 138,
-        "y": 28,
+        "y": 78,
         "width": 12,
         "height": 2,
         "memo": "Library side to AQ"
       },
       {
-        "x": 0,
-        "y": 35,
-        "width": 150,
-        "height": 2
+        "x": 40,
+        "y": 85,
+        "width": 110,
+        "height": 2,
+        "memo":"WMC~AQ hallway bottom"
       },
       {
-        "x": 90,
-        "y": 17,
-        "width": 48,
+        "x": 70,
+        "y": 67,
+        "width": 24,
         "height": 2,
-        "memo": "convo mall library side wall"
+        "memo": "convo mall library side wall - left"
+      },
+      {
+        "x": 100,
+        "y": 67,
+        "width": 38,
+        "height": 2,
+        "memo": "convo mall library side wall - right"
       },
       {
         "x": 137,
-        "y": 17,
+        "y": 67,
         "width": 2,
         "height": 13,
         "memo": "convocation mall right small wall"
       },
       {
-        "x": 90,
-        "y": 17,
-        "width": 48,
+        "x": 70,
+        "y": 42,
+        "width": 55,
         "height": 2,
         "memo": "library top wall"
+      },
+      {
+        "x": 123,
+        "y": 42,
+        "width": 4,
+        "height": 25,
+        "memo": "library right wall"
+      },
+      {
+        "x": 70,
+        "y": 42,
+        "width": 4,
+        "height": 25,
+        "memo": "library left wall"
+      },
+      {
+        "x": 157,
+        "y": 105,
+        "width": 2,
+        "height": 7,
+        "memo": "TASC, upper first, |"
+      },
+      {
+        "x": 148,
+        "y": 110,
+        "width": 11,
+        "height": 2,
+        "memo": "TASC, upper first, _"
+      },
+      {
+        "x": 157,
+        "y": 105,
+        "width": 2,
+        "height": 7,
+        "memo": "TASC, upper first, |"
+      },
+      {
+        "x": 148,
+        "y": 112,
+        "width": 2,
+        "height": 15,
+        "memo": "TASC, upper first, |"
       }
     ],
     "player": [
