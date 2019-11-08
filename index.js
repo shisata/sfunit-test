@@ -41,9 +41,9 @@ pool = new Pool({
 });
 
 app.use('/static', express.static(__dirname + '/static'));// Ring
-// app.get('/', function(request, response) {
-// response.sendFile(path.join(__dirname, 'index.html'));
-// });// Starts the server.
+app.get('/', function(request, response) {
+response.sendFile(path.join(__dirname, 'index.html'));
+});// Starts the server.
 server.listen(PORT, function() {
   console.log('Starting server on port 5000');
 });
@@ -93,7 +93,7 @@ io.on('connection', function(socket) {
     //'disconnect' seems to have some problems. I'm fixing it to:
     //create map WHENever
     if (players.numPlayers <= 1) {
-      var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
+      var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap2.json', 'utf8'));
       var processor = require('./static/objects/mapProcessor.js');
       mapData = processor.constructFromData(mapDataFromFile);
       //console.log(mapData);///////*******
@@ -139,18 +139,27 @@ io.on('connection', function(socket) {
   //Removes disconnected player
   socket.on('disconnect', function() {
     console.log('socket event disconnect called');
-    players[socket.id] = 0;
+    if (players[socket.id] == undefined) {
+      //if the socket id is not valid, ignore the disconnect signal
+      console.log('invalid disconnect call: ignoring...')
+      return;
+    }
+    //players[socket.id] = 0;
+    delete players[socket.id];
     players.numPlayers -= 1;
   });
 //Collects client data at 60 events/second
 });
 
 setInterval(function() {
-  moveProjectiles();
-  moveEnemies();
-  handleBulletCollisions();
-  generateEnemies();
-  io.sockets.emit('state', players, projectiles, enemies);
+  if(players.numPlayers > 0){
+  //  console.log("interval player")
+    moveProjectiles();
+    moveEnemies();
+    handleBulletCollisions();
+    generateEnemies();
+    io.sockets.emit('state', players, projectiles, enemies);
+  }
 }, 1000 / 120);
 
 
@@ -162,9 +171,9 @@ function createPlayer(id) {
   players.numPlayers += 1;
   players[id] = {
     playerID: players.numPlayers,
-    x: 10 * GRID_SIZE,
-    y: 10 * GRID_SIZE,
-    health: 4.33,
+    x: 160 * GRID_SIZE,
+    y: 59 * GRID_SIZE,
+    healsth: 4.33,
     level: 1,
     damage: 5,
     speed: 3
@@ -293,6 +302,7 @@ function generateEnemies() {
   if (time > (lastSpawn + spawnRate)) {
     lastSpawn = time;
     spawnRandomObject();
+    //console.log('emeny spawned. spawnRate: ', spawnRate);
   }
 }
 
@@ -348,6 +358,12 @@ function moveEnemies() {
           closestPlayer = player;
           closestPlayerDistance = distance;
         }
+      }
+      if (players[closestPlayer] == undefined) {
+        console.log("players[closestPlayer] is undefined. Ignoring",
+          "moveEnemies() logic instead of letting program crash.",
+          "Please check the logic.");
+        return;
       }
       //Move to closest player
       distX = enemies[id].x - players[closestPlayer].x;
@@ -638,7 +654,7 @@ console.log(mapData.furnitures[4].name );
 
 //=============================================================================
 // Long Workpace
-
+/*
 //Parse URL-encoded bodies (sent by HTML form)
 app.use(express.urlencoded({extended:false}));
 //Parse JSON body( sent by API client)
@@ -765,7 +781,7 @@ app.post('/register', (request,response)=>{
        }
      };
    });
-});
+});*/
 //=============================================================================
 
 

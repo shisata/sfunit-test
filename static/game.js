@@ -29,12 +29,12 @@ var shoot = {
 
 var hit = new Audio("HITMARKER.mp3");
 var bang = new Audio("batman punch.wav")
-hit.type = 'audio/mp3'
+hit.type = 'audio/mp3';
 bang.type = 'audio/wav';
 
 var xPos = 0;
 var yPos = 0;
-var GRID_SIZE; ///temporary variable
+var GRID_SIZE = 10; ///temporary variable
 
 var mapImage = new Image();
 mapImage.src = "";
@@ -92,20 +92,20 @@ document.addEventListener('keyup', function(event) {
   }
 });
 
-function makeSound(sound){
-  switch (sound){
-    case "hit":
-      hit.play();
-      break;
-    case "bang":
-      bang.play();
-      break;
-    break;
-  }
-}
-socket.on('sound', function(sound){
-  makeSound(sound);
-});
+// function makeSound(sound){
+//   switch (sound){
+//     case "hit":
+//       hit.play();
+//       break;
+//     case "bang":
+//       bang.play();
+//       break;
+//     break;
+//   }
+// }
+// socket.on('sound', function(sound){
+//   makeSound(sound);
+// });
 
 socket.on('grid-size', function(gridSize){
   GRID_SIZE = gridSize;
@@ -115,13 +115,14 @@ socket.emit('new player');
 setInterval(function() {
   socket.emit('movement', movement);
   socket.emit('shoot', shoot);
+  //makeSound("bang");
 }, 1000 / 60);
 
   var canvas = document.getElementById('canvas');
   var startX = 0;
   var startY = 0;
-  var canvasW = 1280;
-  var canvasH = 720;
+  var canvasW = 800;
+  var canvasH = 600;
   canvas.width = canvasW;
   canvas.height = canvasH;
   // canvas.cursor = "none"; //hide the original cursor
@@ -135,6 +136,7 @@ window.addEventListener('mousemove', function (e) {
 
   var context = canvas.getContext('2d');
   socket.on('state', function(players, projectiles, enemies) {
+    //console.log("socket event state called");
     if (myId == "") {
       socket.emit('requestPassId');
       return;
@@ -150,9 +152,13 @@ window.addEventListener('mousemove', function (e) {
     shoot.middleX = middleX;
     shoot.middleY = middleY;
 
+    //'zoom' functionality. It's not done yet! Please just leave it =1..
+    //It only works on map-drawing, NOT collision.
+    var zoom = 1;
+
     //drawing the map from mapURL
     context.drawImage(mapImage, middleX, middleY,
-      canvasW, canvasH, 0, 0, canvasW, canvasH);
+      canvasW, canvasH, 0, 0, canvasW*zoom, canvasH*zoom);
 
     context.fillStyle = 'green';
     for (var id in players) {
@@ -182,7 +188,9 @@ window.addEventListener('mousemove', function (e) {
       context.fill();
     }
 
-
+    context.fillStyle = "white";
+    context.font = "15px Arial";
+    context.fillText("x: " + (players[myId].x/GRID_SIZE) + ", y: " + (players[myId].y/GRID_SIZE), canvasW-120, canvasH-10);
   });
 
 
@@ -202,7 +210,12 @@ function processMapDrawing(mapData){
   //shows only wall now.
    // TODO: change this to variable, not constant literal!
   //const margin = 300;
-  context.clearRect(startX, startY, canvasW, canvasH);
+  var allMap = document.createElement("canvas");
+  allMap.width = 500*GRID_SIZE;
+  allMap.height = 500*GRID_SIZE;
+  var allMapCtx = allMap.getContext('2d');
+
+  //context.clearRect(startX, startY, canvasW, canvasH);
   /*
   aqImage = new Image();
   aqImage.src = '../image/aq.jpeg';
@@ -219,10 +232,10 @@ function processMapDrawing(mapData){
         // var source = mapData[x][y].textureSrc;
         // console.log(source)
         // var pattern = ctx.createPattern(source, "repeat");
-        context.beginPath();
-        context.rect(x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
-        context.fillStyle =" #B3B3B3";
-        context.fill();
+        allMapCtx.beginPath();
+        allMapCtx.rect(x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+        allMapCtx.fillStyle =" #B3B3B3";
+        allMapCtx.fill();
       }
 
       ////******
@@ -234,12 +247,13 @@ function processMapDrawing(mapData){
         line += "!";
       }
     }
-    console.log(line);//////*****
+    //console.log(line);//////*****
   }
-  console.log(mapData);/////*****
-  mapImage.src = canvas.toDataURL();
+  //console.log(mapData);/////*****
+  mapImage.src = allMap.toDataURL();
   console.log('socket event create map called: URL set to', mapImage.src);/////*****
   socket.emit("deliverMapImageSrcToServer", mapImage.src);
+  delete allMap;
 }
 
   // Fazal' Workstation -------------------------------------------------------------------------
