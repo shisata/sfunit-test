@@ -41,9 +41,9 @@ pool = new Pool({
 });
 
 app.use('/static', express.static(__dirname + '/static'));// Ring
-// app.get('/', function(request, response) {
-// response.sendFile(path.join(__dirname, 'index.html'));
-// });// Starts the server.
+app.get('/', function(request, response) {
+response.sendFile(path.join(__dirname, 'index.html'));
+});// Starts the server.
 server.listen(PORT, function() {
   console.log('Starting server on port 5000');
 });
@@ -176,9 +176,17 @@ function createPlayer(id) {
     healsth: 4.33,
     level: 1,
     damage: 5,
-    speed: 3
+    speed: 3,
+    score: 0
   };
 }
+
+// Displays each players score
+function playerScore(){
+
+}
+
+
 
 //Moves a player in response to keyboard input
 function movePlayer(player, data) {
@@ -440,6 +448,8 @@ function handleBulletCollisions() {
     }
   }
 }
+
+
 
 //=============================================================================
 // Fazal Workspace
