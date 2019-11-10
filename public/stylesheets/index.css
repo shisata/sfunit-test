@@ -13,3 +13,7 @@ body{
     background-color: white;
     background-image: url(../image/darkbackground.jpg);
 }
+
+.tracker{
+    color: aliceblue;
+}
