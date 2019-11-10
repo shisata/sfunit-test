@@ -186,6 +186,11 @@ function playerScore(){
 
 }
 
+// Displays each players health
+function playerHealth(){
+  
+}
+
 
 
 //Moves a player in response to keyboard input
