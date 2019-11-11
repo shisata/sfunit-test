@@ -11,6 +11,13 @@
         "memo":"AQ top wall"
       },
       {
+        "x": 165,
+        "y": 50,
+        "width": 42,
+        "height": 1,
+        "memo":"AQ inside top wall"
+      },
+      {
         "x": 150,
         "y": 104,
         "width": 9,
@@ -20,9 +27,16 @@
       {
         "x": 170,
         "y": 104,
-        "width": 45,
+        "width": 38,
         "height": 2,
         "memo":"AQ bottom wall 2"
+      },
+      {
+        "x": 165,
+        "y": 95,
+        "width": 42,
+        "height": 1,
+        "memo":"AQ inside bottom wall"
       },
       {
         "x": 150,
@@ -39,11 +53,25 @@
         "memo":"AQ left wall - bottom"
       },
       {
+        "x": 165,
+        "y": 50,
+        "width": 1,
+        "height": 45,
+        "memo":"AQ inside left wall"
+      },
+      {
         "x": 215,
         "y": 40,
         "width": 4,
         "height": 66,
         "memo":"AQ right wall"
+      },
+      {
+        "x": 206,
+        "y": 50,
+        "width": 1,
+        "height": 45,
+        "memo":"AQ inside right wall"
       },
       {
         "x": 138,
@@ -128,6 +156,62 @@
         "width": 2,
         "height": 15,
         "memo": "TASC, upper first, |"
+      },
+      {
+        "x": 143,
+        "y": 126,
+        "width": 7,
+        "height": 2,
+        "memo": "TASC, upper first, _"
+      },
+      {
+        "x": 143,
+        "y": 126,
+        "width": 2,
+        "height": 8,
+        "memo": "TASC, lower first, |"
+      },
+      {
+        "x": 170,
+        "y": 105,
+        "width": 2,
+        "height": 12,
+        "memo": "TASC, lower first, |"
+      },
+      {
+        "x": 216,
+        "y": 104,
+        "width": 75,
+        "height": 2,
+        "memo": "AQ to ASB hallway, top"
+      },
+      {
+        "x": 216,
+        "y": 115,
+        "width": 66,
+        "height": 2,
+        "memo": "AQ to ASB hallway, bottom"
+      },
+      {
+        "x": 291,
+        "y": 104,
+        "width": 2,
+        "height": 5,
+        "memo": "ASB top 1 |"
+      },
+      {
+        "x": 291,
+        "y": 109,
+        "width": 40,
+        "height": 2,
+        "memo": "ASB top 2 _"
+      },
+      {
+        "x": 280,
+        "y": 117,
+        "width": 2,
+        "height": 50,
+        "memo": "ASB left 1 |"
       }
     ],
     "player": [
