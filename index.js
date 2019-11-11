@@ -111,12 +111,12 @@ io.on('connection', function(socket) {
     socket.emit("passId", socket.id);
   });
   socket.on("deliverMapImageSrcToServer", function(imageSrc){
-    //console.log('deliverMapImageSrcToServer called');
+    console.log('---deliverMapImageSrcToServer called');
     mapImageSrc = imageSrc;
   });
   socket.on("requestMapImageSrcFromServer", function(){
     // console.log('imageSrc returned for request:', mapImageSrc);
-    // console.log('requestMapImageSrcFromServer called');
+    console.log('---requestMapImageSrcFromServer called');
     socket.emit("deliverMapImageSrcToClient", mapImageSrc);
   });
 
@@ -171,8 +171,8 @@ function createPlayer(id) {
   players.numPlayers += 1;
   players[id] = {
     playerID: players.numPlayers,
-    x: 160 * GRID_SIZE,
-    y: 59 * GRID_SIZE,
+    x: 210 * GRID_SIZE,
+    y: 54 * GRID_SIZE,
     healsth: 4.33,
     level: 1,
     damage: 5,
