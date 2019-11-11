@@ -41,9 +41,9 @@ pool = new Pool({
 });
 
 app.use('/static', express.static(__dirname + '/static'));// Ring
-app.get('/', function(request, response) {
-response.sendFile(path.join(__dirname, 'index.html'));
-});// Starts the server.
+// app.get('/', function(request, response) {
+// response.sendFile(path.join(__dirname, 'index.html'));
+// });// Starts the server.
 server.listen(PORT, function() {
   console.log('Starting server on port 5000');
 });
@@ -459,11 +459,11 @@ function handleBulletCollisions() {
 //=============================================================================
 // Fazal Workspace
 // Settings page
-app.get('/', function(request, response)
-{
-   var message ={'message':''};
-   response.render('settings/options.html',message);
-});
+// app.get('/', function(request, response)
+// {
+//    var message ={'message':''};
+//    response.render('settings/options.html',message);
+// });
 
 // // Enemy moves towards player while avoiding an obstacle
 // // Calculate vector between player and target
@@ -727,7 +727,8 @@ app.post('/checkAccount', (request, response)=>{
        var result = (results.rows == '') ? '':results.rows[0].password;
        if (result == String(pw))
        {
-         response.render('pages/index');
+         var user = {'username':uname};
+         response.render('pages/index',user);
        }
        else {
          var message ={'message':'Account is not existing'};
@@ -735,6 +736,38 @@ app.post('/checkAccount', (request, response)=>{
        }
      });
   }
+});
+
+//Cheking gmail data with database
+app.post('/gglogin', (request, response)=>{
+  const uname = request.body.username;
+  const gmail=request.body.gmail;
+  const searchQuery = "SELECT * FROM account WHERE gmail=$1";
+  pool.query(searchQuery,[gmail], (error,results) =>{
+    if (error){
+      throw(error);
+    }
+    if (results.rows=='')
+    {
+      console.log('Creating new account with Google');
+      const createQuery = "INSERT INTO account (username,gmail) VALUES($1,$2)";
+      pool.query(createQuery,[uname,gmail], (error,results)=>{
+      if (error)
+        throw(error);
+      });
+    }
+    response.end();
+  });
+
+});
+//Login with gmail
+app.post('/ggAccount',(request,response)=>
+{
+  const uname = request.body.username;
+  const user = {
+    'username':uname
+  };
+  response.render('pages/index',user);
 });
 
 //sign-up page
