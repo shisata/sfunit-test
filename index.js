@@ -181,14 +181,14 @@ function createPlayer(id) {
   };
 }
 
-// Displays each players score
+// Calculates each players score
 function playerScore(){
 
 }
 
-// Displays each players health
+// Calculates each players health
 function playerHealth(){
-  
+
 }
 
 
