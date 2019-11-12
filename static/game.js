@@ -1,6 +1,6 @@
 //Getting username
 var username = document.getElementById('username');
-username = username.innerHTML;
+//username = username.innerHTML;
 console.log(`Hello ${username}!`);
 
 var socket = io();
