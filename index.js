@@ -776,7 +776,6 @@ app.post('/gglogin', (request, response)=>{
 //Login with gmail
 app.post('/ggAccount',(request,response)=>
 {
-  console.log('Logging in with google account');
   const uname = request.body.username;
   const user = {
     'username':uname
@@ -785,20 +784,16 @@ app.post('/ggAccount',(request,response)=>
   pool.query(query,[uname],(error, results)=>{
     if (error)
       throw (error);
-    console.log('Found account with gg data in our DB');
-    console.log(results);
-    console.log(results.rows[0]);
     if (results.rows[0].online)
     {
       console.log("Redundant login attempt for user $1", [uname]);
       var message ={'message':'Account is already logged in!'};
-  //    response.render('pages/login',message);
-      response.send(uname+ 'is online already');
+     response.render('pages/login',message);
+      // response.send(uname+ ' is online already');
     }
     else
       {
         //Upade online status
-        console.log('Update online status for'+uname);
         pool.query(
           'UPDATE account SET online = true WHERE username=$1',[uname], (error,results)=>{
             if (error)
@@ -806,8 +801,8 @@ app.post('/ggAccount',(request,response)=>
               throw(error);
             }
         });
-    //    response.render('pages/index',user);
-        response.send('Login successfully for'+uname);
+       response.render('pages/index',user);
+        // response.send('Login successfully for'+uname);
       }
   });
 
