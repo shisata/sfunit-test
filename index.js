@@ -793,7 +793,6 @@ app.post('/ggAccount',(request,response)=>
       console.log("Redundant login attempt for user $1", [uname]);
       var message ={'message':'Account is already logged in!'};
   //    response.render('pages/login',message);
-      response.end();
     }
     else
       {
@@ -807,7 +806,7 @@ app.post('/ggAccount',(request,response)=>
             }
         });
     //    response.render('pages/index',user);
-        response.end();
+        response.send('Login successfully for'+uname);
       }
   });
 
