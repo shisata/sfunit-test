@@ -793,6 +793,7 @@ app.post('/ggAccount',(request,response)=>
     else
       {
         //Upade online status
+        console.log('Update online status for'+uname);
         pool.query(
           'UPDATE account SET online = true WHERE username=$1',[uname], (error,results)=>{
             if (error)
@@ -800,9 +801,10 @@ app.post('/ggAccount',(request,response)=>
               throw(error);
             }
         });
+        response.render('pages/index',user);
       }
   });
-  response.render('pages/index',user);
+
 });
 
 //sign-up page
