@@ -801,7 +801,6 @@ app.post('/ggAccount',(request,response)=>
             }
         });
       }
-    }
   });
   response.render('pages/index',user);
 });
