@@ -32,10 +32,10 @@ var shoot = {
     middleY: 0
 }
 
-var hit = new Audio("HITMARKER.mp3");
-var bang = new Audio("batman punch.wav")
-hit.type = 'audio/mp3';
-bang.type = 'audio/wav';
+//var hit = new Audio("HITMARKER.mp3");
+//var bang = new Audio("batman punch.wav")
+//hit.type = 'audio/mp3';
+//bang.type = 'audio/wav';
 
 var xPos = 0;
 var yPos = 0;
