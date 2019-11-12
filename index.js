@@ -41,9 +41,9 @@ pool = new Pool({
 });
 
 app.use('/static', express.static(__dirname + '/static'));// Ring
-app.get('/', function(request, response) {
-response.sendFile(path.join(__dirname, 'index.html'));
-});// Starts the server.
+// app.get('/', function(request, response) {
+// response.sendFile(path.join(__dirname, 'index.html'));
+// });// Starts the server.
 server.listen(PORT, function() {
   console.log('Starting server on port 5000');
 });
@@ -80,13 +80,13 @@ const GRID_SIZE = 10; // each grid size for map
 //Creates a new player
 io.on('connection', function(socket) {
   socket.emit('grid-size', GRID_SIZE);
-  socket.on('new player', function() {
+  socket.on('new player', function(data) {
     console.log('socket event new player called');
     //This condition is commented out because the 'disconnect' event is
     //commented out too. 'disconnect' is having multiple-call problem and
     //causing error for map-loading.
     //if (players.numPlayers < 4) {
-    createPlayer(socket.id);
+    createPlayer(socket.id, data);
     socket.emit("passId", socket.id);
 
     //constructs the very initial map for the game.
@@ -144,6 +144,7 @@ io.on('connection', function(socket) {
       console.log('invalid disconnect call: ignoring...')
       return;
     }
+    logOutPlayer(players[socket.id].username);
     //players[socket.id] = 0;
     delete players[socket.id];
     players.numPlayers -= 1;
@@ -167,10 +168,11 @@ setInterval(function() {
 //Functions
 
 //Creates a new player
-function createPlayer(id) {
+function createPlayer(id, usname) {
   players.numPlayers += 1;
   players[id] = {
     playerID: players.numPlayers,
+    username: usname,
     x: 160 * GRID_SIZE,
     y: 59 * GRID_SIZE,
     healsth: 4.33,
@@ -454,16 +456,36 @@ function handleBulletCollisions() {
   }
 }
 
+//Sets a disconnecting players online status to false
+function logOutPlayer(uname) {
+  console.log(`Logging out ${uname}`);
+  pool.query(
+  'SELECT online FROM account WHERE username=$1',[uname], (error,results)=>{
+    if (error) {
+      throw(error);
+    }
 
+    var result = (results.rows == '') ? '':results.rows[0].online;
+      //Upade online status
+      pool.query(
+        'UPDATE account SET online = false WHERE username=$1',[uname], (error,results)=>{
+          if (error) {
+            throw(error);
+          }
+      }); 
+    console.log(`Succesfully logged out ${uname}`);
+  });
+  
+}
 
 //=============================================================================
 // Fazal Workspace
 // Settings page
-app.get('/', function(request, response)
-{
-   var message ={'message':''};
-   response.render('settings/options.html',message);
-});
+// app.get('/', function(request, response)
+// {
+//    var message ={'message':''};
+//    response.render('settings/options.html',message);
+// });
 
 // // Enemy moves towards player while avoiding an obstacle
 // // Calculate vector between player and target
@@ -609,39 +631,6 @@ app.get('/', function(request, response)
 
 //=============================================================================
 
-
-//=============================================================================
-// George Workpace
-
-// var msg = io()
-// msg.on('message', function(data) {
-//   console.log(data)
-// })
-
-// setInterval(function() {
-//   io.sockets.emit('message', players)
-// }, 1000000);
-
-// Testing git
-
-// document.addEventListener('click', function(event) {
-//     event.preventDefault();
-//     actions.shootBullet = true;
-//     actions.x = event.pageX;
-//     actions.y = event.pageY;
-//     // actions.shootBullet = false;
-//     // this.removeEventListener('click');
-// });
-
-
-
-
-
-
-
-//=============================================================================
-
-
 //=============================================================================
 // Hailey Workpace
 /*Guide to accessing map data:
@@ -718,7 +707,7 @@ app.post('/checkAccount', (request, response)=>{
   }
   else {
    pool.query(
-     'SELECT password FROM account WHERE username=$1',[uname], (error,results)=>{
+     'SELECT password, online FROM account WHERE username=$1',[uname], (error,results)=>{
        if (error)
        {
          throw(error);
@@ -727,12 +716,28 @@ app.post('/checkAccount', (request, response)=>{
        var result = (results.rows == '') ? '':results.rows[0].password;
        if (result == String(pw))
        {
+         //If user already online, reject login attempt
+         if (results.rows[0].online) {
+          console.log("Redundant login attempt for user $1", [uname]);
+          var message ={'message':'Account is already logged in!'};
+          response.render('pages/login',message);
+         }
          var user = {'username':uname};
-         response.render('pages/index',user);
+
+        //Upade online status
+        pool.query(
+          'UPDATE account SET online = true WHERE username=$1',[uname], (error,results)=>{
+            if (error)
+            {
+              throw(error);
+            }
+        });
+        //Log in user
+        response.render('pages/index', user);
        }
        else {
-         var message ={'message':'Account is not existing'};
-         response.render('pages/login',message);
+        var message ={'message':'Account is not existing'};
+        response.render('pages/login', message);
        }
      });
   }
@@ -836,6 +841,14 @@ app.post('/register', (request,response)=>{
 });
 //=============================================================================
 
+//=============================================================================
+// George Workpace
+app.post('/logout', (request, response)=>{
+  console.log("logging username on logout request", request.body.username);
+  logOutPlayer(request.body.username);
+  response.render('pages/login', {'message':'Please play again!'} );
+});
+//=============================================================================
 
 
 

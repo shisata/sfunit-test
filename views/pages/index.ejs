@@ -15,6 +15,11 @@
   </head>
   <body>
     <canvas id="canvas"></canvas>
+    <form action="/logout" method='post'>
+      <p id="username" name="username" hidden><%=username%></p>
+      <input type="submit" id="log_out_button" value="LOGOUT" name="username"/>
+    </form>
   </body>
+
   <script src="/static/game.js"></script>
 </html>

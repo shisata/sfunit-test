@@ -1,3 +1,8 @@
+//Getting username
+var username = document.getElementById('username');
+username = username.innerHTML;
+console.log(`Hello ${username}!`);
+
 var socket = io();
 socket.on('message', function(data) {
   // console.log(data);
@@ -110,7 +115,7 @@ document.addEventListener('keyup', function(event) {
 socket.on('grid-size', function(gridSize){
   GRID_SIZE = gridSize;
 })
-socket.emit('new player');
+socket.emit('new player', username);
 
 setInterval(function() {
   socket.emit('movement', movement);
@@ -263,6 +268,15 @@ function processMapDrawing(mapData){
   socket.emit("deliverMapImageSrcToServer", mapImage.src);
   delete allMap;
 }
+
+//=============================================================================
+// George Workpace
+var logoutButton = document.getElementById('log_out_button');
+logoutButton.addEventListener('click', function(event) {
+  logoutButton.value = username;
+});
+
+//=============================================================================
 
   // Fazal' Workstation -------------------------------------------------------------------------
   // var enemyContext = canvas.getContext('2d');
