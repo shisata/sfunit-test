@@ -472,10 +472,10 @@ function logOutPlayer(uname) {
           if (error) {
             throw(error);
           }
-      }); 
+      });
     console.log(`Succesfully logged out ${uname}`);
   });
-  
+
 }
 
 //=============================================================================
@@ -752,6 +752,14 @@ app.post('/gglogin', (request, response)=>{
     if (error){
       throw(error);
     }
+    if (results.rows!='')
+    {
+      if (results.rows[0].username != uname)
+      {
+        var message = 'Gmail is used';
+        response.render('pages/login',message);
+      }
+    }
     if (results.rows=='')
     {
       console.log('Creating new account with Google');
@@ -772,6 +780,28 @@ app.post('/ggAccount',(request,response)=>
   const user = {
     'username':uname
   };
+  const query = "SELECT * FROM account WHERE username =$1";
+  pool.query(query,[uname],(error, results)=>{
+    if (error)
+      throw (error);
+    if (results.rows[0].online)
+    {
+      console.log("Redundant login attempt for user $1", [uname]);
+      var message ={'message':'Account is already logged in!'};
+      response.render('pages/login',message);
+    }
+    else
+      {
+        //Upade online status
+        pool.query(
+          'UPDATE account SET online = true WHERE username=$1',[uname], (error,results)=>{
+            if (error)
+            {
+              throw(error);
+            }
+        });
+      }
+  });
   response.render('pages/index',user);
 });
 
