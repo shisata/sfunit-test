@@ -472,10 +472,10 @@ function logOutPlayer(uname) {
           if (error) {
             throw(error);
           }
-      }); 
+      });
     console.log(`Succesfully logged out ${uname}`);
   });
-  
+
 }
 
 //=============================================================================
