@@ -781,7 +781,7 @@ app.post('/ggAccount',(request,response)=>
     'username':uname
   };
   const query = "SELECT * FROM account WHERE username =$1";
-  pool.query(query, (error, results)=>{
+  pool.query(query,[uname],(error, results)=>{
     if (error)
       throw (error);
     if (results.rows[0].online)
