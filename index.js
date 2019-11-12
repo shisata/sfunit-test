@@ -752,6 +752,14 @@ app.post('/gglogin', (request, response)=>{
     if (error){
       throw(error);
     }
+    if (results.rows!='')
+    {
+      if (results.rows[0].username != uname)
+      {
+        var message = 'Gmail is used';
+        response.render('pages/login',message);
+      }
+    }
     if (results.rows=='')
     {
       console.log('Creating new account with Google');
