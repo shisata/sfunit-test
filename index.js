@@ -776,6 +776,7 @@ app.post('/gglogin', (request, response)=>{
 //Login with gmail
 app.post('/ggAccount',(request,response)=>
 {
+  console.log('Logging in with google account');
   const uname = request.body.username;
   const user = {
     'username':uname
@@ -784,6 +785,9 @@ app.post('/ggAccount',(request,response)=>
   pool.query(query,[uname],(error, results)=>{
     if (error)
       throw (error);
+    console.log('Found account with gg data in our DB');
+    console.log(results);
+    console.log(results.rows[0]);
     if (results.rows[0].online)
     {
       console.log("Redundant login attempt for user $1", [uname]);
