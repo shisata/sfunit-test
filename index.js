@@ -175,7 +175,7 @@ function createPlayer(id, usname) {
     username: usname,
     x: 160 * GRID_SIZE,
     y: 59 * GRID_SIZE,
-    healsth: 4.33,
+    health: 4.33,
     level: 1,
     damage: 5,
     speed: 3,
