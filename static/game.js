@@ -1,8 +1,8 @@
 //Getting username
 var username = document.getElementById('username');
-//username = username.innerHTML;
+username = username.innerHTML;
 var servername = document.getElementById('servername');
-//servername = servername.innerHTML;
+servername = servername.innerHTML;
 
 console.log(`Hello ${username}!`);
 console.log(`Server ${servername}!`);
