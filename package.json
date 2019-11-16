@@ -20,8 +20,15 @@
   "devDependencies": {
     "mocha": "^6.2.2"
   },
+<<<<<<< HEAD
+=======
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^6.2.2"
+  },
+>>>>>>> 3ebfc94b59ae3ce8297ea25692faf95b077284ae
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",

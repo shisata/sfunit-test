@@ -21,6 +21,16 @@
  *          purpose.
  *
  * ==========================================================================*/
+// Testing with mocha and chai
+// adding export so that the function can be accessed by indexTest.js
+module.exports = {
+  sayHello: function(){
+    return 'hello';
+  },
+  addNumbers: function(value1, value2){
+    return value1 + value2;
+  }
+}
 
 // Dependencies
 var express = require('express');
