@@ -18,4 +18,9 @@ describe('Index', function(){
         let result = addNumbers(5, 5);
         assert.isAbove(result, 5);
     });
+
+    it('addNumbers should return type number', function(){
+        let result = addNumbers(5, 5);
+        assert.typeOf(result, 'number');
+    });
 });
