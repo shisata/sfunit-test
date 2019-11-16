@@ -1,8 +1,15 @@
 const assert = require('chai').assert;
-const index = require('../index');
+const sayHello = require('../index').sayHello;
+//const index = require('../index');
 
 describe('Index', function(){
-    it('index should return hello', function(){
-        assert.equal(index(), 'hello');
+    it('sayHello should return hello', function(){
+        let result = sayHello();
+        assert.equal(result, 'hello');
+    });
+
+    it('sayHello should return type string', function(){
+        let result = sayHello();
+        assert.typeOf(result, 'string');
     });
 });

@@ -23,8 +23,10 @@
  * ==========================================================================*/
 // Testing with mocha and chai
 // adding export so that the function can be accessed by indexTest.js
-module.exports = function(){
-  return 'hello';
+module.exports = {
+  sayHello: function(){
+    return 'hello';
+  }
 }
 
 // Dependencies
