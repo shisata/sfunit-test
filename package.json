@@ -14,9 +14,12 @@
     "pkg": "^4.4.0",
     "request": "^2.88.0",
     "require": "^2.4.20",
-    "socket.io": "^2.3.0"
+    "socket.io": "^2.3.0",
+    "tape": "^4.11.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "mocha": "^6.2.2"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
