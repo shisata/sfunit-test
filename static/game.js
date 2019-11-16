@@ -1,7 +1,12 @@
 //Getting username
 var username = document.getElementById('username');
-//username = username.innerHTML;
-// console.log(`Hello ${username}!`);
+username = username.innerHTML;
+var servername = document.getElementById('servername');
+servername = servername.innerHTML;
+
+console.log(`Hello ${username}!`);
+console.log(`Server ${servername}!`);
+
 
 var socket = io();
 socket.on('message', function(data) {
@@ -115,7 +120,8 @@ document.addEventListener('keyup', function(event) {
 socket.on('grid-size', function(gridSize){
   GRID_SIZE = gridSize;
 })
-socket.emit('new player', username);
+newPlayerData = {"username" : username, "servername" : servername};
+socket.emit('new player', username, servername);
 
 setInterval(function() {
   socket.emit('movement', movement);
