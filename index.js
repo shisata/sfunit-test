@@ -569,7 +569,7 @@ function logOutPlayer(uname) {
             throw(error);
           }
       });
-    console.log(`Succesfully logged out ${uname}`);
+    // console.log(`Succesfully logged out ${uname}`);
   });
 }
 
@@ -816,6 +816,7 @@ app.post('/checkAccount', (request, response)=>{
         });
         //Log in user
         // response.render('pages/index', user);
+        console.log(`logging in ${uname}`);
         response.render('pages/matchmaking', user);
        }
        else {
@@ -960,8 +961,8 @@ app.post('/register', (request,response)=>{
 //=============================================================================
 // George Workpace
 app.post('/logout', (request, response)=>{
-  console.log("logging username on logout request", request.body.username);
   logOutPlayer(request.body.username);
+  console.log(`Succesfully logged out ${request.body.username}`);
   response.render('pages/login', {'message':'Please play again!'} );
 });
 

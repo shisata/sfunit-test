@@ -149,26 +149,25 @@ describe('Index', function(){
 
 
     // Test cases for POST as in check Account
-    describe('POST checkAccount', () => {
-        it('check if post for checkAccount works', function(done) {
-            chai.request('../index')
-              .post('/checkAccount')
-              .send({'username': 'test', 'password': '123'})
-              .end(function(err, res){
-                  res.body;
-                //res.should.have.status(200);
-                // res.should.be.json;
-                // res.body.should.be.a('object');
-                // res.body.should.have.property('SUCCESS');
-                // res.body.SUCCESS.should.be.a('object');
-                // res.body.SUCCESS.should.have.property('name');
-                // res.body.SUCCESS.should.have.property('lastName');
-                // res.body.SUCCESS.should.have.property('_id');
-                // res.body.SUCCESS.name.should.equal('Java');
-                // res.body.SUCCESS.lastName.should.equal('Script');
-                done();
-              });
-          });
+    describe('POST checkAccount, POST logout', () => {
+        it('/checkAccount post request succesfully logs in user', function(done) {
+            // chai.request('../index')
+            chai.request('http://localhost:5000')
+                .post('/checkAccount')
+                .send({'username': 'ggiovani', 'password': '12345' })
+                .end(function(err, res){
+                    res.should.have.status(200);
+                    done();
+                });
+        });
+        it('/logout post request successfully logs out user', function(done) {
+            chai.request('http://localhost:5000')
+                .post('/logout')
+                .send({'username': 'ggiovani'})
+                .end(function(err, res){
+                    res.should.have.status(200);
+                    done();
+                });
+        });
     });
-    
 });
