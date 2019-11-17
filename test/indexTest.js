@@ -3,13 +3,19 @@ const assert = require('chai').assert;
 //const addNumbers = require('../index').addNumbers;
 const index = require('../index');
 
+// chai-http and server access
+var chai = require('chai');
+var chaiHttp = require('chai-http');
+var server = require('../index');
+var should = chai.should();
+
+chai.use(chaiHttp);
+
 // Results
 sayHelloResult = index.sayHello();
 addNumbersResult = index.addNumbers(5, 5);
 
 //roomsResult = index.rooms('test');
-roomDataResult = index.roomData('test');
-createPlayersResult = index.createPlayer('1', 'test', 'testName');
 
 describe('Index', function(){
 
@@ -45,18 +51,124 @@ describe('Index', function(){
 
    // Test cases for roomData
    describe('roomData()', function(){
-
-        it('rooms exist', function(){
+        roomDataResult = index.roomData('test');
+        it('roomData() created a room object', function(){
             assert.isOk(roomDataResult);
         });
    });
 
-   // Test cases for createPlayer
-   describe('createPlayer()', function(){
+    // Test cases for createRoom
+    describe('createRoom()', function() {
+        createRoomReusult = index.createRoom('createRoomTest');
+        it('createRoom() created a room object with the correct name', 
+        function() {
+            assert.isOk(createRoomReusult['createRoomTest']);
+        });
+        createTwoRoomsReusult = index.createTwoRooms('twoRoom');
+        it('createRoom() correctly handles a duplicate room request', 
+        function() {
+            assert.isOk(createRoomReusult['twoRoom']);
+        });
+   });
 
-        it('player exists', function(){
+   // Test cases for createPlayer and createRoom
+   describe('createPlayer()', function() {
+        createPlayersResult = index.createPlayer('1', 'test', 'testName');
+        it('createPlayer() created a player object with correct ID and room', 
+        function(){
             assert.isOk(createPlayersResult['test'].players['1']);
         });
    });
 
+   //Test cases for movePlayer
+   describe('movePlayer()', function () {
+        directions = {
+            dataL: {"left" : true, "right" : false, "up" : false, "down" : false},
+            dataR: {"left" : false, "right" : true, "up" : false, "down" : false},
+            dataU: {"left" : false, "right" : false, "up" : true, "down" : false},
+            dataD: {"left" : false, "right" : false, "up" : false, "down" : true},
+            dataNE: {"left" : false, "right" : true, "up" : true, "down" : false},
+            dataNW: {"left" : true, "right" : false, "up" : true, "down" : false},
+            dataSE: {"left" : false, "right" : true, "up" : false, "down" : true},
+            dataSW: {"left" : true, "right" : false, "up" : false, "down" : true},
+            dataNS: {"left" : false, "right" : false, "up" : true, "down" : true},
+            dataEW: {"left" : true, "right" : true, "up" : false, "down" : false}
+        };
+        for (dir in directions) {
+            // console.log(directions[dir])
+            dir = directions[dir];
+            mov = index.movePlayer("moveTest", "moveRoom", "GG", dir)
+            start = mov.start;
+            end = mov.end;
+            speed = mov.speed;
+            dx = 0; dy = 0;
+            if (dir.left) {
+                dx -= speed;
+            }
+            if (dir.right) {
+                dx += speed;
+            }
+            if (dir.down) {
+                dy -= speed;
+            }
+            if (dir.up) {
+                dy += speed;
+            }
+            it(`movePlayer() ${dir} moved player from [${start}] to [${end}]`, 
+            function(){
+                assert.isOk( 
+                    ((mov.start[0]+dx) == mov.end[0]) &&
+                    ((mov.start[1]+dx) == mov.end[1]));
+            });
+        }
+   });
+
+    // Test cases for GET as in home page
+    describe('GET Home', () => {
+        it('Should return found', (done) => {
+            chai.request('http://localhost:5000')
+                .get('/')
+                .end(function (err, res) {
+                    res.should.have.status(200);
+                    done();
+                });
+        });
+    });
+
+    // Test cases for GET as in home page
+    describe('GET register', () => {
+        it('Should return found', (done) => {
+            chai.request('http://localhost:5000')
+                .get('/register')
+                .end(function (err, res) {
+                    res.should.have.status(200);
+                    done();
+                });
+        });
+    });
+
+
+    // Test cases for POST as in check Account
+    describe('POST checkAccount', () => {
+        it('check if post for checkAccount works', function(done) {
+            chai.request('../index')
+              .post('/checkAccount')
+              .send({'username': 'test', 'password': '123'})
+              .end(function(err, res){
+                  res.body;
+                //res.should.have.status(200);
+                // res.should.be.json;
+                // res.body.should.be.a('object');
+                // res.body.should.have.property('SUCCESS');
+                // res.body.SUCCESS.should.be.a('object');
+                // res.body.SUCCESS.should.have.property('name');
+                // res.body.SUCCESS.should.have.property('lastName');
+                // res.body.SUCCESS.should.have.property('_id');
+                // res.body.SUCCESS.name.should.equal('Java');
+                // res.body.SUCCESS.lastName.should.equal('Script');
+                done();
+              });
+          });
+    });
+    
 });
