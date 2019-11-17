@@ -107,7 +107,7 @@ io.on('connection', function(socket) {
     console.log("Logging Game Room Name", servername)
     socket.join(servername);
     getRoomBySocketId[socket.id] = servername;
-    
+
     //if room does not exist, create a room.
     if ([servername] == undefined) {
       servername = "STUB"
