@@ -125,9 +125,20 @@ describe('Index', function(){
 
     // Test cases for GET as in app.get
     describe('GET Home', () => {
-        it('Should return Not found', (done) => {
+        it('Should return found', (done) => {
             chai.request('http://localhost:5000')
                 .get('/')
+                .end(function (err, res) {
+                    res.should.have.status(200);
+                    done();
+                });
+        });
+    });
+
+    describe('GET register', () => {
+        it('Should return found', (done) => {
+            chai.request('http://localhost:5000')
+                .get('/register')
                 .end(function (err, res) {
                     res.should.have.status(200);
                     done();
