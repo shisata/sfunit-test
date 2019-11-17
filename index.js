@@ -27,11 +27,19 @@ module.exports = {
   sayHello: function(){
     return 'hello';
   },
+
   addNumbers: function(value1, value2){
     return value1 + value2;
   },
+
   roomData: function(value1){
     return roomData(value1);
+  },
+
+  createPlayer: function(socketID, serverName, username){
+    createRoom(serverName);
+    createPlayer(socketID, serverName, username);
+    return returnRooms();
   }
 }
 
@@ -108,18 +116,16 @@ io.on('connection', function(socket) {
     socket.join(servername);
     getRoomBySocketId[socket.id] = servername;
 
-    //if room does not exist, create a room.
-    if ([servername] == undefined) {
-      servername = "STUB"
-    }
-
     //This condition is commented out because the 'disconnect' event is
     //commented out too. 'disconnect' is having multiple-call problem and
     //causing error for map-loading.
     //if (players.numPlayers < 4) {
-    createRoom(servername); //TODO
+    if(rooms[servername] == undefined) {
+      createRoom(servername); //TODO
+    }
     createPlayer(socket.id, servername, username);
     socket.emit("passId", socket.id);
+
 
     //constructs the very initial map for the game.
     //'disconnect' seems to have some problems. I'm fixing it to:
@@ -253,12 +259,13 @@ setInterval(function() {
 
 //Creates a new player
 function createPlayer(id, serverName, username) {
+  io.sockets.to(serverName).emit('create map', rooms[serverName].mapData);
   rooms[serverName].players.numPlayers += 1;
   rooms[serverName].players[id] = {
     playerID: rooms[serverName].players.numPlayers,
     username: username,
-    x: 160 * GRID_SIZE,
-    y: 59 * GRID_SIZE,
+    x: 211 * GRID_SIZE,
+    y: 247 * GRID_SIZE,
     health: 4.33,
     level: 1,
     damage: 5,
@@ -317,7 +324,7 @@ function createRoom(serverName) {
   var processor = require('./static/objects/mapProcessor.js');
   rooms[serverName].mapData = processor.constructFromData(mapDataFromFile);
   //console.log(mapData);///////*******
-  io.sockets.to(serverName).emit('create map', rooms[serverName].mapData);
+  // io.sockets.to(serverName).emit('create map', rooms[serverName].mapData);
   console.log('players.numPlayers: ', rooms[serverName].players.numPlayers, ', create map called');
 }
 
@@ -518,9 +525,9 @@ function spawnRandomObject(rm) {
     rooms[rm].enemies[rooms[rm].enemyID] = {
       // type: t,
       // set x randomly but at least 15px off the canvas edges
-      x: Math.random() * 350,
+      x: Math.random() * 350 + 1600,
       // set y to start on the line where objects are spawned
-      y: Math.random() * 300,
+      y: Math.random() * 300 + 2000,
       vx: 5,
       vy: 5,
       speed: .5,
@@ -865,6 +872,15 @@ function logOutPlayer(uname) {
     console.log(`Succesfully logged out ${uname}`);
   });
 }
+
+//=========================================================================================
+// Testing functions
+
+function returnRooms(){
+  return rooms;
+}
+//=========================================================================================
+
 
 //=============================================================================
 // Fazal Workspace
