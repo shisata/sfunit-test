@@ -220,6 +220,7 @@ window.addEventListener('mousemove', function (e) {
 
 // Support Functions ------------------------------------
 function processMapDrawing(mapData){
+  console.log(mapData);
   //called ONLY when numPlayers: 0 -> 1.
   //draws the whole canvas, and saves to images file.
   /*
@@ -244,8 +245,10 @@ function processMapDrawing(mapData){
 
   for (var x = 0; x < mapData.length; x++) {
     var line = "";
+    console.log("mapdata is running");
     for (var y = 0; y < mapData[mapData.length - 1].length; y++){
       // console.log("\tMapdata[" + x + "][" + y + "]"); ////*****
+      console.log("hi qt");
       if(mapData[x][y] != '')
       {
         // var source = mapData[x][y].textureSrc;
@@ -266,7 +269,7 @@ function processMapDrawing(mapData){
         line += "!";
       }
     }
-    //console.log(line);//////*****
+    console.log(line);//////*****
   }
   //console.log(mapData);/////*****
   mapImage.src = allMap.toDataURL();

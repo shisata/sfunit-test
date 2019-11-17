@@ -108,19 +108,17 @@ io.on('connection', function(socket) {
     socket.join(servername);
     getRoomBySocketId[socket.id] = servername;
     
-    //if room does not exist, create a room.
-    if ([servername] == undefined) {
-      servername = "STUB"
-    }
-
     //This condition is commented out because the 'disconnect' event is
     //commented out too. 'disconnect' is having multiple-call problem and
     //causing error for map-loading.
     //if (players.numPlayers < 4) {
-    createRoom(servername); //TODO
+    if(rooms[servername] == undefined) {
+      createRoom(servername); //TODO
+    }
     createPlayer(socket.id, servername, username);
     socket.emit("passId", socket.id);
 
+    
     //constructs the very initial map for the game.
     //'disconnect' seems to have some problems. I'm fixing it to:
     //create map WHENever
@@ -253,6 +251,7 @@ setInterval(function() {
 
 //Creates a new player
 function createPlayer(id, serverName, username) {
+  io.sockets.to(serverName).emit('create map', rooms[serverName].mapData);
   rooms[serverName].players.numPlayers += 1;
   rooms[serverName].players[id] = {
     playerID: rooms[serverName].players.numPlayers,
@@ -317,7 +316,7 @@ function createRoom(serverName) {
   var processor = require('./static/objects/mapProcessor.js');
   rooms[serverName].mapData = processor.constructFromData(mapDataFromFile);
   //console.log(mapData);///////*******
-  io.sockets.to(serverName).emit('create map', rooms[serverName].mapData);
+  // io.sockets.to(serverName).emit('create map', rooms[serverName].mapData);
   console.log('players.numPlayers: ', rooms[serverName].players.numPlayers, ', create map called');
 }
 
