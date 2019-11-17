@@ -146,4 +146,29 @@ describe('Index', function(){
                 });
         });
     });
+
+
+    // Test cases for POST as in check Account
+    describe('POST checkAccount', () => {
+        it('check if post for checkAccount works', function(done) {
+            chai.request('../index')
+              .post('/checkAccount')
+              .send({'username': 'test', 'password': '123'})
+              .end(function(err, res){
+                  res.body;
+                //res.should.have.status(200);
+                // res.should.be.json;
+                // res.body.should.be.a('object');
+                // res.body.should.have.property('SUCCESS');
+                // res.body.SUCCESS.should.be.a('object');
+                // res.body.SUCCESS.should.have.property('name');
+                // res.body.SUCCESS.should.have.property('lastName');
+                // res.body.SUCCESS.should.have.property('_id');
+                // res.body.SUCCESS.name.should.equal('Java');
+                // res.body.SUCCESS.lastName.should.equal('Script');
+                done();
+              });
+          });
+    });
+    
 });
