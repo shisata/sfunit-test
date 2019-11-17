@@ -16,8 +16,6 @@ sayHelloResult = index.sayHello();
 addNumbersResult = index.addNumbers(5, 5);
 
 //roomsResult = index.rooms('test');
-roomDataResult = index.roomData('test');
-createPlayersResult = index.createPlayer('1', 'test', 'testName');
 
 describe('Index', function(){
 
@@ -53,34 +51,88 @@ describe('Index', function(){
 
    // Test cases for roomData
    describe('roomData()', function(){
-
-        it('rooms exist', function(){
+        roomDataResult = index.roomData('test');
+        it('roomData() created a room object', function(){
             assert.isOk(roomDataResult);
         });
    });
 
-   // Test cases for createPlayer
-   describe('createPlayer()', function(){
+    // Test cases for createRoom
+    describe('createRoom()', function() {
+        createRoomReusult = index.createRoom('createRoomTest');
+        it('createRoom() created a room object with the correct name', 
+        function() {
+            assert.isOk(createRoomReusult['createRoomTest']);
+        });
+        createTwoRoomsReusult = index.createTwoRooms('twoRoom');
+        it('createRoom() correctly handles a duplicate room request', 
+        function() {
+            assert.isOk(createRoomReusult['twoRoom']);
+        });
+   });
 
-        it('player exists', function(){
+   // Test cases for createPlayer and createRoom
+   describe('createPlayer()', function() {
+        createPlayersResult = index.createPlayer('1', 'test', 'testName');
+        it('createPlayer() created a player object with correct ID and room', 
+        function(){
             assert.isOk(createPlayersResult['test'].players['1']);
         });
    });
 
-   // Test cases for GET as in app.get
-   describe('Blobs', function() {
-    it('should list ALL blobs on /blobs GET', function(done){
-        chai.request(server)
-        .get('/pages/login')
-        .end(function(err, res){
-            res.should.have.status(5000);
-            done();
-        });
-    });
-    it('should list a SINGLE blob on /blob/<id> GET');
-    it('should add a SINGLE blob on /blobs POST');
-    it('should update a SINGLE blob on /blob/<id> PUT');
-    it('should delete a SINGLE blob on /blob/<id> DELETE');
-  });
+   //Test cases for movePlayer
+   describe('movePlayer()', function () {
+        directions = {
+            dataL: {"left" : true, "right" : false, "up" : false, "down" : false},
+            dataR: {"left" : false, "right" : true, "up" : false, "down" : false},
+            dataU: {"left" : false, "right" : false, "up" : true, "down" : false},
+            dataD: {"left" : false, "right" : false, "up" : false, "down" : true},
+            dataNE: {"left" : false, "right" : true, "up" : true, "down" : false},
+            dataNW: {"left" : true, "right" : false, "up" : true, "down" : false},
+            dataSE: {"left" : false, "right" : true, "up" : false, "down" : true},
+            dataSW: {"left" : true, "right" : false, "up" : false, "down" : true},
+            dataNS: {"left" : false, "right" : false, "up" : true, "down" : true},
+            dataEW: {"left" : true, "right" : true, "up" : false, "down" : false}
+        };
+        for (dir in directions) {
+            // console.log(directions[dir])
+            dir = directions[dir];
+            movementResult = index.movePlayer("moveTest", "moveRoom", "GG", dir)
+            speed = movementResult.speed;
+            dx = 0; dy = 0;
+            if (dir.left) {
+                dx -= speed;
+            }
+            if (dir.right) {
+                dx += speed;
+            }
+            if (dir.down) {
+                dy -= speed;
+            }
+            if (dir.up) {
+                dy += speed;
+            }
+            it(`movePlayer() using ${dir} moved player from [${movementResult.start}] to [${movementResult.end}]`, function(){
+                assert.isOk( 
+                    ((movementResult.start[0]+dx) == movementResult.end[0]) &&
+                    ((movementResult.start[1]+dx) == movementResult.end[1]));
+            });
+        }
+   });
 
+    // Test cases for GET as in app.get
+    describe('Testing GET', function() {
+        it('should list ALL blobs on /blobs GET', function(done){
+            chai.request(server)
+            .get('/pages/login')
+            .end(function(err, res){
+                res.should.have.status(5000);
+                done();
+            });
+        });
+        it('should list a SINGLE blob on /blob/<id> GET');
+        it('should add a SINGLE blob on /blobs POST');
+        it('should update a SINGLE blob on /blob/<id> PUT');
+        it('should delete a SINGLE blob on /blob/<id> DELETE');
+      });
 });

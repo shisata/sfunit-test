@@ -28,18 +28,43 @@ module.exports = {
     return 'hello';
   },
 
-  addNumbers: function(value1, value2){
+  addNumbers: function(value1, value2) {
     return value1 + value2;
   },
-
-  roomData: function(value1){
+  //Tests that roomData() creates a room object
+  roomData: function(value1) {
     return roomData(value1);
   },
-
-  createPlayer: function(socketID, serverName, username){
+  //Tests that createRoom() creates a room with name serverName
+  createRoom: function(serverName) {
+    createRoom(serverName);
+    return returnRooms();
+  },
+  //Tests that createRoom() correctly handles a request to make duplicate room
+  createTwoRooms: function(serverName) {
+    createRoom(serverName);
+    createRoom(serverName);
+    return returnRooms();
+  },
+  //Tests that createlayer correctly creates a player with ID socketID inside
+  //the room serverName
+  createPlayer: function(socketID, serverName, username) {
     createRoom(serverName);
     createPlayer(socketID, serverName, username);
     return returnRooms();
+  },
+  //Test player movement
+  movePlayer: function(socketID, serverName, username, directionData) {
+    //Create a player for moving
+    createRoom(serverName);
+    createPlayer(socketID, serverName, username);
+    player = rooms[serverName].players[socketID]
+    speed = player.speed;
+    origin = [player.x, player.y];
+    //Move the player
+    movePlayer(player, directionData, serverName);
+    result = [player.x, player.y];
+    return {"start" : origin, "end" : result, "speed" : speed};
   }
 }
 
@@ -317,9 +342,17 @@ function roomData(serverName) {
 
 //Creates a new room
 function createRoom(serverName) {
+
+  //Dont remake room if it already exists
+  if (rooms[serverName]) {
+    console.log("Skipping duplicate room request");
+    return -1;
+  }
+
   rooms[serverName] = roomData(serverName);
   console.log("LOGGING ROOMS", rooms[serverName]);
 
+  //Load map data
   var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap2.json', 'utf8'));
   var processor = require('./static/objects/mapProcessor.js');
   rooms[serverName].mapData = processor.constructFromData(mapDataFromFile);
