@@ -3,9 +3,15 @@ const assert = require('chai').assert;
 //const addNumbers = require('../index').addNumbers;
 const index = require('../index');
 
+// Variables
+var rooms = {};
+
 // Results
 sayHelloResult = index.sayHello();
 addNumbersResult = index.addNumbers(5, 5);
+
+//roomsResult = index.rooms('test');
+roomDataResult = index.roomData('test')
 
 describe('Index', function(){
 
@@ -37,6 +43,16 @@ describe('Index', function(){
             assert.typeOf(addNumbersResult, 'number');
         });
 
+   });
+
+   // Test cases for roomData
+   describe('roomData()', function(){
+
+        it('rooms exist', function(){
+            assert.isOk(roomDataResult);
+            //assert.isOk(rooms['room']);
+            //console.log(roomsResult);
+        });
    });
 
 });

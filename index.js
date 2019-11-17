@@ -29,6 +29,9 @@ module.exports = {
   },
   addNumbers: function(value1, value2){
     return value1 + value2;
+  },
+  roomData: function(value1){
+    return roomData(value1);
   }
 }
 
@@ -106,7 +109,7 @@ io.on('connection', function(socket) {
     getRoomBySocketId[socket.id] = servername;
     
     //if room does not exist, create a room.
-    if (rooms[servername] == undefined) {
+    if ([servername] == undefined) {
       createRoom(servername); //TODO
     }
 
