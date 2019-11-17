@@ -3,6 +3,14 @@ const assert = require('chai').assert;
 //const addNumbers = require('../index').addNumbers;
 const index = require('../index');
 
+// chai-http and server access
+var chai = require('chai');
+var chaiHttp = require('chai-http');
+var server = require('../index');
+var should = chai.should();
+
+chai.use(chaiHttp);
+
 // Results
 sayHelloResult = index.sayHello();
 addNumbersResult = index.addNumbers(5, 5);
@@ -58,5 +66,21 @@ describe('Index', function(){
             assert.isOk(createPlayersResult['test'].players['1']);
         });
    });
+
+   // Test cases for GET as in app.get
+   describe('Blobs', function() {
+    it('should list ALL blobs on /blobs GET', function(done){
+        chai.request(server)
+        .get('/pages/login')
+        .end(function(err, res){
+            res.should.have.status(5000);
+            done();
+        });
+    });
+    it('should list a SINGLE blob on /blob/<id> GET');
+    it('should add a SINGLE blob on /blobs POST');
+    it('should update a SINGLE blob on /blob/<id> PUT');
+    it('should delete a SINGLE blob on /blob/<id> DELETE');
+  });
 
 });
