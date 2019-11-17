@@ -27,11 +27,19 @@ module.exports = {
   sayHello: function(){
     return 'hello';
   },
+
   addNumbers: function(value1, value2){
     return value1 + value2;
   },
+
   roomData: function(value1){
     return roomData(value1);
+  },
+
+  createPlayer: function(socketID, serverName, username){
+    createRoom(serverName);
+    createPlayer(socketID, serverName, username);
+    return returnRooms();
   }
 }
 
@@ -864,6 +872,15 @@ function logOutPlayer(uname) {
     console.log(`Succesfully logged out ${uname}`);
   });
 }
+
+//=========================================================================================
+// Testing functions
+
+function returnRooms(){
+  return rooms;
+}
+//=========================================================================================
+
 
 //=============================================================================
 // Fazal Workspace
