@@ -110,13 +110,14 @@ io.on('connection', function(socket) {
     
     //if room does not exist, create a room.
     if ([servername] == undefined) {
-      createRoom(servername); //TODO
+      servername = "STUB"
     }
 
     //This condition is commented out because the 'disconnect' event is
     //commented out too. 'disconnect' is having multiple-call problem and
     //causing error for map-loading.
     //if (players.numPlayers < 4) {
+    createRoom(servername); //TODO
     createPlayer(socket.id, servername, username);
     socket.emit("passId", socket.id);
 
@@ -280,7 +281,6 @@ function playerHealth(){
 function roomData(serverName) {
   //Players object will contain all information about each player's position,
   var room = {}
-
 
   room.players = {
     numPlayers: 0
