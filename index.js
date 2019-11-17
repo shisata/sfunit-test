@@ -46,25 +46,23 @@ module.exports = {
     createRoom(serverName);
     return returnRooms();
   },
-  //Tests that createlayer correctly creates a player with ID socketID inside
+  //Tests that createlayer() correctly creates a player with ID socketID inside
   //the room serverName
   createPlayer: function(socketID, serverName, username) {
-    createRoom(serverName);
-    createPlayer(socketID, serverName, username);
+    createRoom(serverName);                        //Create a room
+    createPlayer(socketID, serverName, username);  //Create player within room
     return returnRooms();
   },
   //Test player movement
   movePlayer: function(socketID, serverName, username, directionData) {
-    //Create a player for moving
-    createRoom(serverName);
-    createPlayer(socketID, serverName, username);
-    player = rooms[serverName].players[socketID]
-    speed = player.speed;
-    origin = [player.x, player.y];
-    //Move the player
-    movePlayer(player, directionData, serverName);
-    result = [player.x, player.y];
-    return {"start" : origin, "end" : result, "speed" : speed};
+    createRoom(serverName);                        //Create a room
+    createPlayer(socketID, serverName, username);  //Create a player for moving
+    player = rooms[serverName].players[socketID];  
+    origin = [player.x, player.y];                 //Player's starting position
+
+    movePlayer(player, directionData, serverName); //Move the player
+    result = [player.x, player.y];                 //Position player moved to
+    return { "start" : origin, "end" : result, "speed" : player.speed };
   }
 }
 
