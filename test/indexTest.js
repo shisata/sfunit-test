@@ -3,15 +3,13 @@ const assert = require('chai').assert;
 //const addNumbers = require('../index').addNumbers;
 const index = require('../index');
 
-// Variables
-var rooms = {};
-
 // Results
 sayHelloResult = index.sayHello();
 addNumbersResult = index.addNumbers(5, 5);
 
 //roomsResult = index.rooms('test');
-roomDataResult = index.roomData('test')
+roomDataResult = index.roomData('test');
+createPlayersResult = index.createPlayer('1', 'test', 'testName');
 
 describe('Index', function(){
 
@@ -50,8 +48,14 @@ describe('Index', function(){
 
         it('rooms exist', function(){
             assert.isOk(roomDataResult);
-            //assert.isOk(rooms['room']);
-            //console.log(roomsResult);
+        });
+   });
+
+   // Test cases for createPlayer
+   describe('createPlayer()', function(){
+
+        it('player exists', function(){
+            assert.isOk(createPlayersResult['test'].players['1']);
         });
    });
 
