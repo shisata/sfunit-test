@@ -101,31 +101,11 @@ app.set('view engine', 'ejs');
 //Looking for static files in public folder
 app.use(express.static(path.join(__dirname, 'public')));
 
-//Players object will contain all information about each player's position,
-//health, etc.
-var players = {
-  numPlayers: 0
-};
-
-//Projectiles object will keep track of active projectiles
-var projectiles = {
-  numProjectiles: 0
-}
-var bulletCount = 0;
-
-//Enemies
-var enemies = {
-  numEnemies: 0
-}
-enemyID = 0;
+const GRID_SIZE = 10; // each grid size for map
 
 //Game rooms
 var rooms = {};
 var getRoomBySocketId = {};
-
-var mapImageSrc = "";
-var mapData; // 2d array of the map
-const GRID_SIZE = 10; // each grid size for map
 
 //Creates a new player and puts them into the gane room specified by serverName
 io.on('connection', function(socket) {
@@ -150,23 +130,6 @@ io.on('connection', function(socket) {
     }
     createPlayer(socket.id, servername, username);
     socket.emit("passId", socket.id);
-
-
-    //constructs the very initial map for the game.
-    //'disconnect' seems to have some problems. I'm fixing it to:
-    //create map WHENever
-    // if (players.numPlayers <= 1) {
-    //   var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap2.json', 'utf8'));
-    //   var processor = require('./static/objects/mapProcessor.js');
-    //   mapData = processor.constructFromData(mapDataFromFile);
-    //   //console.log(mapData);///////*******
-    //   socket.emit('create map', mapData);
-    //   console.log('players.numPlayers: ', players.numPlayers, ', create map called');
-    // }
-    // else {
-    //   console.log('players.numPlayers: ', players.numPlayers);
-    //   socket.emit("deliverMapImageSrcToClient", mapImageSrc);
-    // }
   });
 
   //socket on functions for ID, Map, etc.
@@ -210,16 +173,6 @@ io.on('connection', function(socket) {
 
   //Removes disconnected player
   socket.on('disconnect', function() {
-    //   if (players[socket.id] == undefined) {
-      //     //if the socket id is not valid, ignore the disconnect signal
-      //     console.log('invalid disconnect call: ignoring...')
-      //     return;
-      //   }
-      //   logOutPlayer(players[socket.id].username);
-      //   //players[socket.id] = 0;
-      //   delete players[socket.id];
-      //   players.numPlayers -= 1;
-      // });
       //Collects client data at 60 events/second
     console.log('socket event disconnect called');
     if (getRoomBySocketId == undefined
@@ -235,16 +188,6 @@ io.on('connection', function(socket) {
     rooms[getRoomBySocketId[socket.id]].players.numPlayers -= 1;
   });
 });
-// setInterval(function() {
-//   if(players.numPlayers > 0){
-//   //  console.log("interval player")
-//     moveProjectiles();
-//     moveEnemies();
-//     handleBulletCollisions();
-//     generateEnemies();
-//     io.sockets.emit('state', players, projectiles, enemies);
-//   }
-// }, 1000 / 120);
 
 setInterval(function() {
   for (var rm in rooms) {
@@ -265,22 +208,6 @@ setInterval(function() {
 
 //=============================================================================
 //Functions
-
-// Creates a new player
-// function createPlayer(id, usname) {
-//   players.numPlayers += 1;
-//   players[id] = {
-//     playerID: players.numPlayers,
-//     username: usname,
-//     x: 160 * GRID_SIZE,
-//     y: 59 * GRID_SIZE,
-//     health: 4.33,
-//     level: 1,
-//     damage: 5,
-//     speed: 3,
-//     score: 0
-//   };
-// }
 
 //Creates a new player
 function createPlayer(id, serverName, username) {
@@ -361,32 +288,6 @@ function createRoom(serverName) {
   console.log('players.numPlayers: ', rooms[serverName].players.numPlayers, ', create map called');
 }
 
-// //Moves a player in response to keyboard input
-// function movePlayer(player, data) {
-//   //Modified the values here to reflect player speed - GG 2019.10.26 17:30
-//   var originX = player.x;
-//   var originY = player.y;
-//   //console.log(player.x + ", " + player.y)////*****
-//   if (data.left) {
-//     player.x -= player.speed;
-//   }
-//   if (data.up) {
-//     player.y -= player.speed;
-//   }
-//   if (data.right) {
-//     player.x += player.speed;
-//   }
-//   if (data.down) {
-//     player.y += player.speed;
-//   }
-//   if(player != undefined){
-//     if(hasCollision(player.x, player.y)){
-//       player.x = originX;
-//       player.y = originY
-//     }
-//   }
-// }
-
 //Moves a player in response to keyboard input
 function movePlayer(player, data, rm) {
   //Modified the values here to reflect player speed - GG 2019.10.26 17:30
@@ -414,20 +315,6 @@ function movePlayer(player, data, rm) {
 }
 
 
-// //check if there is collision  at direction
-// function hasCollision(x, y){
-//   var gridX = Math.floor(x / GRID_SIZE);
-//   var gridY = Math.floor(y / GRID_SIZE);
-//   if(mapData == undefined || mapData[gridX] == undefined
-//     || mapData[gridX][gridY] == undefined){
-//     // console.log("collision " + gridX + ", " + gridY)
-//     return false;
-//   }else if(mapData[gridX][gridY].collision == true){
-//     // console.log("collision " + gridX + ", " + gridY)
-//     return true;
-//   }
-//   return false;
-// }
 
 //check if there is collision  at direction
 function hasCollision(x, y, rm){
@@ -446,41 +333,6 @@ function hasCollision(x, y, rm){
   return false;
 }
 
-
-// //Generates a projectile on shoot input
-// function generateProjectile(id, data) {
-//   projectiles.numProjectiles++;
-
-//   mouseX = data.x;
-//   mouseY = data.y;
-//   playerX = players[id].x - data.middleX;
-//   playerY = players[id].y - data.middleY;
-
-//   dx = mouseX - playerX;
-//   dy = mouseY - playerY;
-
-//   theta = Math.atan(dx / dy);
-
-//   velX = players[id].speed * Math.sin(theta);
-//   velY = players[id].speed * Math.cos(theta);
-//   if (dy < 0) {
-//     velY *= -1;
-//     velX *= -1;
-//   }
-
-//   projectiles[bulletCount] = {
-//     x: players[id].x + (4 * velX),
-//     y: players[id].y + (4 * velY),
-//     vx: velX,
-//     vy: velY
-//   };
-
-//   bulletCount++;
-//   //reset bullet count
-//   if (bulletCount > 100) {
-//     bulletCount = 0;
-//   }
-// }
 
 //Generates a projectile on shoot input
 function generateProjectile(id, data, rm) {
@@ -517,32 +369,6 @@ function generateProjectile(id, data, rm) {
   }
 }
 
-// //Spawn a random enemy
-// function spawnRandomObject() {
-
-//   // About Math.random()
-//   // Math.random() generates a semi-random number
-//   // between 0-1. So to randomly decide if the next object
-//   // will be A or B, we say if the random# is 0-.49 we
-//   // create A and if the random# is .50-1.00 we create B
-
-//   // add the new object to the objects[] array
-//   if (enemies.numEnemies < 10) {
-//     enemies[enemyID] = {
-//       // type: t,
-//       // set x randomly but at least 15px off the canvas edges
-//       x: Math.random() * 350,
-//       // set y to start on the line where objects are spawned
-//       y: Math.random() * 300,
-//       vx: 5,
-//       vy: 5,
-//       speed: .5,
-//       health: 4
-//     }
-//     enemies.numEnemies++;
-//     enemyID++;
-//   }
-// }
 
 //Spawn a random enemy
 function spawnRandomObject(rm) {
@@ -572,29 +398,6 @@ function spawnRandomObject(rm) {
 }
 
 
-// // when was the last object spawned
-// var lastSpawn = -1;
-// var spawnRate = 2000;
-
-// //Generate enemies
-// function generateEnemies() {
-
-//   // spawn a new object
-//   if (spawnRate > 1000) {
-//     spawnRate = spawnRate -= 1;
-//   }
-
-//   // get the elapsed time
-//   var time = Date.now();
-
-//   // see if its time to spawn a new object
-//   if (time > (lastSpawn + spawnRate)) {
-//     lastSpawn = time;
-//     spawnRandomObject();
-//     //console.log('emeny spawned. spawnRate: ', spawnRate);
-//   }
-// }
-
 //Generate enemies
 function generateEnemies(rm) {
 
@@ -614,32 +417,6 @@ function generateEnemies(rm) {
   }
 }
 
-// //Move projectiles along the screen
-// function moveProjectiles() {
-//   for (var id in projectiles) {
-//     if (projectiles[id]) {
-//       var delBullet = false;
-//       var originX = projectiles[id].x;
-//       var originY = projectiles[id].y;
-//       projectiles[id].x += projectiles[id].vx;
-//       projectiles[id].y += projectiles[id].vy;
-//       if(hasCollision(projectiles[id].x, projectiles[id].y)){
-//         projectiles[id].x = originX;
-//         projectiles[id].y = originY;
-//         delBullet = true;
-//         // deleteBullet(id);
-//       }
-//       //Delete stale projectiles
-//       if ( (projectiles[id].x > 5000) || (projectiles[id].y > 5000) ||
-//           (projectiles[id].x < -5000) || (projectiles[id].y < -5000)) {
-//           delBullet = true;
-//       }
-//       if(delBullet == true){
-//         deleteBullet(id);
-//       }
-//     }
-//   }
-// }
 
 function moveProjectiles(rm) {
   for (var id in rooms[rm].projectiles) {
@@ -667,13 +444,6 @@ function moveProjectiles(rm) {
   }
 }
 
-// function deleteBullet(id) {
-//   var temp = projectiles[bulletCount -= 1];
-//   projectiles[bulletCount] = projectiles[id];
-//   projectiles[id] = temp;
-//   projectiles[bulletCount] = 0;
-//   projectiles.numProjectiles -= 1;
-// }
 
 function deleteBullet(id, rm) {
   var temp = rooms[rm].projectiles[rooms[rm].bulletCount -= 1];
@@ -682,70 +452,6 @@ function deleteBullet(id, rm) {
   rooms[rm].projectiles[rooms[rm].bulletCount] = 0;
   rooms[rm].projectiles.numProjectiles -= 1;
 }
-
-
-// //Move enemies towards the nearest player
-// function moveEnemies() {
-//    //Enemy movement handler
-//    for (var id in enemies) {
-//     //Find closest players
-//     if ( players.numPlayers > 0 ) {
-//     // if ( (players.numPlayers > 0) && (enemies.numEnemies > 0) ) {
-//       var closestPlayer;
-//       var closestPlayerDistance = Infinity;
-//       for (var player in players) {
-//         var distX = players[player].x - enemies[id].x;
-//         var distY = players[player].y - enemies[id].y;
-//         var distance = Math.sqrt( distX * distX + distY * distY );
-//         if (distance < closestPlayerDistance) {
-//           closestPlayer = player;
-//           closestPlayerDistance = distance;
-//         }
-//       }
-//       if (players[closestPlayer] == undefined) {
-//         console.log("players[closestPlayer] is undefined. Ignoring",
-//           "moveEnemies() logic instead of letting program crash.",
-//           "Please check the logic.");
-//         return;
-//       }
-//       //Move to closest player
-//       distX = enemies[id].x - players[closestPlayer].x;
-//       distY = enemies[id].y - players[closestPlayer].y;
-
-//       var attackTheta = Math.atan(distX / distY);
-
-//       var sign = -1;
-//       if (enemies[id].y < players[closestPlayer].y) {
-//         sign = 1;
-//       }
-
-//       if ( Math.abs(distX) < 12 && Math.abs(distY) < 12 ) {
-//         // console.log("distX ", distX, "distY, ", distY);
-//         //Deplete health
-//         players[closestPlayer].health -= .05;
-//         //Kill player
-//         // if (players[closestPlayer].health < 0) {
-//         //   players[closestPlayer] = 0;
-//         //   players.numPlayers -= 1;
-//         // }
-
-//         //Dont move any closer
-//         sign = 0;
-//       }
-
-//       enemies[id].vx =  enemies[id].speed * Math.sin(attackTheta) * sign;
-//       enemies[id].vy =  enemies[id].speed * Math.cos(attackTheta) * sign;
-//       var originX = enemies[id].x;
-//       var originY = enemies[id].y;
-//       enemies[id].x += enemies[id].vx;
-//       enemies[id].y += enemies[id].vy;
-//       if(hasCollision(enemies[id].x, enemies[id].y)){
-//         enemies[id].x = originX;
-//         enemies[id].y = originY;
-//       }
-//     }
-//   }
-// }
 
 //Move enemies towards the nearest player
 function moveEnemies(rm) {
@@ -809,43 +515,6 @@ function moveEnemies(rm) {
    }
  }
 }
-
-// //Handles bullet collisions
-// function handleBulletCollisions() {
-//   //Player-projectile collision handler
-//   for (var player in players) {
-//     for (var id in projectiles) {
-//       if (projectiles[id]) {
-//         if ( (Math.abs(players[player].x - projectiles[id].x) < 2) &&
-//             (Math.abs(players[player].y - projectiles[id].y) < 2) ) {
-//           players[player].health -= 1;
-//           // if (players[player].health < 0) {
-//           //   players[player] = 0;
-//           //   players.numPlayers -= 1;
-//           // }
-//         }
-//       }
-//     }
-//   }
-//   //Enemy-projectile collision handler
-//   for (var enemy in enemies) {
-//     for (var id in projectiles) {
-//       if (projectiles[id]) {
-//         if ( (Math.abs(enemies[enemy].x - projectiles[id].x) < 5) &&
-//             (Math.abs(enemies[enemy].y - projectiles[id].y) < 5) ) {
-//               enemies[enemy].health -= 1;
-//               if (enemies[enemy].health < 0) {
-//                 var temp = enemies[enemyID -= 1];
-//                 enemies[enemyID] = enemies[enemy];
-//                 enemies[enemy] = temp;
-//                 enemies[enemyID] = 0;
-//                 enemies.numEnemies -= 1;
-//               }
-//         }
-//       }
-//     }
-//   }
-// }
 
 //Handles bullet collisions
 function handleBulletCollisions(rm) {
@@ -1070,28 +739,6 @@ function returnRooms(){
 
 //=============================================================================
 // Hailey Workpace
-/*Guide to accessing map data:
-1. Walls: objects that has x, y, width, height, texture.
-2. Furnitures: objects that has names, x, y, direction.
-3. Enemies, bullets, players: will think about this tomorrow
-
-console.log( mapData.walls[2].x );
--->prints the x-axis of mapData's wall's 3rd element.
-
-console.log(mapData.furnitures[4].name );
--->prints the x-axis of mapData's wall's 5th element.
-*/
-
-//
-// var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
-// var processor = require('./static/objects/mapProcessor.js');
-// mapData = processor.constructFromData(mapDataFromFile);
-// console.log(JSON.stringify(mapData));
-
-
-
-
-// processor.constructFromData(initialData);
 
 //=============================================================================
 
