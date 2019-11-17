@@ -49,13 +49,11 @@ var GRID_SIZE = 10; ///temporary variable
 var mapImage = new Image();
 mapImage.src = "";
 var mapImageLoaded = false;
-var loadingScreen = true;
 socket.on("deliverMapImageSrcToClient", function(imageSrc){
   // console.log('deliverMapImageSrcToClient called');
   if (!mapImageLoaded && imageSrc != "") {
     mapImage.src = imageSrc;
     mapImageLoaded = true;
-    loadingScreen = false;
   }
   //console.log('image source set to:', mapImage.src);
 });
@@ -131,16 +129,15 @@ setInterval(function() {
   //makeSound("bang");
 }, 1000 / 60);
 
-var canvas = document.getElementById('canvas');
-var startX = 0;
-var startY = 0;
-var canvasW = 800;
-var canvasH = 600;
-canvas.width = canvasW;
-canvas.height = canvasH;
-
-// canvas.cursor = "none"; //hide the original cursor
-var lastLoop = new Date();  //this is used for getting fps
+  var canvas = document.getElementById('canvas');
+  var startX = 0;
+  var startY = 0;
+  var canvasW = 800;
+  var canvasH = 600;
+  canvas.width = canvasW;
+  canvas.height = canvasH;
+  // canvas.cursor = "none"; //hide the original cursor
+  var lastLoop = new Date();  //this is used for getting fps
 
 window.addEventListener('mousemove', function (e) {
   xPos = e.pageX;
@@ -149,98 +146,80 @@ window.addEventListener('mousemove', function (e) {
   // console.log(yPos);
 });
 
-var context = canvas.getContext('2d');
-//Loading screen
-context.clearRect(startX, startY, canvasW, canvasH);
-context.fillStyle = "white";
-context.font = "50px Arial";
-context.fillText("Loading . . .", (canvasW/2 - 100), (canvasH/2 - 30));
-
-socket.on('state', function(players, projectiles, enemies) {
-  //console.log("socket event state called");
-  if (loadingScreen) {
+  var context = canvas.getContext('2d');
+  socket.on('state', function(players, projectiles, enemies) {
+    //console.log("socket event state called");
+    if (myId == "") {
+      socket.emit('requestPassId');
+      return;
+    }
+    if (mapImage.src == "") {
+      socket.emit("requestMapImageSrcFromServer");
+      return;
+    }
     context.clearRect(startX, startY, canvasW, canvasH);
+
+    var middleX = players[myId].x - (canvasW)/2;
+    var middleY = players[myId].y - (canvasH)/2;
+    shoot.middleX = middleX;
+    shoot.middleY = middleY;
+
+    //'zoom' functionality. It's not done yet! Please just leave it =1..
+    //It only works on map-drawing, NOT collision.
+    var zoom = 1;
+
+    //drawing the map from mapURL
+    context.drawImage(mapImage, middleX, middleY,
+      canvasW, canvasH, 0, 0, canvasW*zoom, canvasH*zoom);
+
+    context.fillStyle = 'green';
+    for (var id in players) {
+      var player = players[id];
+      //Determines how the characters look
+      context.beginPath();
+      context.arc(player.x - middleX, player.y - middleY, GRID_SIZE/2 , 0, 2 * Math.PI);
+      context.fill();
+    }
+
+    for (var id in projectiles) {
+      var projectile = projectiles[id];
+      //Determines how the bullets look
+      context.beginPath();
+      context.arc(projectile.x - middleX, projectile.y - middleY, 2, 0, 2 * Math.PI);
+      context.fillStyle = 'white';
+      context.fill();
+    }
+
+    for (var id in enemies) {
+
+      var enemy = enemies[id];
+      //Determines how the bullets look // old radius = 6
+      context.beginPath();
+      context.arc(enemy.x - middleX, enemy.y - middleY, GRID_SIZE/2, 0, 2 * Math.PI);
+      context.fillStyle = 'red';
+      context.fill();
+    }
+
     context.fillStyle = "white";
-    context.font = "50px Arial";
-    context.fillText("Loading . . .", (canvasW/2 - 100), (canvasH/2 - 30));
-    return;
-  }
-  if (myId == "") {
-    socket.emit('requestPassId');
-    return;
-  }
-  if (mapImage.src == "") {
-    socket.emit("requestMapImageSrcFromServer");
-    return;
-  }
-  context.clearRect(startX, startY, canvasW, canvasH);
+    context.font = "15px Arial";
+    context.fillText("Player: x: " + (players[myId].x/GRID_SIZE) + ", y: "
+      + (players[myId].y/GRID_SIZE), canvasW-170, canvasH-50);
+    context.fillText("Mouse: x: " + (xPos+middleX)/GRID_SIZE + ", y: "
+      + (yPos+middleY)/GRID_SIZE, canvasW-170, canvasH-30);
 
-  var middleX = players[myId].x - (canvasW)/2;
-  var middleY = players[myId].y - (canvasH)/2;
-  shoot.middleX = middleX;
-  shoot.middleY = middleY;
-
-  //'zoom' functionality. It's not done yet! Please just leave it =1..
-  //It only works on map-drawing, NOT collision.
-  var zoom = 1;
-
-  //drawing the map from mapURL
-  context.drawImage(mapImage, middleX, middleY,
-    canvasW, canvasH, 0, 0, canvasW*zoom, canvasH*zoom);
-
-  context.fillStyle = 'green';
-  for (var id in players) {
-    var player = players[id];
-    //Determines how the characters look
-    context.beginPath();
-    context.arc(player.x - middleX, player.y - middleY, GRID_SIZE/2 , 0, 2 * Math.PI);
-    context.fill();
-  }
-
-  for (var id in projectiles) {
-    var projectile = projectiles[id];
-    //Determines how the bullets look
-    context.beginPath();
-    context.arc(projectile.x - middleX, projectile.y - middleY, 2, 0, 2 * Math.PI);
-    context.fillStyle = 'white';
-    context.fill();
-  }
-
-  for (var id in enemies) {
-
-    var enemy = enemies[id];
-    //Determines how the bullets look // old radius = 6
-    context.beginPath();
-    context.arc(enemy.x - middleX, enemy.y - middleY, GRID_SIZE/2, 0, 2 * Math.PI);
-    context.fillStyle = 'red';
-    context.fill();
-  }
-
-  context.fillStyle = "white";
-  context.font = "15px Arial";
-  context.fillText("Player: x: " + (players[myId].x/GRID_SIZE) + ", y: "
-    + (players[myId].y/GRID_SIZE), canvasW-170, canvasH-50);
-  context.fillText("Mouse: x: " + (xPos+middleX)/GRID_SIZE + ", y: "
-    + (yPos+middleY)/GRID_SIZE, canvasW-170, canvasH-30);
-
-  var thisLoop = new Date();
-  context.fillText(Math.round(1000 / (thisLoop - lastLoop)) + " FPS", canvasW-70, canvasH-10);
-  lastLoop = thisLoop;
-});
+    var thisLoop = new Date();
+    context.fillText(Math.round(1000 / (thisLoop - lastLoop)) + " FPS", canvasW-70, canvasH-10);
+    lastLoop = thisLoop;
+  });
 
 
-socket.on("create map", function(mapData){
-  processMapDrawing(mapData);
-});
+  socket.on("create map", function(mapData){
+    processMapDrawing(mapData);
+  });
 
 
 // Support Functions ------------------------------------
 function processMapDrawing(mapData){
-  loadingScreen = true;
-  context.clearRect(startX, startY, canvasW, canvasH);
-  context.fillStyle = "white";
-  context.font = "50px Arial";
-  context.fillText("Loading . . .", (canvasW/2 - 100), (canvasH/2 - 30));
   console.log(mapData);
   //called ONLY when numPlayers: 0 -> 1.
   //draws the whole canvas, and saves to images file.
@@ -269,7 +248,7 @@ function processMapDrawing(mapData){
     console.log("mapdata is running");
     for (var y = 0; y < mapData[mapData.length - 1].length; y++){
       // console.log("\tMapdata[" + x + "][" + y + "]"); ////*****
-      //console.log("hi qt");
+      console.log("hi qt");
       if(mapData[x][y] != '')
       {
         // var source = mapData[x][y].textureSrc;
@@ -296,7 +275,6 @@ function processMapDrawing(mapData){
   mapImage.src = allMap.toDataURL();
   console.log('socket event create map called: URL set to', mapImage.src);/////*****
   socket.emit("deliverMapImageSrcToServer", mapImage.src);
-  loadingScreen = false;
   delete allMap;
 }
 
