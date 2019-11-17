@@ -97,8 +97,10 @@ describe('Index', function(){
         for (dir in directions) {
             // console.log(directions[dir])
             dir = directions[dir];
-            movementResult = index.movePlayer("moveTest", "moveRoom", "GG", dir)
-            speed = movementResult.speed;
+            mov = index.movePlayer("moveTest", "moveRoom", "GG", dir)
+            start = mov.start;
+            end = mov.end;
+            speed = mov.speed;
             dx = 0; dy = 0;
             if (dir.left) {
                 dx -= speed;
@@ -112,10 +114,11 @@ describe('Index', function(){
             if (dir.up) {
                 dy += speed;
             }
-            it(`movePlayer() using ${dir} moved player from [${movementResult.start}] to [${movementResult.end}]`, function(){
+            it(`movePlayer() ${dir} moved player from [${start}] to [${end}]`, 
+            function(){
                 assert.isOk( 
-                    ((movementResult.start[0]+dx) == movementResult.end[0]) &&
-                    ((movementResult.start[1]+dx) == movementResult.end[1]));
+                    ((mov.start[0]+dx) == mov.end[0]) &&
+                    ((mov.start[1]+dx) == mov.end[1]));
             });
         }
    });
