@@ -121,18 +121,14 @@ describe('Index', function(){
    });
 
     // Test cases for GET as in app.get
-    describe('Testing GET', function() {
-        it('should list ALL blobs on /blobs GET', function(done){
-            chai.request(server)
-            .get('/pages/login')
-            .end(function(err, res){
-                res.should.have.status(5000);
-                done();
-            });
+    describe('GET Home', () => {
+        it('Should return Not found', (done) => {
+            chai.request('http://localhost:5000')
+                .get('/')
+                .end(function (err, res) {
+                    res.should.have.status(200);
+                    done();
+                });
         });
-        it('should list a SINGLE blob on /blob/<id> GET');
-        it('should add a SINGLE blob on /blobs POST');
-        it('should update a SINGLE blob on /blob/<id> PUT');
-        it('should delete a SINGLE blob on /blob/<id> DELETE');
-      });
+    });
 });
