@@ -123,7 +123,7 @@ describe('Index', function(){
         }
    });
 
-    // Test cases for GET as in app.get
+    // Test cases for GET as in home page
     describe('GET Home', () => {
         it('Should return found', (done) => {
             chai.request('http://localhost:5000')
@@ -135,6 +135,7 @@ describe('Index', function(){
         });
     });
 
+    // Test cases for GET as in home page
     describe('GET register', () => {
         it('Should return found', (done) => {
             chai.request('http://localhost:5000')
