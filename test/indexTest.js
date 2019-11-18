@@ -31,11 +31,10 @@ describe('Index', function(){
             //let result = index.sayHello();
             assert.typeOf(sayHelloResult, 'string');
         });
-
     });
 
-    // Test cases for addNumbers function
-   describe('addNumbers()', function(){
+    //Test cases for addNumbers function
+    describe('addNumbers()', function(){
 
         it('addNumbers should be above 5', function(){
             //let result = index.addNumbers(5, 5);
@@ -46,18 +45,17 @@ describe('Index', function(){
             //let result = index.addNumbers(5, 5);
             assert.typeOf(addNumbersResult, 'number');
         });
+    });
 
-   });
-
-   // Test cases for roomData
-   describe('roomData()', function(){
+    //Test cases for roomData
+    describe('roomData()', function(){
         roomDataResult = index.roomData('test');
         it('roomData() created a room object', function(){
             assert.isOk(roomDataResult);
         });
-   });
+    });
 
-    // Test cases for createRoom
+    //Test cases for createRoom
     describe('createRoom()', function() {
         createRoomReusult = index.createRoom('createRoomTest');
         it('createRoom() created a room object with the correct name', 
@@ -69,19 +67,19 @@ describe('Index', function(){
         function() {
             assert.isOk(createRoomReusult['twoRoom']);
         });
-   });
+    });
 
-   // Test cases for createPlayer and createRoom
-   describe('createPlayer()', function() {
+    //Test cases for createPlayer and createRoom
+    describe('createPlayer()', function() {
         createPlayersResult = index.createPlayer('1', 'test', 'testName');
         it('createPlayer() created a player object with correct ID and room', 
         function(){
             assert.isOk(createPlayersResult['test'].players['1']);
         });
-   });
+    });
 
-   //Test cases for movePlayer
-   describe('movePlayer()', function () {
+    //Test cases for movePlayer
+    describe('movePlayer()', function () {
         directions = {
             dataL: {"left" : true, "right" : false, "up" : false, "down" : false},
             dataR: {"left" : false, "right" : true, "up" : false, "down" : false},
@@ -94,34 +92,44 @@ describe('Index', function(){
             dataNS: {"left" : false, "right" : false, "up" : true, "down" : true},
             dataEW: {"left" : true, "right" : true, "up" : false, "down" : false}
         };
+        index.createRoom("moveRoom");
         for (dir in directions) {
             // console.log(directions[dir])
-            dir = directions[dir];
-            mov = index.movePlayer("moveTest", "moveRoom", "GG", dir)
+            direction = directions[dir];
+            mov = index.testMovePlayer("moveTest", "moveRoom", "GG", direction);
             start = mov.start;
             end = mov.end;
             speed = mov.speed;
             dx = 0; dy = 0;
-            if (dir.left) {
+            if (direction.left) {
                 dx -= speed;
             }
-            if (dir.right) {
+            if (direction.right) {
                 dx += speed;
             }
-            if (dir.down) {
-                dy -= speed;
-            }
-            if (dir.up) {
+            if (direction.down) {
                 dy += speed;
             }
-            it(`movePlayer() ${dir} moved player from [${start}] to [${end}]`, 
-            function(){
-                assert.isOk( 
-                    ((mov.start[0]+dx) == mov.end[0]) &&
-                    ((mov.start[1]+dx) == mov.end[1]));
+            if (direction.up) {
+                dy -= speed;
+            }
+            it(`movePlayer() ${dir} moved player from [${start}] to [${end}]`,
+            function() {
+                assert.isOk( (start[0]+dx == end[0]) && 
+                             (start[1]+dy == end[1]) );
             });
         }
-   });
+    });
+
+   //Test cases for movePlayer
+    describe('testCollision()', function () {
+        left = {"left" : true, "right" : false, "up" : false, "down" : false}
+        result = index.testCollision("leftTest", "collRoom", "GG", left)
+        it("moved player left 100 units to successfully force collision",
+        function() {
+            assert.isOk(result == true);
+        });
+    });
 
     // Test cases for GET as in home page
     describe('GET Home', () => {
@@ -147,7 +155,6 @@ describe('Index', function(){
         });
     });
     
-
     // Test cases for POST as in check Account
     describe('POST checkAccount, POST logout', () => {
         it('/checkAccount post request succesfully logs in user', function(done) {
