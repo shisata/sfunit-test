@@ -103,9 +103,9 @@ module.exports = {
 
   // Tests Enemy Movements
   testEnemyMovement: function(){
+    enemyMove = 5;
     // enemies = generateEnemies();
     // enemyMove = moveEnemies(enemies);
-    enemyMove = 5;
     return enemyMove;
   }
 }
