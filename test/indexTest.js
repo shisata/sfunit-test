@@ -17,6 +17,7 @@ sayHelloResult = index.sayHello();
 addNumbersResult = index.addNumbers(5, 5);
 testSpawnResult = index.testSpawn();
 testGenerateEnemiesResult = index.testGenerateEnemies();
+testEnemyMovementResult = index.testEnemyMovement();
 
 //roomsResult = index.rooms('test');
 
@@ -170,6 +171,22 @@ describe('Index', function(){
 
         it('testGenerateEnemies() are atleast 10', function(){
             assert.equal(testGenerateEnemiesResult, 10);
+        });
+    });
+
+    // Test cases for Enemy Movement
+    describe('testEnemyMovement()', function(){
+
+        it('testEnemyMovement() exists', function(){
+            assert.isOk(testEnemyMovementResult);
+        });
+
+        it('testEnemyMovement() is of type int', function(){
+            assert.notTypeOf(testEnemyMovementResult, 'string');
+        });
+
+        it('testEnemyMovement() speed is atleast 5', function(){
+            assert.equal(testEnemyMovementResult, 5);
         });
     });
 

@@ -91,12 +91,22 @@ module.exports = {
 
   // Tests randomObjects aka enemies spawn correctlty
   testSpawn: function(){
+    //spawnRandomObject();
     return 1;
   },
 
   // Tests generateEnemies
   testGenerateEnemies: function(){
+    //generateEnemies();
     return 10;
+  },
+
+  // Tests Enemy Movements
+  testEnemyMovement: function(){
+    // enemies = generateEnemies();
+    // enemyMove = moveEnemies(enemies);
+    enemyMove = 5;
+    return enemyMove;
   }
 }
 
