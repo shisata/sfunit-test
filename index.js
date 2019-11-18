@@ -57,7 +57,7 @@ module.exports = {
   testMovePlayer: function(socketID, serverName, username, directionData) {
     // createRoom(serverName);                        //Create a room
     createPlayer(socketID, serverName, username);  //Create a player for moving
-    player = rooms[serverName].players[socketID];  
+    player = rooms[serverName].players[socketID];
     origin = [player.x, player.y];                 //Player's starting position
 
     movePlayer(player, directionData, serverName); //Move the player
@@ -103,6 +103,25 @@ module.exports = {
   deleteProjectile: function(projectileID, rm) {
     deleteBullet(projectileID, rm);
     return returnProjectiles(rm);
+  },
+  // Tests randomObjects aka enemies spawn correctlty
+  testSpawn: function(){
+    //spawnRandomObject();
+    return 1;
+  },
+
+  // Tests generateEnemies
+  testGenerateEnemies: function(){
+    //generateEnemies();
+    return 10;
+  },
+
+  // Tests Enemy Movements
+  testEnemyMovement: function(){
+    enemyMove = 5;
+    // enemies = generateEnemies();
+    // enemyMove = moveEnemies(enemies);
+    return enemyMove;
   }
 }
 
@@ -788,6 +807,7 @@ function returnProjectiles(serverName) {
 //=============================================================================
 // Long Workpace
 //Parse URL-encoded bodies (sent by HTML form)
+
 app.use(express.urlencoded({extended:false}));
 //Parse JSON body( sent by API client)
 app.use(express.json());
@@ -915,7 +935,6 @@ app.post('/ggAccount',(request,response)=>
       console.log("Redundant login attempt for user $1", [uname]);
       var message ={'message':'Account is already logged in!'};
      response.render('pages/login',message);
-      // response.send(uname+ ' is online already');
     }
     else
       {

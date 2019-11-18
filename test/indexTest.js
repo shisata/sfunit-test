@@ -9,11 +9,15 @@ var chaiHttp = require('chai-http');
 var server = require('../index');
 var should = chai.should();
 
+
 chai.use(chaiHttp);
 
 // Results
 sayHelloResult = index.sayHello();
 addNumbersResult = index.addNumbers(5, 5);
+testSpawnResult = index.testSpawn();
+testGenerateEnemiesResult = index.testGenerateEnemies();
+testEnemyMovementResult = index.testEnemyMovement();
 
 //roomsResult = index.rooms('test');
 
@@ -21,12 +25,12 @@ describe('Index', function(){
 
     // Test cases for sayHello function
     describe('sayHello()', function(){
-        
+
         it('sayHello should return hello', function(){
             //let result = index.sayHello();
             assert.equal(sayHelloResult, 'hello');
         });
-    
+
         it('sayHello should return type string', function(){
             //let result = index.sayHello();
             assert.typeOf(sayHelloResult, 'string');
@@ -58,12 +62,12 @@ describe('Index', function(){
     //Test cases for createRoom
     describe('createRoom()', function() {
         createRoomReusult = index.createRoom('createRoomTest');
-        it('createRoom() created a room object with the correct name', 
+        it('createRoom() created a room object with the correct name',
         function() {
             assert.isOk(createRoomReusult['createRoomTest']);
         });
         createTwoRoomsReusult = index.createTwoRooms('twoRoom');
-        it('createRoom() correctly handles a duplicate room request', 
+        it('createRoom() correctly handles a duplicate room request',
         function() {
             assert.isOk(createRoomReusult['twoRoom']);
         });
@@ -72,7 +76,7 @@ describe('Index', function(){
     //Test cases for createPlayer and createRoom
     describe('createPlayer()', function() {
         createPlayersResult = index.createPlayer('1', 'test', 'testName');
-        it('createPlayer() created a player object with correct ID and room', 
+        it('createPlayer() created a player object with correct ID and room',
         function(){
             assert.isOk(createPlayersResult['test'].players['1']);
         });
@@ -115,8 +119,6 @@ describe('Index', function(){
             }
             it(`movePlayer() ${dir} moved player from [${start}] to [${end}]`,
             function() {
-                // assert.isOk( (start[0]+dx == end[0]) && 
-                //              (start[1]+dy == end[1]) );
                 assert.isOk(start[0]+dddx == end[0]);
                 assert.isOk(start[1]+dddy == end[1]);            
             });
@@ -150,10 +152,6 @@ describe('Index', function(){
         endCoords = [movResults[0].x, movResults[0].y];
         delResults = index.deleteProjectile(0, "gunrange");
 
-        
-        
-        
-
         it('Projectile succesfully generated', function() {
             assert.isOk(genResults);
         });
@@ -167,6 +165,57 @@ describe('Index', function(){
         });
     });
 
+    // Test cases for spawning Random enemies
+    describe('testSpawn()', function(){
+
+        it('testSpawn() exists', function(){
+            assert.isOk(testSpawnResult);
+        });
+
+        it('testSpawn() is of type int', function(){
+            assert.notTypeOf(testSpawnResult, 'string');
+        });
+
+        it('testSpawn() is atleast 1', function(){
+            assert.equal(testSpawnResult, 1);
+        });
+    });
+
+    //Test cases for generating Enemies
+    describe('testGenerateEnemies()', function(){
+
+        it('testGenerateEnemies() exists', function(){
+            assert.isOk(testGenerateEnemiesResult);
+        });
+
+        it('testGenerateEnemies() is of type int', function(){
+            assert.notTypeOf(testGenerateEnemiesResult, 'string');
+        });
+
+        it('testGenerateEnemies() are atleast 10', function(){
+            assert.equal(testGenerateEnemiesResult, 10);
+        });
+    });
+
+    // Test cases for Enemy Movement
+    describe('testEnemyMovement()', function(){
+
+        it('testEnemyMovement() exists', function(){
+            assert.isOk(testEnemyMovementResult);
+        });
+
+        it('testEnemyMovement() is of type int', function(){
+            assert.notTypeOf(testEnemyMovementResult, 'string');
+        });
+
+        it('testEnemyMovement() speed is atleast 5', function(){
+            assert.equal(testEnemyMovementResult, 5);
+        });
+    });
+
+
+//GET and POST testing functions start from below, just uncomment them to make them work
+
     // Test cases for GET as in home page
     describe('GET Home', () => {
         it('Should return found', (done) => {
@@ -177,18 +226,36 @@ describe('Index', function(){
                     done();
                 });
         });
+  //Test cases for login page
+  describe('Login page', ()=>{
+    //Render login page
+    it('Should render login page on / GET', (done) => {
+      chai.request('http://localhost:5000')
+          .get('/')
+          .end(function (err, res) {
+            res.should.have.status(200);
+            done();
+          });
+    });
+    //Render register page
+    it('Should render register page on /register GET', (done) => {
+      chai.request('http://localhost:5000')
+          .get('/register')
+          .end(function (err, res) {
+            res.should.have.status(200);
+            done();
+          });
     });
 
-    // Test cases for GET as in home page
-    describe('GET register', () => {
-        it('Should return found', (done) => {
-            chai.request('http://localhost:5000')
-                .get('/register')
-                .end(function (err, res) {
-                    res.should.have.status(200);
-                    done();
-                });
-        });
+    it('/checkAccount post request succesfully logs in user', function(done) {
+        // chai.request('../index')
+        chai.request('http://localhost:5000')
+            .post('/checkAccount')
+            .send({'username': 'long', 'password': '123456' })
+            .end(function(err, res){
+                res.should.have.status(200);
+                done();
+            });
     });
     
     // Test cases for POST as in check Account
@@ -213,4 +280,30 @@ describe('Index', function(){
                 });
         });
     });
+    });
+    it('/logout post request successfully logs out user', function(done) {
+        chai.request('http://localhost:5000')
+            .post('/logout')
+            .send({'username': 'long'})
+            .end(function(err, res){
+                res.should.have.status(200);
+                done();
+            });
+    });
+  });
+
+  //Test  cases for register page
+  describe('Register page', ()=>{
+      it ('Should create an account with /register POST and valid data'), (done) =>{
+        chai.request('http://localhost:5000')
+            .post('/register')
+            .send({'username':'long10'},
+                  {'pw':'123456'},
+                  {'gmail':'test@gmail.com'})
+            .end(function(err,res){
+              res.should.have.status(200);
+              done();
+            });
+      }
+  });
 });
