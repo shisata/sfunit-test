@@ -1,4 +1,6 @@
 //Call a popup alert for failure in sign-up or sign-in
+
+
 var msg = document.querySelector('#msg');
 if (msg.innerHTML !='')
   {

@@ -57,7 +57,7 @@ module.exports = {
   testMovePlayer: function(socketID, serverName, username, directionData) {
     // createRoom(serverName);                        //Create a room
     createPlayer(socketID, serverName, username);  //Create a player for moving
-    player = rooms[serverName].players[socketID];  
+    player = rooms[serverName].players[socketID];
     origin = [player.x, player.y];                 //Player's starting position
 
     movePlayer(player, directionData, serverName); //Move the player
@@ -773,6 +773,7 @@ function returnRooms(){
 //=============================================================================
 // Long Workpace
 //Parse URL-encoded bodies (sent by HTML form)
+
 app.use(express.urlencoded({extended:false}));
 //Parse JSON body( sent by API client)
 app.use(express.json());
@@ -900,7 +901,6 @@ app.post('/ggAccount',(request,response)=>
       console.log("Redundant login attempt for user $1", [uname]);
       var message ={'message':'Account is already logged in!'};
      response.render('pages/login',message);
-      // response.send(uname+ ' is online already');
     }
     else
       {

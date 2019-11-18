@@ -9,6 +9,7 @@ var chaiHttp = require('chai-http');
 var server = require('../index');
 var should = chai.should();
 
+
 chai.use(chaiHttp);
 
 // Results
@@ -22,12 +23,12 @@ describe('Index', function(){
 
     // Test cases for sayHello function
     describe('sayHello()', function(){
-        
+
         it('sayHello should return hello', function(){
             //let result = index.sayHello();
             assert.equal(sayHelloResult, 'hello');
         });
-    
+
         it('sayHello should return type string', function(){
             //let result = index.sayHello();
             assert.typeOf(sayHelloResult, 'string');
@@ -59,12 +60,12 @@ describe('Index', function(){
     //Test cases for createRoom
     describe('createRoom()', function() {
         createRoomReusult = index.createRoom('createRoomTest');
-        it('createRoom() created a room object with the correct name', 
+        it('createRoom() created a room object with the correct name',
         function() {
             assert.isOk(createRoomReusult['createRoomTest']);
         });
         createTwoRoomsReusult = index.createTwoRooms('twoRoom');
-        it('createRoom() correctly handles a duplicate room request', 
+        it('createRoom() correctly handles a duplicate room request',
         function() {
             assert.isOk(createRoomReusult['twoRoom']);
         });
@@ -73,7 +74,7 @@ describe('Index', function(){
     //Test cases for createPlayer and createRoom
     describe('createPlayer()', function() {
         createPlayersResult = index.createPlayer('1', 'test', 'testName');
-        it('createPlayer() created a player object with correct ID and room', 
+        it('createPlayer() created a player object with correct ID and room',
         function(){
             assert.isOk(createPlayersResult['test'].players['1']);
         });
@@ -116,7 +117,7 @@ describe('Index', function(){
             }
             it(`movePlayer() ${dir} moved player from [${start}] to [${end}]`,
             function() {
-                assert.isOk( (start[0]+dx == end[0]) && 
+                assert.isOk( (start[0]+dx == end[0]) &&
                              (start[1]+dy == end[1]) );
             });
         }
@@ -167,18 +168,36 @@ describe('Index', function(){
                     done();
                 });
         });
+  //Test cases for login page
+  describe('Login page', ()=>{
+    //Render login page
+    it('Should render login page on / GET', (done) => {
+      chai.request('http://localhost:5000')
+          .get('/')
+          .end(function (err, res) {
+            res.should.have.status(200);
+            done();
+          });
+    });
+    //Render register page
+    it('Should render register page on /register GET', (done) => {
+      chai.request('http://localhost:5000')
+          .get('/register')
+          .end(function (err, res) {
+            res.should.have.status(200);
+            done();
+          });
     });
 
-    // Test cases for GET as in home page
-    describe('GET register', () => {
-        it('Should return found', (done) => {
-            chai.request('http://localhost:5000')
-                .get('/register')
-                .end(function (err, res) {
-                    res.should.have.status(200);
-                    done();
-                });
-        });
+    it('/checkAccount post request succesfully logs in user', function(done) {
+        // chai.request('../index')
+        chai.request('http://localhost:5000')
+            .post('/checkAccount')
+            .send({'username': 'long', 'password': '123456' })
+            .end(function(err, res){
+                res.should.have.status(200);
+                done();
+            });
     });
     
     // // Test cases for POST as in check Account
@@ -203,4 +222,30 @@ describe('Index', function(){
     //             });
     //     });
     // });
+});
+    it('/logout post request successfully logs out user', function(done) {
+        chai.request('http://localhost:5000')
+            .post('/logout')
+            .send({'username': 'long'})
+            .end(function(err, res){
+                res.should.have.status(200);
+                done();
+            });
+    });
+  });
+
+  //Test  cases for register page
+  describe('Register page', ()=>{
+      it ('Should create an account with /register POST and valid data'), (done) =>{
+        chai.request('http://localhost:5000')
+            .post('/register')
+            .send({'username':'long10'},
+                  {'pw':'123456'},
+                  {'gmail':'test@gmail.com'})
+            .end(function(err,res){
+              res.should.have.status(200);
+              done();
+            });
+      }
+  });
 });
