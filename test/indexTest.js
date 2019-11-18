@@ -146,6 +146,7 @@ describe('Index', function(){
                 });
         });
     });
+    
 
     // Test cases for POST as in check Account
     describe('POST checkAccount, POST logout', () => {
