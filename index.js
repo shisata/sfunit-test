@@ -884,7 +884,7 @@ app.post('/gglogin', (request, response)=>{
       if (results.rows[0].username != uname)
       {
         var message = 'Gmail is used';
-        response.render('pages/login',message);
+        response.render('pages/login', message);
       }
     }
     if (results.rows=='')
@@ -908,7 +908,7 @@ app.post('/ggAccount',(request,response)=>
     'username':uname
   };
   const query = "SELECT * FROM account WHERE username =$1";
-  pool.query(query,[uname],(error, results)=>{
+  pool.query(query,[uname],(error, results)=> {
     if (error)
       throw (error);
     if (results.rows[0].online)
@@ -927,7 +927,8 @@ app.post('/ggAccount',(request,response)=>
               throw(error);
             }
         });
-       response.render('pages/index',user);
+      //  response.render('pages/index',user);
+       response.render('pages/matchmaking', user);
         // response.send('Login successfully for'+uname);
       }
   });
