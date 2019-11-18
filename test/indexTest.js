@@ -21,12 +21,12 @@ describe('Index', function(){
 
     // Test cases for sayHello function
     describe('sayHello()', function(){
-        
+
         it('sayHello should return hello', function(){
             //let result = index.sayHello();
             assert.equal(sayHelloResult, 'hello');
         });
-    
+
         it('sayHello should return type string', function(){
             //let result = index.sayHello();
             assert.typeOf(sayHelloResult, 'string');
@@ -60,12 +60,12 @@ describe('Index', function(){
     // Test cases for createRoom
     describe('createRoom()', function() {
         createRoomReusult = index.createRoom('createRoomTest');
-        it('createRoom() created a room object with the correct name', 
+        it('createRoom() created a room object with the correct name',
         function() {
             assert.isOk(createRoomReusult['createRoomTest']);
         });
         createTwoRoomsReusult = index.createTwoRooms('twoRoom');
-        it('createRoom() correctly handles a duplicate room request', 
+        it('createRoom() correctly handles a duplicate room request',
         function() {
             assert.isOk(createRoomReusult['twoRoom']);
         });
@@ -74,7 +74,7 @@ describe('Index', function(){
    // Test cases for createPlayer and createRoom
    describe('createPlayer()', function() {
         createPlayersResult = index.createPlayer('1', 'test', 'testName');
-        it('createPlayer() created a player object with correct ID and room', 
+        it('createPlayer() created a player object with correct ID and room',
         function(){
             assert.isOk(createPlayersResult['test'].players['1']);
         });
@@ -114,61 +114,46 @@ describe('Index', function(){
             if (dir.up) {
                 dy += speed;
             }
-            it(`movePlayer() ${dir} moved player from [${start}] to [${end}]`, 
+            it(`movePlayer() ${dir} moved player from [${start}] to [${end}]`,
             function(){
-                assert.isOk( 
+                assert.isOk(
                     ((mov.start[0]+dx) == mov.end[0]) &&
                     ((mov.start[1]+dx) == mov.end[1]));
             });
         }
    });
 
-    // Test cases for GET as in home page
-    describe('GET Home', () => {
-        it('Should return found', (done) => {
-            chai.request('http://localhost:5000')
-                .get('/')
-                .end(function (err, res) {
-                    res.should.have.status(200);
-                    done();
-                });
-        });
-    });
-
-    // Test cases for GET as in home page
-    describe('GET register', () => {
-        it('Should return found', (done) => {
-            chai.request('http://localhost:5000')
-                .get('/register')
-                .end(function (err, res) {
-                    res.should.have.status(200);
-                    done();
-                });
-        });
-    });
-
-
-    // Test cases for POST as in check Account
-    describe('POST checkAccount', () => {
-        it('check if post for checkAccount works', function(done) {
-            chai.request('../index')
-              .post('/checkAccount')
-              .send({'username': 'test', 'password': '123'})
-              .end(function(err, res){
-                  res.body;
-                //res.should.have.status(200);
-                // res.should.be.json;
-                // res.body.should.be.a('object');
-                // res.body.should.have.property('SUCCESS');
-                // res.body.SUCCESS.should.be.a('object');
-                // res.body.SUCCESS.should.have.property('name');
-                // res.body.SUCCESS.should.have.property('lastName');
-                // res.body.SUCCESS.should.have.property('_id');
-                // res.body.SUCCESS.name.should.equal('Java');
-                // res.body.SUCCESS.lastName.should.equal('Script');
-                done();
-              });
+  //Test cases for login page
+  describe('Login page', ()=>{
+    //Render login page
+    it('Should return login page on / GET', (done) => {
+      chai.request('http://localhost:5000')
+          .get('/')
+          .end(function (err, res) {
+            res.should.have.status(200);
+            done();
           });
     });
-    
+    //Render register page
+    it('Should return register page on /register GET', (done) => {
+      chai.request('http://localhost:5000')
+          .get('/register')
+          .end(function (err, res) {
+            res.should.have.status(200);
+            done();
+          });
+    });
+    // Testing login authentification
+    it('Should fail to login with wrong input', function(done) {
+      // chai.request('../index')
+      chai.request('http://localhost:5000')
+          .post('/checkAccount')
+          .send({'username': 'test', 'password': '123'})
+          .end(function(err, res){
+            res.should.have.status(200);
+            done();
+          });
+    });
+
+  });
 });
