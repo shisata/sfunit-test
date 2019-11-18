@@ -147,4 +147,28 @@ describe('Index', function(){
         });
     });
     
+
+
+    // Test cases for POST as in check Account
+    describe('POST checkAccount, POST logout', () => {
+        it('/checkAccount post request succesfully logs in user', function(done) {
+            // chai.request('../index')
+            chai.request('http://localhost:5000')
+                .post('/checkAccount')
+                .send({'username': 'ggiovani', 'password': '12345' })
+                .end(function(err, res){
+                    res.should.have.status(200);
+                    done();
+                });
+        });
+        it('/logout post request successfully logs out user', function(done) {
+            chai.request('http://localhost:5000')
+                .post('/logout')
+                .send({'username': 'ggiovani'})
+                .end(function(err, res){
+                    res.should.have.status(200);
+                    done();
+                });
+        });
+    });
 });
