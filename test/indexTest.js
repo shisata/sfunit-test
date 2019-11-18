@@ -2,7 +2,6 @@ const assert = require('chai').assert;
 //const sayHello = require('../index').sayHello;
 //const addNumbers = require('../index').addNumbers;
 const index = require('../index');
-
 // chai-http and server access
 var chai = require('chai');
 var chaiHttp = require('chai-http');
@@ -17,10 +16,11 @@ sayHelloResult = index.sayHello();
 addNumbersResult = index.addNumbers(5, 5);
 testSpawnResult = index.testSpawn();
 testGenerateEnemiesResult = index.testGenerateEnemies();
+testEnemyMovementResult = index.testEnemyMovement();
 
 //roomsResult = index.rooms('test');
 
-// describe('Index', function(){
+describe('Index', function(){
 
     // Test cases for sayHello function
     describe('sayHello()', function(){
@@ -103,28 +103,28 @@ testGenerateEnemiesResult = index.testGenerateEnemies();
             start = mov.start;
             end = mov.end;
             speed = mov.speed;
-            dx = 0; dy = 0;
+            dddx = 0; dddy = 0;
             if (direction.left) {
-                dx -= speed;
+                dddx -= speed;
             }
             if (direction.right) {
-                dx += speed;
+                dddx += speed;
             }
             if (direction.down) {
-                dy += speed;
+                dddy += speed;
             }
             if (direction.up) {
-                dy -= speed;
+                dddy -= speed;
             }
             it(`movePlayer() ${dir} moved player from [${start}] to [${end}]`,
             function() {
-                assert.isOk( (start[0]+dx == end[0]) &&
-                             (start[1]+dy == end[1]) );
+                assert.isOk(start[0]+dddx == end[0]);
+                assert.isOk(start[1]+dddy == end[1]);
             });
         }
     });
 
-   //Test cases for movePlayer
+    //Test cases hasCollision()
     describe('testCollision()', function () {
         collisionDirections = {
             left: {"left" : true, "right" : false, "up" : false, "down" : false},
@@ -139,6 +139,29 @@ testGenerateEnemiesResult = index.testGenerateEnemies();
                 assert.isOk(result == true);
             });
         }
+    });
+
+    // Projectile test cases
+    describe ('testProjectiles()', function () {
+        msCoords = {shootBullet: true, x: 90, y: 90, middleX: 0, middleY: 0};
+        genResults = index.generateProjectiles("shooter", "gunrange", msCoords);
+        startCoords = [genResults[0].x, genResults[0].y];
+        velVector = [genResults[0].vx, genResults[0].vy]
+        movResults = index.moveProjectiles("gunrange");
+        endCoords = [movResults[0].x, movResults[0].y];
+        delResults = index.deleteProjectile(0, "gunrange");
+
+        it('Projectile succesfully generated', function() {
+            assert.isOk(genResults);
+        });
+        it(`Projectile rightly moved from [${startCoords}] to [${endCoords}]`,
+        function() {
+            assert.isOk(startCoords[0] + velVector[0] == endCoords[0]);
+            assert.isOk(startCoords[1] + velVector[1] == endCoords[1]);
+        });
+        it("Projectile was deleted successfully", function() {
+            assert.isOk(!delResults.x && !delResults.y);
+        });
     });
 
     // Test cases for spawning Random enemies
@@ -170,6 +193,22 @@ testGenerateEnemiesResult = index.testGenerateEnemies();
 
         it('testGenerateEnemies() are atleast 10', function(){
             assert.equal(testGenerateEnemiesResult, 10);
+        });
+    });
+
+    // Test cases for Enemy Movement
+    describe('testEnemyMovement()', function(){
+
+        it('testEnemyMovement() exists', function(){
+            assert.isOk(testEnemyMovementResult);
+        });
+
+        it('testEnemyMovement() is of type int', function(){
+            assert.notTypeOf(testEnemyMovementResult, 'string');
+        });
+
+        it('testEnemyMovement() speed is atleast 5', function(){
+            assert.equal(testEnemyMovementResult, 5);
         });
     });
 
@@ -219,16 +258,16 @@ testGenerateEnemiesResult = index.testGenerateEnemies();
   describe('Login page', ()=>{
     //Render login page
     it('Should render login page on / GET', (done) => {
-      chai.request('http://localhost:5000')
+      chai.request('https://sfunit.herokuapp.com')
           .get('/')
           .end(function (err, res) {
             res.should.have.status(200);
             done();
           });
     });
-    //Render register page
+    // Render register page
     it('Should render register page on /register GET', (done) => {
-      chai.request('http://localhost:5000')
+      chai.request('https://sfunit.herokuapp.com')
           .get('/register')
           .end(function (err, res) {
             res.should.have.status(200);
@@ -236,9 +275,9 @@ testGenerateEnemiesResult = index.testGenerateEnemies();
           });
     });
     //Loging in valid account
-    it('/checkAccount post request succesfully logs in user', function(done) {
+    it('Should log in user with valid account using /checkAccount POST', function(done) {
         // chai.request('../index')
-        chai.request('http://localhost:5000')
+        chai.request('https://sfunit.herokuapp.com')
             .post('/checkAccount')
             .send({'username': 'ggiovani', 'password': '12345' })
             .end(function(err, res){
@@ -247,8 +286,20 @@ testGenerateEnemiesResult = index.testGenerateEnemies();
             });
     });
 
-    it('/logout post request successfully logs out user', function(done) {
-        chai.request('http://localhost:5000')
+    it('Fail to log in due to redundant login /checkAccount POST', function(done) {
+        // chai.request('../index')
+        chai.request('https://sfunit.herokuapp.com')
+            .post('/checkAccount')
+            .send({'username': 'ggiovani', 'password': '12345' })
+            .end(function(err, res){
+                res.should.have.status(200);
+                done();
+            });
+    });
+
+
+    it('Should log out user using /logout POST', function(done) {
+        chai.request('https://sfunit.herokuapp.com')
             .post('/logout')
             .send({'username': 'ggiovani'})
             .end(function(err, res){
@@ -261,7 +312,7 @@ testGenerateEnemiesResult = index.testGenerateEnemies();
   describe('Register page', ()=>{
       it ('Should create an account with /register POST using valid data',
       (done) =>{
-        chai.request('http://localhost:5000')
+        chai.request('https://sfunit.herokuapp.com')
             .post('/register')
             .send({'username':'long',
                     'pw':'123456',
@@ -272,4 +323,4 @@ testGenerateEnemiesResult = index.testGenerateEnemies();
             });
       });
   });
-// });
+});

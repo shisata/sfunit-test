@@ -89,14 +89,39 @@ module.exports = {
     return hasCollision((player.x + ddx), (player.y + ddy), serverName);
   },
 
+  //Projectile testing
+  generateProjectiles: function(socketID, rm, msCoords) {
+    createRoom(rm);                             //Create a gun range
+    createPlayer(socketID, rm, "OJ");           //Create a shooter
+    generateProjectile(socketID, msCoords, rm); //Create projectile
+    return returnProjectiles(rm);
+  },
+  moveProjectiles: function(rm) {
+    moveProjectiles(rm);
+    return returnProjectiles(rm);
+  },
+  deleteProjectile: function(projectileID, rm) {
+    deleteBullet(projectileID, rm);
+    return returnProjectiles(rm);
+  },
   // Tests randomObjects aka enemies spawn correctlty
   testSpawn: function(){
+    //spawnRandomObject();
     return 1;
   },
 
   // Tests generateEnemies
   testGenerateEnemies: function(){
+    //generateEnemies();
     return 10;
+  },
+
+  // Tests Enemy Movements
+  testEnemyMovement: function(){
+    enemyMove = 5;
+    // enemies = generateEnemies();
+    // enemyMove = moveEnemies(enemies);
+    return enemyMove;
   }
 }
 
@@ -610,6 +635,10 @@ function logOutPlayer(uname) {
 
 function returnRooms(){
   return rooms;
+}
+
+function returnProjectiles(serverName) {
+  return rooms[serverName].projectiles
 }
 //=========================================================================================
 
