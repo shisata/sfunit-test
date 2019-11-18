@@ -92,6 +92,11 @@ module.exports = {
   // Tests randomObjects aka enemies spawn correctlty
   testSpawn: function(){
     return 1;
+  },
+
+  // Tests generateEnemies
+  testGenerateEnemies: function(){
+    return 10;
   }
 }
 
