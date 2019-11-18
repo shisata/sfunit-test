@@ -174,7 +174,7 @@ describe('Index', function(){
     });
 
 
-
+// GET and POST testing functions start from below, just uncomment them to make them work
 
 //     // Test cases for GET as in home page
 //     describe('GET Home', () => {
