@@ -74,19 +74,19 @@ module.exports = {
       movePlayer(player, directionData, serverName);
     }
     ddx = 0; ddy = 0;
-    if (direction.left) {
+    if (directionData.left) {
       ddx -= player.speed;
     }
-    if (direction.right) {
+    if (directionData.right) {
         ddx += player.speed;
     }
-    if (direction.down) {
+    if (directionData.down) {
         ddy += player.speed;
     }
-    if (direction.up) {
+    if (directionData.up) {
         ddy -= player.speed;
     }
-    return hasCollision(player.x + ddx, player.y + ddy, serverName);
+    return hasCollision( (player.x + ddx), (player.y + ddy), serverName);
   }
 }
 
