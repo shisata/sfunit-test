@@ -100,28 +100,30 @@ describe('Index', function(){
             start = mov.start;
             end = mov.end;
             speed = mov.speed;
-            dx = 0; dy = 0;
+            dddx = 0; dddy = 0;
             if (direction.left) {
-                dx -= speed;
+                dddx -= speed;
             }
             if (direction.right) {
-                dx += speed;
+                dddx += speed;
             }
             if (direction.down) {
-                dy += speed;
+                dddy += speed;
             }
             if (direction.up) {
-                dy -= speed;
+                dddy -= speed;
             }
             it(`movePlayer() ${dir} moved player from [${start}] to [${end}]`,
             function() {
-                assert.isOk( (start[0]+dx == end[0]) && 
-                             (start[1]+dy == end[1]) );
+                // assert.isOk( (start[0]+dx == end[0]) && 
+                //              (start[1]+dy == end[1]) );
+                assert.isOk(start[0]+dddx == end[0]);
+                assert.isOk(start[1]+dddy == end[1]);            
             });
         }
     });
 
-   //Test cases for movePlayer
+    //Test cases hasCollision()
     describe('testCollision()', function () {
         collisionDirections = {
             left: {"left" : true, "right" : false, "up" : false, "down" : false},
@@ -136,6 +138,33 @@ describe('Index', function(){
                 assert.isOk(result == true);
             });
         }
+    });
+
+    // Projectile test cases
+    describe ('testProjectiles()', function () {
+        msCoords = {shootBullet: true, x: 90, y: 90, middleX: 0, middleY: 0};
+        genResults = index.generateProjectiles("shooter", "gunrange", msCoords);
+        startCoords = [genResults[0].x, genResults[0].y];
+        velVector = [genResults[0].vx, genResults[0].vy]
+        movResults = index.moveProjectiles("gunrange");
+        endCoords = [movResults[0].x, movResults[0].y];
+        delResults = index.deleteProjectile(0, "gunrange");
+
+        
+        
+        
+
+        it('Projectile succesfully generated', function() {
+            assert.isOk(genResults);
+        });
+        it(`Projectile rightly moved from [${startCoords}] to [${endCoords}]`, 
+        function() {
+            assert.isOk(startCoords[0] + velVector[0] == endCoords[0]);
+            assert.isOk(startCoords[1] + velVector[1] == endCoords[1]);
+        });
+        it("Projectile was deleted successfully", function() {
+            assert.isOk(!delResults.x && !delResults.y);
+        });
     });
 
     // Test cases for GET as in home page

@@ -87,6 +87,22 @@ module.exports = {
         ddy -= player.speed;
     }
     return hasCollision((player.x + ddx), (player.y + ddy), serverName);
+  },
+
+  //Projectile testing
+  generateProjectiles: function(socketID, rm, msCoords) {
+    createRoom(rm);                             //Create a gun range            
+    createPlayer(socketID, rm, "OJ");           //Create a shooter
+    generateProjectile(socketID, msCoords, rm); //Create projectile
+    return returnProjectiles(rm);
+  },
+  moveProjectiles: function(rm) {
+    moveProjectiles(rm);    
+    return returnProjectiles(rm);
+  },
+  deleteProjectile: function(projectileID, rm) {
+    deleteBullet(projectileID, rm);
+    return returnProjectiles(rm);
   }
 }
 
@@ -600,6 +616,10 @@ function logOutPlayer(uname) {
 
 function returnRooms(){
   return rooms;
+}
+
+function returnProjectiles(serverName) {
+  return rooms[serverName].projectiles
 }
 //=========================================================================================
 
