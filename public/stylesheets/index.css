@@ -29,10 +29,10 @@ body{
     font-size: 14pt;
     font-family: tahoma;
     margin-top: 1px;
-    margin-right: 2px;
+    margin-left: 720px;
     position:absolute;
-    top:100;
-    right:100;
+    /* top:100; */
+
 }
 
 #weather-container{
