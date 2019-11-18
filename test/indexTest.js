@@ -147,7 +147,6 @@ describe('Index', function(){
         });
     });
 
-
     // Test cases for POST as in check Account
     describe('POST checkAccount, POST logout', () => {
         it('/checkAccount post request succesfully logs in user', function(done) {
