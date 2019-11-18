@@ -119,6 +119,8 @@ h2{
 
 #sign_out_btn{
   display:none;
+  margin-left:auto;
+  margin-right:auto;
 }
 
 #gmail_button {
