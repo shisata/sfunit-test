@@ -123,12 +123,19 @@ describe('Index', function(){
 
    //Test cases for movePlayer
     describe('testCollision()', function () {
-        left = {"left" : true, "right" : false, "up" : false, "down" : false}
-        result = index.testCollision("leftTest", "collRoom", "GG", left)
-        it("moved player left 100 units to successfully force collision",
-        function() {
-            assert.isOk(result == true);
-        });
+        collisionDirections = {
+            left: {"left" : true, "right" : false, "up" : false, "down" : false},
+            right: {"left" : false, "right" : true, "up" : false, "down" : false},
+            up: {"left" : false, "right" : false, "up" : true, "down" : false},
+        };
+        for (dir in collisionDirections) {
+            direction = collisionDirections[dir];
+            result = index.testCollision(`${dir}Test`, `${dir}Room`, "BC", direction);
+            it(`moved player ${dir} 200 units to successfully force collision`,
+            function() {
+                assert.isOk(result == true);
+            });
+        }
     });
 
     // Test cases for GET as in home page

@@ -70,7 +70,7 @@ module.exports = {
     createRoom(serverName);
     createPlayer(socketID, serverName, username);
     player = rooms[serverName].players[socketID]
-    for (i = 0; i < 100; i++) {
+    for (i = 0; i < 200; i++) {
       movePlayer(player, directionData, serverName);
     }
     ddx = 0; ddy = 0;
@@ -86,7 +86,7 @@ module.exports = {
     if (directionData.up) {
         ddy -= player.speed;
     }
-    return hasCollision( (player.x + ddx), (player.y + ddy), serverName);
+    return hasCollision((player.x + ddx), (player.y + ddy), serverName);
   }
 }
 
@@ -307,7 +307,7 @@ function createRoom(serverName) {
   rooms[serverName].mapData = processor.constructFromData(mapDataFromFile);
   //console.log(mapData);///////*******
   // io.sockets.to(serverName).emit('create map', rooms[serverName].mapData);
-  console.log('players.numPlayers: ', rooms[serverName].players.numPlayers, ', create map called');
+  // console.log('players.numPlayers: ', rooms[serverName].players.numPlayers, ', create map called');
 }
 
 //Moves a player in response to keyboard input
