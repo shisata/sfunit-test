@@ -54,8 +54,8 @@ module.exports = {
     return returnRooms();
   },
   //Test player movement
-  movePlayer: function(socketID, serverName, username, directionData) {
-    createRoom(serverName);                        //Create a room
+  testMovePlayer: function(socketID, serverName, username, directionData) {
+    // createRoom(serverName);                        //Create a room
     createPlayer(socketID, serverName, username);  //Create a player for moving
     player = rooms[serverName].players[socketID];
     origin = [player.x, player.y];                 //Player's starting position
@@ -63,6 +63,30 @@ module.exports = {
     movePlayer(player, directionData, serverName); //Move the player
     result = [player.x, player.y];                 //Position player moved to
     return { "start" : origin, "end" : result, "speed" : player.speed };
+  },
+
+  //Test player-wall collisions
+  testCollision: function(socketID, serverName, username, directionData) {
+    createRoom(serverName);
+    createPlayer(socketID, serverName, username);
+    player = rooms[serverName].players[socketID]
+    for (i = 0; i < 200; i++) {
+      movePlayer(player, directionData, serverName);
+    }
+    ddx = 0; ddy = 0;
+    if (directionData.left) {
+      ddx -= player.speed;
+    }
+    if (directionData.right) {
+        ddx += player.speed;
+    }
+    if (directionData.down) {
+        ddy += player.speed;
+    }
+    if (directionData.up) {
+        ddy -= player.speed;
+    }
+    return hasCollision((player.x + ddx), (player.y + ddy), serverName);
   }
 }
 
@@ -275,7 +299,7 @@ function createRoom(serverName) {
   }
 
   rooms[serverName] = roomData(serverName);
-  console.log("LOGGING ROOMS", rooms[serverName]);
+  // console.log("LOGGING ROOMS", rooms[serverName]);
 
   //Load map data
   var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap2.json', 'utf8'));
@@ -283,7 +307,7 @@ function createRoom(serverName) {
   rooms[serverName].mapData = processor.constructFromData(mapDataFromFile);
   //console.log(mapData);///////*******
   // io.sockets.to(serverName).emit('create map', rooms[serverName].mapData);
-  console.log('players.numPlayers: ', rooms[serverName].players.numPlayers, ', create map called');
+  // console.log('players.numPlayers: ', rooms[serverName].players.numPlayers, ', create map called');
 }
 
 //Moves a player in response to keyboard input
@@ -313,9 +337,8 @@ function movePlayer(player, data, rm) {
 }
 
 
-
 //check if there is collision  at direction
-function hasCollision(x, y, rm){
+function hasCollision(x, y, rm) {
   var gridX = Math.floor(x / GRID_SIZE);
   var gridY = Math.floor(y / GRID_SIZE);
   if(rooms[rm] == undefined || rooms[rm].mapData == undefined
@@ -366,7 +389,6 @@ function generateProjectile(id, data, rm) {
     spawnRandomObjectbulletCount = 0;
   }
 }
-
 
 //Spawn a random enemy
 function spawnRandomObject(rm) {
@@ -569,7 +591,7 @@ function logOutPlayer(uname) {
             throw(error);
           }
       });
-    console.log(`Succesfully logged out ${uname}`);
+    // console.log(`Succesfully logged out ${uname}`);
   });
 }
 
@@ -817,6 +839,7 @@ app.post('/checkAccount', (request, response)=>{
         });
         //Log in user
         // response.render('pages/index', user);
+        console.log(`logging in ${uname}`);
         response.render('pages/matchmaking', user);
        }
        else {
@@ -960,8 +983,8 @@ app.post('/register', (request,response)=>{
 //=============================================================================
 // George Workpace
 app.post('/logout', (request, response)=>{
-  console.log("logging username on logout request", request.body.username);
   logOutPlayer(request.body.username);
+  console.log(`Succesfully logged out ${request.body.username}`);
   response.render('pages/login', {'message':'Please play again!'} );
 });
 
