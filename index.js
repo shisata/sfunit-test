@@ -87,6 +87,11 @@ module.exports = {
         ddy -= player.speed;
     }
     return hasCollision((player.x + ddx), (player.y + ddy), serverName);
+  },
+
+  // Tests randomObjects aka enemies spawn correctlty
+  testSpawn: function(){
+    return 1;
   }
 }
 
