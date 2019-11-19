@@ -392,6 +392,10 @@ function hasCollision(x, y, rm) {
 
 //Generates a projectile on shoot input
 function generateProjectile(id, data, rm) {
+  if (!rooms[rm]) {
+    console.log("Room does not exist, cannot create projectile.")
+    return
+  }
   rooms[rm].projectiles.numProjectiles++;
 
   mouseX = data.x;
