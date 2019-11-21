@@ -242,7 +242,8 @@ function processMapDrawing(mapData){
   aqImage.onload = function(){
     context.drawImage(aqImage, 0, 0);
   }*/
-
+  var texture = new Image();
+  texture.src = "/objects/wall.png"
   for (var x = 0; x < mapData.length; x++) {
     var line = "";
     console.log("mapdata is running");
@@ -256,7 +257,7 @@ function processMapDrawing(mapData){
         // var pattern = ctx.createPattern(source, "repeat");
         allMapCtx.beginPath();
         allMapCtx.rect(x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
-        allMapCtx.fillStyle =" #B3B3B3";
+        allMapCtx.fillStyle = texture.src;
         allMapCtx.fill();
       }
 
