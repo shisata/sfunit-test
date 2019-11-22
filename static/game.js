@@ -193,6 +193,7 @@ window.addEventListener('mousemove', function (e) {
     for (var id in projectiles) {
       var projectile = projectiles[id];
       //Determines how the bullets look
+      // context.drawImage('../public/image/George.jpeg', projectile.x - middleX, projectile.y - middleY,10,10);
       context.beginPath();
       context.arc(projectile.x - middleX, projectile.y - middleY, 2, 0, 2 * Math.PI);
       context.fillStyle = 'white';
