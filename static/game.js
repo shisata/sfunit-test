@@ -42,10 +42,12 @@ var action = {
   reload: false
 }
 
-//var hit = new Audio("HITMARKER.mp3");
-//var bang = new Audio("batman punch.wav")
-//hit.type = 'audio/mp3';
-//bang.type = 'audio/wav';
+var sound = {
+  background: null,
+  shoot: null,
+  reload: null,
+  hit: null
+}
 
 var xPos = 0;
 var yPos = 0;
@@ -87,6 +89,8 @@ document.addEventListener('keydown', function(event) {
 });
 
 canvas.addEventListener('click', function(event) {
+  var newAudio = sound.shoot.cloneNode()
+  newAudio.play()
   shoot.shootBullet = true;
   shoot.x = xPos;
   shoot.y = yPos;
@@ -110,22 +114,39 @@ document.addEventListener('keyup', function(event) {
       action.interaction = false;
       break;
     case 82: // R
+      var newAudio = sound.reload.cloneNode()
+      newAudio.play()
       action.reload = false;
       break;
   }
 });
 
-// function makeSound(sound){
-//   switch (sound){
-//     case "hit":
-//       hit.play();
-//       break;
-//     case "bang":
-//       bang.play();
-//       break;
-//     break;
-//   }
-// }
+function makeSound(sound){
+  switch (sound) {
+    case "shoot":
+      sound.shoot.play();
+      break;
+    case "reload":
+      sound.reload.play();
+      break;
+    break;
+  }
+}
+
+function initSound(){
+  // var audio = new Audio();
+  // for(var aSound in sound){
+  //   aSound = audio;
+  // }
+  sound.background = new Audio();
+  sound.shoot = new Audio();
+  sound.reload = new Audio();
+  sound.hit = new Audio();
+  sound.background.src = "";
+  sound.shoot.src = "../static/sound/silencer.mp3";
+  sound.reload.src = "../static/sound/reload.mp3";
+  sound.hit.src = "../static/sound/HITMARKER.mp3";
+}
 // socket.on('sound', function(sound){
 //   makeSound(sound);
 // });
@@ -139,7 +160,7 @@ socket.emit('new player', username, servername);
 setInterval(function() {
   socket.emit('movement', movement);
   socket.emit('shoot', shoot);
-  socket.emit('interact', action); 
+  socket.emit('interact', action);
   shoot.shootBullet = false;
   //makeSound("bang");
 }, 1000 / 120);
@@ -237,11 +258,12 @@ window.addEventListener('mousemove', function (e) {
     var thisLoop = new Date();
     context.fillText(Math.round(1000 / (thisLoop - lastLoop)) + " FPS", canvasW-95, canvasH-10);
     lastLoop = thisLoop;
-    
+
   });
 
 
   socket.on("create map", function(mapData){
+    initSound();
     processMapDrawing(mapData);
   });
 

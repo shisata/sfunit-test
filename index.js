@@ -145,7 +145,9 @@ pool = new Pool({
 
 app.use('/static', express.static(__dirname + '/static'));// Ring
 // app.get('/', function(request, response) {
-// response.sendFile(path.join(__dirname, 'index.html'));
+// // response.sendFile(path.join(__dirname, 'index.html'));
+//    var user = {'username':'uname'};
+//   response.render('pages/matchmaking', user);
 // });// Starts the server.
 server.listen(PORT, function() {
   console.log('Starting server on port 5000');
@@ -518,7 +520,7 @@ function moveProjectiles(rm) {
         // deleteBullet(id);
       }
       //Delete stale projectiles
-      if ( (Math.abs(rooms[rm].projectiles[id].x) > 5000) || 
+      if ( (Math.abs(rooms[rm].projectiles[id].x) > 5000) ||
            (Math.abs(rooms[rm].projectiles[id].y) > 5000) ) {
           delBullet = true;
       }
