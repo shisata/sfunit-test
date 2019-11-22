@@ -145,7 +145,9 @@ pool = new Pool({
 
 app.use('/static', express.static(__dirname + '/static'));// Ring
 // app.get('/', function(request, response) {
-// response.sendFile(path.join(__dirname, 'index.html'));
+// // response.sendFile(path.join(__dirname, 'index.html'));
+//    var user = {'username':'uname'};
+//   response.render('pages/matchmaking', user);
 // });// Starts the server.
 server.listen(PORT, function() {
   console.log('Starting server on port 5000');
@@ -228,6 +230,23 @@ io.on('connection', function(socket) {
     }
   });
 
+  //Code block to respond to an interaction with the game environment
+  socket.on('interact', function(data) {
+    if (getRoomBySocketId == undefined
+      || getRoomBySocketId[socket.id] == undefined) {
+      return;
+    }
+    var player = rooms[getRoomBySocketId[socket.id]].players[socket.id] || {};
+    //General interaction button
+    if(data.interaction) {
+      console.log("logging interaction data", data);
+    }
+    //Reload gun
+    if(data.reload) {
+      reloadGun(player);
+    }
+  });
+
   //Removes disconnected player
   socket.on('disconnect', function() {
       //Collects client data at 60 events/second
@@ -279,10 +298,12 @@ function createPlayer(id, serverName, username) {
     level: 1,
     damage: 5,
     speed: 3,
-    score: 0
+    score: 0,
+    gun: "pistol",
+    clip: 12,
+    clipSize: 12
   };
 }
-
 
 // Calculates each players score
 function playerScore(){
@@ -392,16 +413,23 @@ function hasCollision(x, y, rm) {
 
 //Generates a projectile on shoot input
 function generateProjectile(id, data, rm) {
+  //Don't shoot if the room doesnt exist
   if (!rooms[rm]) {
-    console.log("Room does not exist, cannot create projectile.")
-    return
+    console.log("Room does not exist, cannot create projectile.");
+    return;
+  }
+  //Don't shoot if player is out of clip
+  if (!rooms[rm].players[id].clip) {
+    return;
   }
   rooms[rm].projectiles.numProjectiles++;
 
+  //Calculate projectile trajectory
   mouseX = data.x;
   mouseY = data.y;
   playerX = rooms[rm].players[id].x - data.middleX;
   playerY = rooms[rm].players[id].y - data.middleY;
+  rooms[rm].players[id].clip -= 1;
 
   dx = mouseX - playerX;
   dy = mouseY - playerY;
@@ -415,15 +443,16 @@ function generateProjectile(id, data, rm) {
     velX *= -1;
   }
 
+  //Generate the projectile
   rooms[rm].projectiles[rooms[rm].bulletCount] = {
     x: rooms[rm].players[id].x + (4 * velX),
     y: rooms[rm].players[id].y + (4 * velY),
     vx: velX,
     vy: velY
   };
-
   rooms[rm].bulletCount++;
-  //reset bullet count
+
+  //reset bullet count if too high
   if (rooms[rm].bulletCount > 100) {
     spawnRandomObjectbulletCount = 0;
   }
@@ -456,7 +485,6 @@ function spawnRandomObject(rm) {
   }
 }
 
-
 //Generate enemies
 function generateEnemies(rm) {
 
@@ -476,7 +504,7 @@ function generateEnemies(rm) {
   }
 }
 
-
+//Move projectiles
 function moveProjectiles(rm) {
   for (var id in rooms[rm].projectiles) {
     if (rooms[rm].projectiles[id]) {
@@ -492,8 +520,8 @@ function moveProjectiles(rm) {
         // deleteBullet(id);
       }
       //Delete stale projectiles
-      if ( (rooms[rm].projectiles[id].x > 5000) || (rooms[rm].projectiles[id].y > 5000) ||
-          (rooms[rm].projectiles[id].x < -5000) || (rooms[rm].projectiles[id].y < -5000)) {
+      if ( (Math.abs(rooms[rm].projectiles[id].x) > 5000) ||
+           (Math.abs(rooms[rm].projectiles[id].y) > 5000) ) {
           delBullet = true;
       }
       if(delBullet == true){
@@ -503,7 +531,7 @@ function moveProjectiles(rm) {
   }
 }
 
-
+//Delete a stale bullet
 function deleteBullet(id, rm) {
   var temp = rooms[rm].projectiles[rooms[rm].bulletCount -= 1];
   rooms[rm].projectiles[rooms[rm].bulletCount] = rooms[rm].projectiles[id];
@@ -547,15 +575,15 @@ function moveEnemies(rm) {
        sign = 1;
      }
 
-     if ( Math.abs(distX) < 12 && Math.abs(distY) < 12 ) {
-       // console.log("distX ", distX, "distY, ", distY);
-       //Deplete health
-       rooms[rm].players[closestPlayer].health -= .05;
-       //Kill player
-       // if (players[closestPlayer].health < 0) {
-       //   players[closestPlayer] = 0;
-       //   players.numPlayers -= 1;
-       // }
+     if ( Math.abs(distX) < 15 && Math.abs(distY) < 15 ) {
+      // console.log("distX ", distX, "distY, ", distY);
+      //Deplete health
+      rooms[rm].players[closestPlayer].health -= 2;
+      //Kill player
+      if (rooms[rm].players[closestPlayer].health < 0) {
+        youveBeenTerminated(closestPlayer, rm);
+        // break;
+      }
 
        //Dont move any closer
        sign = 0;
@@ -612,7 +640,6 @@ function handleBulletCollisions(rm) {
   }
 }
 
-
 //Sets a disconnecting players online status to false
 function logOutPlayer(uname) {
   console.log(`Logging out ${uname}`);
@@ -632,6 +659,25 @@ function logOutPlayer(uname) {
       });
     // console.log(`Succesfully logged out ${uname}`);
   });
+}
+
+//Reload players gun
+function reloadGun(player) {
+  player.clip = player.clipSize;
+}
+
+//Kill a player below 0 health
+function youveBeenTerminated(player, rm) {
+  rooms[rm].players[player] = 0;
+  console.log(rooms[rm].players[player]);
+  rooms[rm].numPlayers -= 1;
+  //Load "YOUVE FAILED SCREEN"
+
+}
+
+//Loads the you've failed screen
+function youFailed(player, rm) {
+
 }
 
 //=========================================================================================
