@@ -241,7 +241,7 @@ io.on('connection', function(socket) {
     }
     //Reload gun
     if(data.reload) {
-      reloadGun(player, getRoomBySocketId[socket.id]);
+      reloadGun(player);
     }
   });
 
@@ -574,14 +574,14 @@ function moveEnemies(rm) {
      }
 
      if ( Math.abs(distX) < 15 && Math.abs(distY) < 15 ) {
-       // console.log("distX ", distX, "distY, ", distY);
-       //Deplete health
-       rooms[rm].players[closestPlayer].health -= .05;
-       //Kill player
-       // if (players[closestPlayer].health < 0) {
-       //   players[closestPlayer] = 0;
-       //   players.numPlayers -= 1;
-       // }
+      // console.log("distX ", distX, "distY, ", distY);
+      //Deplete health
+      rooms[rm].players[closestPlayer].health -= 2;
+      //Kill player
+      if (rooms[rm].players[closestPlayer].health < 0) {
+        youveBeenTerminated(closestPlayer, rm);
+        // break;
+      }
 
        //Dont move any closer
        sign = 0;
@@ -660,8 +660,22 @@ function logOutPlayer(uname) {
 }
 
 //Reload players gun
-function reloadGun(player, rm) {
+function reloadGun(player) {
   player.clip = player.clipSize;
+}
+
+//Kill a player below 0 health
+function youveBeenTerminated(player, rm) {
+  rooms[rm].players[player] = 0;
+  console.log(rooms[rm].players[player]);
+  rooms[rm].numPlayers -= 1;
+  //Load "YOUVE FAILED SCREEN"
+
+}
+
+//Loads the you've failed screen
+function youFailed(player, rm) {
+
 }
 
 //=========================================================================================

@@ -190,6 +190,7 @@ window.addEventListener('mousemove', function (e) {
 
     context.fillStyle = 'green';
     for (var id in players) {
+
       var player = players[id];
       //Determines how the characters look
       context.beginPath();
