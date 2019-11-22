@@ -303,7 +303,6 @@ function createPlayer(id, serverName, username) {
   };
 }
 
-
 // Calculates each players score
 function playerScore(){
 
@@ -530,7 +529,7 @@ function moveProjectiles(rm) {
   }
 }
 
-
+//Delete a stale bullet
 function deleteBullet(id, rm) {
   var temp = rooms[rm].projectiles[rooms[rm].bulletCount -= 1];
   rooms[rm].projectiles[rooms[rm].bulletCount] = rooms[rm].projectiles[id];
