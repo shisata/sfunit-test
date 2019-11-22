@@ -3,6 +3,7 @@ var username = document.getElementById('username');
 username = username.innerHTML;
 var servername = document.getElementById('servername');
 servername = servername.innerHTML;
+var canvas = document.getElementById('canvas');
 
 console.log(`Hello ${username}!`);
 console.log(`Server ${servername}!`);
@@ -75,16 +76,18 @@ document.addEventListener('keydown', function(event) {
     case 83: // S
       movement.down = true;
       break;
-    case 32: // ' '
-      shoot.shootBullet = true;
-      shoot.x = xPos;
-      shoot.y = yPos;
-      break;
     case 69: // E
       action.interaction = true;
       break;
   }
 });
+
+canvas.addEventListener('click', function(event) {
+  shoot.shootBullet = true;
+  shoot.x = xPos;
+  shoot.y = yPos;
+});
+
 document.addEventListener('keyup', function(event) {
   switch (event.keyCode) {
     case 65: // A
@@ -98,11 +101,6 @@ document.addEventListener('keyup', function(event) {
       break;
     case 83: // S
       movement.down = false;
-      break;
-    case 32: // ' '
-      shoot.shootBullet = false;
-      shoot.x = xPos;
-      shoot.y = yPos;
       break;
     case 69: // E
       action.interaction = false;
@@ -135,10 +133,12 @@ setInterval(function() {
   socket.emit('movement', movement);
   socket.emit('shoot', shoot);
   socket.emit('interact', action); 
+  shoot.shootBullet = false;
   //makeSound("bang");
 }, 1000 / 120);
 
-  var canvas = document.getElementById('canvas');
+  //Moved canvas var to top so shoot could use it - GG
+  // var canvas = document.getElementById('canvas');
   var startX = 0;
   var startY = 0;
   var canvasW = 800;
