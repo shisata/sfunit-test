@@ -38,7 +38,8 @@ var shoot = {
   middleY: 0
 }
 var action = {
-  interaction: false
+  interaction: false,
+  reload: false
 }
 
 //var hit = new Audio("HITMARKER.mp3");
@@ -79,6 +80,9 @@ document.addEventListener('keydown', function(event) {
     case 69: // E
       action.interaction = true;
       break;
+    case 82: // R
+      action.reload = true;
+      break;
   }
 });
 
@@ -104,6 +108,9 @@ document.addEventListener('keyup', function(event) {
       break;
     case 69: // E
       action.interaction = false;
+      break;
+    case 82: // R
+      action.reload = false;
       break;
   }
 });

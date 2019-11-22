@@ -230,8 +230,18 @@ io.on('connection', function(socket) {
 
   //Code block to respond to an interaction with the game environment
   socket.on('interact', function(data) {
+    if (getRoomBySocketId == undefined
+      || getRoomBySocketId[socket.id] == undefined) {
+      return;
+    }
+    var player = rooms[getRoomBySocketId[socket.id]].players[socket.id] || {};
+    //General interaction button
     if(data.interaction) {
       console.log("logging interaction data", data);
+    }
+    //Reload gun
+    if(data.reload) {
+      reloadGun(player, getRoomBySocketId[socket.id]);
     }
   });
 
@@ -288,7 +298,8 @@ function createPlayer(id, serverName, username) {
     speed: 3,
     score: 0,
     gun: "pistol",
-    ammo: 12
+    clip: 12,
+    clipSize: 12
   };
 }
 
@@ -406,8 +417,8 @@ function generateProjectile(id, data, rm) {
     console.log("Room does not exist, cannot create projectile.");
     return;
   }
-  //Don't shoot if player is out of ammo
-  if (!rooms[rm].players[id].ammo) {
+  //Don't shoot if player is out of clip
+  if (!rooms[rm].players[id].clip) {
     return;
   }
   rooms[rm].projectiles.numProjectiles++;
@@ -417,7 +428,7 @@ function generateProjectile(id, data, rm) {
   mouseY = data.y;
   playerX = rooms[rm].players[id].x - data.middleX;
   playerY = rooms[rm].players[id].y - data.middleY;
-  rooms[rm].players[id].ammo -= 1;
+  rooms[rm].players[id].clip -= 1;
 
   dx = mouseX - playerX;
   dy = mouseY - playerY;
@@ -628,7 +639,6 @@ function handleBulletCollisions(rm) {
   }
 }
 
-
 //Sets a disconnecting players online status to false
 function logOutPlayer(uname) {
   console.log(`Logging out ${uname}`);
@@ -648,6 +658,11 @@ function logOutPlayer(uname) {
       });
     // console.log(`Succesfully logged out ${uname}`);
   });
+}
+
+//Reload players gun
+function reloadGun(player, rm) {
+  player.clip = player.clipSize;
 }
 
 //=========================================================================================
