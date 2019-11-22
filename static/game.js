@@ -24,17 +24,20 @@ socket.on("passId", function(id){
 });
 
 var movement = {
-    up: false,
-    down: false,
-    left: false,
-    right: false,
+  up: false,
+  down: false,
+  left: false,
+  right: false,
 }
 var shoot = {
-    shootBullet: false,
-    x: 0,
-    y: 0,
-    middleX: 0,
-    middleY: 0
+  shootBullet: false,
+  x: 0,
+  y: 0,
+  middleX: 0,
+  middleY: 0
+}
+var action = {
+  interaction: false
 }
 
 //var hit = new Audio("HITMARKER.mp3");
@@ -58,7 +61,6 @@ socket.on("deliverMapImageSrcToClient", function(imageSrc){
   //console.log('image source set to:', mapImage.src);
 });
 
-
 document.addEventListener('keydown', function(event) {
   switch (event.keyCode) {
     case 65: // A
@@ -77,6 +79,9 @@ document.addEventListener('keydown', function(event) {
       shoot.shootBullet = true;
       shoot.x = xPos;
       shoot.y = yPos;
+      break;
+    case 69: // E
+      action.interaction = true;
       break;
   }
 });
@@ -98,6 +103,9 @@ document.addEventListener('keyup', function(event) {
       shoot.shootBullet = false;
       shoot.x = xPos;
       shoot.y = yPos;
+      break;
+    case 69: // E
+      action.interaction = false;
       break;
   }
 });
@@ -126,8 +134,9 @@ socket.emit('new player', username, servername);
 setInterval(function() {
   socket.emit('movement', movement);
   socket.emit('shoot', shoot);
+  socket.emit('interact', action); 
   //makeSound("bang");
-}, 1000 / 60);
+}, 1000 / 120);
 
   var canvas = document.getElementById('canvas');
   var startX = 0;

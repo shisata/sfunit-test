@@ -23,20 +23,28 @@ body{
 }
 
 #log_out_button {
-    line-height: 100px;
+    /* line-height: 100px; */
     width: 100px;
     height:50px;
+    
+    /* margin-top: 30px; */
     font-size: 14pt;
     font-family: tahoma;
-    margin-top: 1px;
-    margin-left: 720px;
+    margin-top: 10px;
+    margin-left: 710px;
     position:absolute;
+    border-radius: 5px;
     /* top:100; */
+
+    background-color: rgba(15, 14, 14, 0.842);
+    color: rgb(66, 196, 236);
+    border: solid white 1px; 
 
 }
 
 #weather-container{
   margin-left:40px;
+  
 }
 
 #icon{
@@ -45,5 +53,6 @@ body{
   height: 60px;
   border: 2px solid;
   border-radius: 100%;
+  background-color: rgba(15, 14, 14, 0.842);
   margin:auto;
 }

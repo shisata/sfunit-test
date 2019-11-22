@@ -228,6 +228,13 @@ io.on('connection', function(socket) {
     }
   });
 
+  //Code block to respond to an interaction with the game environment
+  socket.on('interact', function(data) {
+    if(data.interaction) {
+      console.log("logging interaction data", data);
+    }
+  });
+
   //Removes disconnected player
   socket.on('disconnect', function() {
       //Collects client data at 60 events/second
