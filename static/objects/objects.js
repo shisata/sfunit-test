@@ -41,7 +41,7 @@ class MapObject{
 //a general class for Surfaces such as wall, floor, grass, glasses,etc
 class Wall extends MapObject{
   constructor(){
-    var source = "/wall.png";//"../../public/image/wall.png";
+    var source = "wall.png";//"../../public/image/wall.png";
     super("wall", true, false, false, source);
     //might have functions for interactions, destructions
   }

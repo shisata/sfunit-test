@@ -4,19 +4,26 @@
 // <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 // </head>
 
-function getWeather()
+function getLocation()
 {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(weather);
+  console.log('getLocation() called');
+  const location = navigator.geolocation.getCurrentPosition();
+  console.log(location);
+  if (location)
+    getWeather(location);
   }
   else {
-    alert(`Geolocation is not supported in your browser`);
+    console.log('No location');
+    const position = {'coords':{'latitude':'49.2785182',
+                                'longitude':'-122.9198392'}};
+    getWeather(location);
+    // alert(`Geolocation is not supported in your browser`);
   };
 };
-//Update information on HTML file
 
 //Sending API request with given geolocation
-function weather(position) {
+function getWeather(position) {
+  console.log('POSITION PASSED SUCCESSFULLY');
   const lat = position.coords.latitude;
   const lon = position.coords.longitude;
 
@@ -24,8 +31,10 @@ function weather(position) {
     'https://fcc-weather-api.glitch.me/api/current?lat='+lat+'&lon='+lon;
 
   $.getJSON(URL, function(data){
+      console.log('latitude: '+lat);
       console.log(data.weather[0].main);
       console.log(data.weather[0].icon);
+
       var weather = data.weather[0].main;
       var icon = data.weather[0].icon;
 
@@ -41,6 +50,6 @@ function weather(position) {
 
 //When the document is ready, evoke the followed function
 $(document).ready(function(){
-  getWeather();
-  setInterval(getWeather,60000);
+  getLocation();
+  setInterval(getLocation,2000);
 });

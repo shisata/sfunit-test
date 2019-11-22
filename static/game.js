@@ -254,10 +254,16 @@ function processMapDrawing(mapData){
         // var source = mapData[x][y].textureSrc;
         // console.log(source)
         // var pattern = ctx.createPattern(source, "repeat");
-        allMapCtx.beginPath();
-        allMapCtx.rect(x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
-        allMapCtx.fillStyle =" #B3B3B3";
-        allMapCtx.fill();
+        var img = new Image();
+        img.src = "static/objects/player1.jpg";
+        img.onload = function(){
+          allMapCtx.drawImage(img, 300, 300, 300, 300);
+        }
+        console.log(img.src)
+        // allMapCtx.beginPath();
+        // allMapCtx.fillStyle = textureSrc;
+        // allMapCtx.rect(x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+        // allMapCtx.fill();
       }
 
       ////******
