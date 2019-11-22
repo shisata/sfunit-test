@@ -224,9 +224,19 @@ window.addEventListener('mousemove', function (e) {
     context.fillText("Mouse: x: " + (xPos+middleX)/GRID_SIZE + ", y: "
       + (yPos+middleY)/GRID_SIZE, canvasW-170, canvasH-30);
 
+    if(players[myId].clip) {
+      context.fillStyle = "red";
+      context.fillText("AMMO: " + players[myId].clip + "/" + players[myId].clipSize, canvasW-100, canvasH-70);
+    }
+    if(!players[myId].clip) {
+      context.fillStyle = "red";
+      context.fillText("RELOAD",  canvasW-70, canvasH-70);
+    }
+
     var thisLoop = new Date();
-    context.fillText(Math.round(1000 / (thisLoop - lastLoop)) + " FPS", canvasW-70, canvasH-10);
+    context.fillText(Math.round(1000 / (thisLoop - lastLoop)) + " FPS", canvasW-95, canvasH-10);
     lastLoop = thisLoop;
+    
   });
 
 
