@@ -286,7 +286,9 @@ function createPlayer(id, serverName, username) {
     level: 1,
     damage: 5,
     speed: 3,
-    score: 0
+    score: 0,
+    gun: "pistol",
+    ammo: 12
   };
 }
 
