@@ -401,16 +401,23 @@ function hasCollision(x, y, rm) {
 
 //Generates a projectile on shoot input
 function generateProjectile(id, data, rm) {
+  //Don't shoot if the room doesnt exist
   if (!rooms[rm]) {
-    console.log("Room does not exist, cannot create projectile.")
-    return
+    console.log("Room does not exist, cannot create projectile.");
+    return;
+  }
+  //Don't shoot if player is out of ammo
+  if (!rooms[rm].players[id].ammo) {
+    return;
   }
   rooms[rm].projectiles.numProjectiles++;
 
+  //Calculate projectile trajectory
   mouseX = data.x;
   mouseY = data.y;
   playerX = rooms[rm].players[id].x - data.middleX;
   playerY = rooms[rm].players[id].y - data.middleY;
+  rooms[rm].players[id].ammo -= 1;
 
   dx = mouseX - playerX;
   dy = mouseY - playerY;
@@ -424,15 +431,16 @@ function generateProjectile(id, data, rm) {
     velX *= -1;
   }
 
+  //Generate the projectile
   rooms[rm].projectiles[rooms[rm].bulletCount] = {
     x: rooms[rm].players[id].x + (4 * velX),
     y: rooms[rm].players[id].y + (4 * velY),
     vx: velX,
     vy: velY
   };
-
   rooms[rm].bulletCount++;
-  //reset bullet count
+
+  //reset bullet count if too high
   if (rooms[rm].bulletCount > 100) {
     spawnRandomObjectbulletCount = 0;
   }
@@ -465,7 +473,6 @@ function spawnRandomObject(rm) {
   }
 }
 
-
 //Generate enemies
 function generateEnemies(rm) {
 
@@ -485,7 +492,7 @@ function generateEnemies(rm) {
   }
 }
 
-
+//Move projectiles
 function moveProjectiles(rm) {
   for (var id in rooms[rm].projectiles) {
     if (rooms[rm].projectiles[id]) {
@@ -501,8 +508,8 @@ function moveProjectiles(rm) {
         // deleteBullet(id);
       }
       //Delete stale projectiles
-      if ( (rooms[rm].projectiles[id].x > 5000) || (rooms[rm].projectiles[id].y > 5000) ||
-          (rooms[rm].projectiles[id].x < -5000) || (rooms[rm].projectiles[id].y < -5000)) {
+      if ( (Math.abs(rooms[rm].projectiles[id].x) > 5000) || 
+           (Math.abs(rooms[rm].projectiles[id].y) > 5000) ) {
           delBullet = true;
       }
       if(delBullet == true){
@@ -556,7 +563,7 @@ function moveEnemies(rm) {
        sign = 1;
      }
 
-     if ( Math.abs(distX) < 12 && Math.abs(distY) < 12 ) {
+     if ( Math.abs(distX) < 15 && Math.abs(distY) < 15 ) {
        // console.log("distX ", distX, "distY, ", distY);
        //Deplete health
        rooms[rm].players[closestPlayer].health -= .05;
