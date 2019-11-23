@@ -8,6 +8,9 @@ var canvas = document.getElementById('canvas');
 console.log(`Hello ${username}!`);
 console.log(`Server ${servername}!`);
 
+//these two messages are related to function 'showMessage'.
+var messageOn = true;
+var messageStr = "";
 
 var socket = io();
 socket.on('message', function(data) {
@@ -84,6 +87,8 @@ document.addEventListener('keydown', function(event) {
       break;
     case 82: // R
       action.reload = true;
+    case 66: // B
+      messageOn = false;
       break;
   }
 });
@@ -268,6 +273,19 @@ window.addEventListener('mousemove', function (e) {
     context.fillText(Math.round(1000 / (thisLoop - lastLoop)) + " FPS", canvasW-95, canvasH-10);
     lastLoop = thisLoop;
 
+
+    // related to function 'showMessage'.
+    if (messageOn) {
+      context.fillStyle = "rgba(0, 0, 0, 0.7)";
+      var zone = zones[id];
+      context.beginPath();
+      context.rect(20, 400, canvasW - 40, canvasH - 420);
+      context.fill();
+      context.fillStyle = "white";
+      context.font = "25px Arial";
+      context.fillText("Press 'B' to turn off message...", 40, 440);
+    }
+
   });
 
 
@@ -348,6 +366,11 @@ function processMapDrawing(mapData){
   console.log('socket event create map called: URL set to', mapImage.src);/////*****
   socket.emit("deliverMapImageSrcToServer", mapImage.src);
   delete allMap;
+}
+
+function showMessage(messageString) {
+  messageOn = true;
+  messageStr = messageString;
 }
 
 //=============================================================================
