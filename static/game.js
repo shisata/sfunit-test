@@ -13,14 +13,14 @@ var messageOn = true;
 var messageQueue = ["Welcome to S.F.U.! \nPress B to continue."
   , "S.F.U. stands for Special Fortification Unit."
   , "What? You mean, S.F.U. is Simon Fraser University?"
-  , "Well, who cares about that guy who destroyed aboriginal \nculture and became honored as an explorer?"
+  , "Well, who cares about that Simon Fraser guy who \ndestroyed aboriginal culture and became honored as \nan explorer?"
   , "Press W/A/S/D to Move, B to see next message."
   , "Move mouse and click to shoot."
   , "And survive."
   , "What? You mean, we didn't talk about this kind of story \nin the meetings?"
   , "I know, I just wanted to put this in. -Hailey"
   , "If you are bored, you can go kill the enemies."
-  , "And we have a cool weather feature on top left."
+  , "And we have a cool weather feature on top right."
   , "Good luck, have fun!"];
 
 var socket = io();
