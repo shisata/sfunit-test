@@ -225,7 +225,7 @@ window.addEventListener('mousemove', function (e) {
       // context.drawImage('../public/image/George.jpeg', projectile.x - middleX, projectile.y - middleY,10,10);
       context.beginPath();
       context.arc(projectile.x - middleX, projectile.y - middleY, 2, 0, 2 * Math.PI);
-      context.fillStyle = 'white';
+      context.fillStyle = 'blue';
       context.fill();
     }
 
@@ -239,7 +239,7 @@ window.addEventListener('mousemove', function (e) {
       context.fill();
     }
 
-    context.fillStyle = "white";
+    context.fillStyle = "blue";
     context.font = "15px Arial";
     context.fillText("Player: x: " + (players[myId].x/GRID_SIZE) + ", y: "
       + (players[myId].y/GRID_SIZE), canvasW-170, canvasH-50);
