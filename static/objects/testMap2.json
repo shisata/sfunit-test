@@ -634,6 +634,13 @@
         "memo": "TASC, lower third bottom 3, _"
       },
       {
+        "x": 140,
+        "y": 364,
+        "width": 129,
+        "height": 2,
+        "memo": "TASC, lower bottom exit over-draw _"
+      },
+      {
         "x": 237,
         "y": 315,
         "width": 2,
@@ -788,6 +795,13 @@
         "memo": "ASB bottom 2 _"
       },
       {
+        "x": 275,
+        "y": 365,
+        "width": 50,
+        "height": 2,
+        "memo": "ASB bottom exit over-draw _"
+      },
+      {
         "x": 315,
         "y": 318,
         "width": 10,
@@ -828,6 +842,13 @@
         "width": 2,
         "height": 24,
         "memo": "ASB right 5 |"
+      },
+      {
+        "x": 325,
+        "y": 310,
+        "width": 3,
+        "height": 10,
+        "memo": "ASB right exit block |"
       },
       {
         "x": 151,
@@ -1075,67 +1096,194 @@
         "memo":"RCB~SWH top 5 |"
       },
       {
+        "x": 236,
+        "y": 195,
+        "width": 30,
+        "height": 2,
+        "memo":"SWH top 1, _"
+      },
+      {
+        "x": 266,
+        "y": 195,
+        "width": 2,
+        "height": 5,
+        "memo":"SWH top 2, |"
+      },
+      {
+        "x": 266,
+        "y": 198,
+        "width": 8,
+        "height": 2,
+        "memo":"SWH top 3, _"
+      },
+      {
+        "x": 274,
+        "y": 195,
+        "width": 2,
+        "height": 5,
+        "memo":"SWH top 4, |"
+      },
+      {
+        "x": 274,
+        "y": 195,
+        "width": 43,
+        "height": 2,
+        "memo":"SWH top 5, _"
+      },
+      {
+        "x": 245,
+        "y": 202,
+        "width": 55,
+        "height": 2,
+        "memo":"SWH top inside 1, _"
+      },
+      {
         "x": 230,
         "y": 238,
         "width": 8,
         "height": 2,
-        "memo":"SWH top 1 _"
+        "memo":"SWH bottom inside 1 _"
       },
       {
         "x": 236,
         "y": 230,
         "width": 2,
         "height": 10,
-        "memo":"SWH top 2 |"
+        "memo":"SWH bottom inside 2 |"
       },
       {
-        "x": 238,
+        "x": 244,
         "y": 230,
-        "width": 30,
+        "width": 23,
         "height": 2,
-        "memo":"SWH top 3 _"
+        "memo":"SWH bottom inside 3 _"
       },
       {
         "x": 266,
         "y": 230,
         "width": 2,
         "height": 10,
-        "memo":"SWH top 4 |"
+        "memo":"SWH bottom inside 4 |"
       },
       {
         "x": 268,
         "y": 238,
         "width": 5,
         "height": 2,
-        "memo":"SWH top 5 _"
+        "memo":"SWH bottom inside 5 _"
       },
       {
         "x": 273,
         "y": 230,
         "width": 2,
         "height": 10,
-        "memo":"SWH top 6 |"
+        "memo":"SWH bottom inside 6 |"
       },
       {
         "x": 273,
         "y": 230,
-        "width": 37,
+        "width": 27,
         "height": 2,
-        "memo":"SWH top 7 _"
+        "memo":"SWH bottom inside 7 _"
       },
       {
-        "x": 310,
-        "y": 210,
-        "width": 37,
+        "x": 236,
+        "y": 196,
+        "width": 2,
+        "height": 34,
+        "memo":"SWH left 1 |"
+      },
+      {
+        "x": 244,
+        "y": 202,
+        "width": 2,
+        "height": 28,
+        "memo":"SWH left inside 1 |"
+      },
+      {
+        "x": 317,
+        "y": 195,
+        "width": 2,
+        "height": 13,
+        "memo":"SWH right 1 |"
+      },
+      {
+        "x": 312,
+        "y": 208,
+        "width": 7,
         "height": 2,
-        "memo":"SWH top 9 _"
+        "memo":"SWH right 2 _"
+      },
+      {
+        "x": 312,
+        "y": 208,
+        "width": 2,
+        "height": 31,
+        "memo":"SWH right 3 |"
+      },
+      {
+        "x": 312,
+        "y": 237,
+        "width": 11,
+        "height": 3,
+        "memo":"SWH right 4 _"
+      },
+      {
+        "x": 298,
+        "y": 202,
+        "width": 2,
+        "height": 28,
+        "memo":"SWH right inside 1 |"
       },
       {
         "x": 215,
         "y": 246,
-        "width": 100,
+        "width": 110,
         "height": 2,
         "memo":"SWH hallway bottom"
+      },
+      {
+        "x": 322,
+        "y": 238,
+        "width": 3,
+        "height": 10,
+        "memo":"SWH left exit block |"
+      }
+    ],
+    "floor": [
+      {
+        "x" : 0,
+        "y": 0,
+        "width": 500,
+        "height": 500,
+        "color": "white",
+        "memo": "white background because it's snowing"
+      },
+      {
+        "x": 150,
+        "y": 240,
+        "width": 65,
+        "height": 10,
+        "color": "#cacaca",
+        "memo": "aq top"
+      },
+      {
+        "x": 176,
+        "y": 264,
+        "width": 10,
+        "height": 22,
+        "color": "#2277FF",
+        "memo": "aq pond"
+      }
+    ],
+    "zone": [
+      {
+        "x": 50,
+        "y": 50,
+        "width": 90,
+        "height": 300,
+        "num": "1",
+        "memo": "zone locking thing. number should NEVER be 0!"
       }
     ],
     "player": [
