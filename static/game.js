@@ -10,7 +10,18 @@ console.log(`Server ${servername}!`);
 
 //these two messages are related to function 'showMessage'.
 var messageOn = true;
-var messageStr = "";
+var messageQueue = ["Welcome to S.F.U.! \nPress B to continue."
+  , "S.F.U. stands for Special Fortification Unit."
+  , "What? You mean, S.F.U. is Simon Fraser University?"
+  , "Well, who cares about that guy who destroyed aboriginal \nculture and became honored as an explorer?"
+  , "Press W/A/S/D to Move, B to see next message."
+  , "Move mouse and click to shoot."
+  , "And survive."
+  , "What? You mean, we didn't talk about this kind of story \nin the meetings?"
+  , "I know, I just wanted to put this in. -Hailey"
+  , "If you are bored, you can go kill the enemies."
+  , "And we have a cool weather feature on top left."
+  , "Good luck, have fun!"];
 
 var socket = io();
 socket.on('message', function(data) {
@@ -88,7 +99,15 @@ document.addEventListener('keydown', function(event) {
     case 82: // R
       action.reload = true;
     case 66: // B
-      messageOn = false;
+      if (messageQueue.length <= 0) {
+        messageOn = false;
+      }
+      else {
+        messageQueue.shift();
+        if (messageQueue.length <= 0) {
+          messageOn = false;
+        }
+      }
       break;
   }
 });
@@ -275,7 +294,7 @@ window.addEventListener('mousemove', function (e) {
 
 
     // related to function 'showMessage'.
-    if (messageOn) {
+    if (messageOn && messageQueue.length >= 1) {
       context.fillStyle = "rgba(0, 0, 0, 0.7)";
       var zone = zones[id];
       context.beginPath();
@@ -283,7 +302,10 @@ window.addEventListener('mousemove', function (e) {
       context.fill();
       context.fillStyle = "white";
       context.font = "25px Arial";
-      context.fillText("Press 'B' to turn off message...", 40, 440);
+      var lines = messageQueue[0].split('\n');
+      for (var i = 0; i<lines.length; i++) {
+        context.fillText(lines[i], 40, 440 + i*35);
+      }
     }
 
   });
@@ -370,7 +392,7 @@ function processMapDrawing(mapData){
 
 function showMessage(messageString) {
   messageOn = true;
-  messageStr = messageString;
+  messageQueue.push(messageString);
 }
 
 //=============================================================================
