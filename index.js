@@ -293,7 +293,7 @@ function createPlayer(id, serverName, username) {
     playerID: rooms[serverName].players.numPlayers,
     username: username,
     x: 211 * GRID_SIZE,
-    y: 247 * GRID_SIZE,
+    y: 147 * GRID_SIZE,
     health: 4.33,
     level: 1,
     damage: 5,
