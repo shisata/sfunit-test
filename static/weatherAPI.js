@@ -29,17 +29,19 @@ function noLocation(error) {
 
 //Sending API request with given geolocation
 function getWeather(position) {
-  console.log('LOCATION PASSED SUCCESSFULLY');
+  console.log('Sending weather API request');
   const lat = position.coords.latitude;
   const lon = position.coords.longitude;
+  const APIKEY= `44c3c5b6dfdc148055677bde4d8e396d`;
   const URL =
-    'https://fcc-weather-api.glitch.me/api/current?lat='+lat+'&lon='+lon;
+    `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&APPID=${APIKEY}`;
+    // 'https://fcc-weather-api.glitch.me/api/current?lat='+lat+'&lon='+lon;
   $.getJSON(URL, function(data){
     // console.log('latitude: '+lat);
     // console.log(data.weather[0].main);
     // console.log(data.weather[0].icon);
     var weather = data.weather[0].main;
-    var icon = data.weather[0].icon;
+    var icon = `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
       // $('#label').html(weather);
     if (icon)
       $("#icon").attr("src",icon);
