@@ -296,28 +296,35 @@ function processMapDrawing(mapData){
   texture.src = "/objects/wall.png"
   for (var x = 0; x < mapData.length; x++) {
     var line = "";
-    console.log("mapdata is running");
     for (var y = 0; y < mapData[mapData.length - 1].length; y++){
       // console.log("\tMapdata[" + x + "][" + y + "]"); ////*****
-      console.log("hi qt");
-      if(mapData[x][y] != '')
+      // var source = mapData[x][y].textureSrc;
+      // console.log(source)
+      // var pattern = ctx.createPattern(source, "repeat");
+      // var img = new Image();
+      // img.src = "static/objects/player1.jpg";
+      // img.onload = function(){
+      //   allMapCtx.drawImage(img, 300, 300, 300, 300);
+      // }
+      if(mapData[x][y] != '' && mapData[x][y].name == "floor")
+      {
+        allMapCtx.beginPath();
+        allMapCtx.rect(x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+        allMapCtx.fillStyle = mapData[x][y].color;
+        allMapCtx.fill();
+      }
+      else if(mapData[x][y] != '' && mapData[x][y].name == "wall")
       {
         // var source = mapData[x][y].textureSrc;
         // console.log(source)
         // var pattern = ctx.createPattern(source, "repeat");
-        // var img = new Image();
-        // img.src = "static/objects/player1.jpg";
-        // img.onload = function(){
-        //   allMapCtx.drawImage(img, 300, 300, 300, 300);
-        // }
-        // console.log(img.src)
         allMapCtx.beginPath();
-        allMapCtx.fillStyle = "#bbb";
         allMapCtx.rect(x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+        // allMapCtx.fillStyle = texture.src;
+        allMapCtx.fillStyle = "black";
         allMapCtx.fill();
       }
 
-      ////******
       if (mapData[x][y] == ''){
         line += "0";
       }else if(mapData[x][y].name == "wall"){
@@ -326,7 +333,6 @@ function processMapDrawing(mapData){
         line += "!";
       }
     }
-    console.log(line);//////*****
   }
   //console.log(mapData);/////*****
   mapImage.src = allMap.toDataURL();
