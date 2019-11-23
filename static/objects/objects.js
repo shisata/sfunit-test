@@ -47,6 +47,15 @@ class Wall extends MapObject{
   }
 }
 
+//non-colliding objects. Ex: background, aq pond, gray floors....
+class Floor extends MapObject {
+  constructor(color){
+    super("floor", false, false, false, color);
+    this.color = color;
+
+  }
+}
+
 class Furniture extends MapObject{ // lets name this as furniture FOR NOW
   constructor(){
     var source = null;
@@ -77,6 +86,31 @@ class Player {
 module.exports.MapObject = MapObject;
 module.exports.Wall = Wall;
 module.exports.Furniture = Furniture;
+module.exports.Floor = Floor;
 
 
 // Detailed definitions for: furnitures
+
+
+
+
+//==========================================================================
+
+//Zones. blocking areas while game is running.
+class Zone {
+  constructor(num, x, y, width, height) {
+    this.num = num;
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.open = false;  //will be modified during game!
+
+    this.inside = function(x, y) {
+      return ((x >= this.x && x <= this.x + width)
+        && (y >= this.y && y <= this.y + height));
+    }
+  }
+}
+
+module.exports.Zone = Zone;
