@@ -3,6 +3,7 @@ var username = document.getElementById('username');
 username = username.innerHTML;
 var servername = document.getElementById('servername');
 servername = servername.innerHTML;
+var canvas = document.getElementById('canvas');
 
 console.log(`Hello ${username}!`);
 console.log(`Server ${servername}!`);
@@ -24,23 +25,29 @@ socket.on("passId", function(id){
 });
 
 var movement = {
-    up: false,
-    down: false,
-    left: false,
-    right: false,
+  up: false,
+  down: false,
+  left: false,
+  right: false,
 }
 var shoot = {
-    shootBullet: false,
-    x: 0,
-    y: 0,
-    middleX: 0,
-    middleY: 0
+  shootBullet: false,
+  x: 0,
+  y: 0,
+  middleX: 0,
+  middleY: 0
+}
+var action = {
+  interaction: false,
+  reload: false
 }
 
-//var hit = new Audio("HITMARKER.mp3");
-//var bang = new Audio("batman punch.wav")
-//hit.type = 'audio/mp3';
-//bang.type = 'audio/wav';
+var sound = {
+  background: null,
+  shoot: null,
+  reload: null,
+  hit: null
+}
 
 var xPos = 0;
 var yPos = 0;
@@ -58,7 +65,6 @@ socket.on("deliverMapImageSrcToClient", function(imageSrc){
   //console.log('image source set to:', mapImage.src);
 });
 
-
 document.addEventListener('keydown', function(event) {
   switch (event.keyCode) {
     case 65: // A
@@ -73,13 +79,23 @@ document.addEventListener('keydown', function(event) {
     case 83: // S
       movement.down = true;
       break;
-    case 32: // ' '
-      shoot.shootBullet = true;
-      shoot.x = xPos;
-      shoot.y = yPos;
+    case 69: // E
+      action.interaction = true;
+      break;
+    case 82: // R
+      action.reload = true;
       break;
   }
 });
+
+canvas.addEventListener('click', function(event) {
+  var newAudio = sound.shoot.cloneNode()
+  newAudio.play()
+  shoot.shootBullet = true;
+  shoot.x = xPos;
+  shoot.y = yPos;
+});
+
 document.addEventListener('keyup', function(event) {
   switch (event.keyCode) {
     case 65: // A
@@ -94,25 +110,43 @@ document.addEventListener('keyup', function(event) {
     case 83: // S
       movement.down = false;
       break;
-    case 32: // ' '
-      shoot.shootBullet = false;
-      shoot.x = xPos;
-      shoot.y = yPos;
+    case 69: // E
+      action.interaction = false;
+      break;
+    case 82: // R
+      var newAudio = sound.reload.cloneNode()
+      newAudio.play()
+      action.reload = false;
       break;
   }
 });
 
-// function makeSound(sound){
-//   switch (sound){
-//     case "hit":
-//       hit.play();
-//       break;
-//     case "bang":
-//       bang.play();
-//       break;
-//     break;
-//   }
-// }
+function makeSound(sound){
+  switch (sound) {
+    case "shoot":
+      sound.shoot.play();
+      break;
+    case "reload":
+      sound.reload.play();
+      break;
+    break;
+  }
+}
+
+function initSound(){
+  // var audio = new Audio();
+  // for(var aSound in sound){
+  //   aSound = audio;
+  // }
+  sound.background = new Audio();
+  sound.shoot = new Audio();
+  sound.reload = new Audio();
+  sound.hit = new Audio();
+  sound.background.src = "";
+  sound.shoot.src = "../static/sound/silencer.mp3";
+  sound.reload.src = "../static/sound/reload.mp3";
+  sound.hit.src = "../static/sound/HITMARKER.mp3";
+}
 // socket.on('sound', function(sound){
 //   makeSound(sound);
 // });
@@ -126,10 +160,13 @@ socket.emit('new player', username, servername);
 setInterval(function() {
   socket.emit('movement', movement);
   socket.emit('shoot', shoot);
+  socket.emit('interact', action);
+  shoot.shootBullet = false;
   //makeSound("bang");
-}, 1000 / 60);
+}, 1000 / 120);
 
-  var canvas = document.getElementById('canvas');
+  //Moved canvas var to top so shoot could use it - GG
+  // var canvas = document.getElementById('canvas');
   var startX = 0;
   var startY = 0;
   var canvasW = 800;
@@ -174,6 +211,7 @@ window.addEventListener('mousemove', function (e) {
 
     context.fillStyle = 'green';
     for (var id in players) {
+
       var player = players[id];
       //Determines how the characters look
       context.beginPath();
@@ -184,6 +222,7 @@ window.addEventListener('mousemove', function (e) {
     for (var id in projectiles) {
       var projectile = projectiles[id];
       //Determines how the bullets look
+      // context.drawImage('../public/image/George.jpeg', projectile.x - middleX, projectile.y - middleY,10,10);
       context.beginPath();
       context.arc(projectile.x - middleX, projectile.y - middleY, 2, 0, 2 * Math.PI);
       context.fillStyle = 'white';
@@ -207,13 +246,24 @@ window.addEventListener('mousemove', function (e) {
     context.fillText("Mouse: x: " + (xPos+middleX)/GRID_SIZE + ", y: "
       + (yPos+middleY)/GRID_SIZE, canvasW-170, canvasH-30);
 
+    if(players[myId].clip) {
+      context.fillStyle = "red";
+      context.fillText("AMMO: " + players[myId].clip + "/" + players[myId].clipSize, canvasW-100, canvasH-70);
+    }
+    if(!players[myId].clip) {
+      context.fillStyle = "red";
+      context.fillText("RELOAD",  canvasW-70, canvasH-70);
+    }
+
     var thisLoop = new Date();
-    context.fillText(Math.round(1000 / (thisLoop - lastLoop)) + " FPS", canvasW-70, canvasH-10);
+    context.fillText(Math.round(1000 / (thisLoop - lastLoop)) + " FPS", canvasW-95, canvasH-10);
     lastLoop = thisLoop;
+
   });
 
 
   socket.on("create map", function(mapData){
+    initSound();
     processMapDrawing(mapData);
   });
 
@@ -255,10 +305,16 @@ function processMapDrawing(mapData){
         // var source = mapData[x][y].textureSrc;
         // console.log(source)
         // var pattern = ctx.createPattern(source, "repeat");
-        allMapCtx.beginPath();
-        allMapCtx.rect(x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
-        allMapCtx.fillStyle = texture.src;
-        allMapCtx.fill();
+        var img = new Image();
+        img.src = "static/objects/player1.jpg";
+        img.onload = function(){
+          allMapCtx.drawImage(img, 300, 300, 300, 300);
+        }
+        console.log(img.src)
+        // allMapCtx.beginPath();
+        // allMapCtx.fillStyle = textureSrc;
+        // allMapCtx.rect(x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+        // allMapCtx.fill();
       }
 
       ////******
