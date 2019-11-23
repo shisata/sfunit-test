@@ -275,7 +275,7 @@ setInterval(function() {
         generateEnemies(rm);
         //console.log("LOGGING rm", rm);
         io.sockets.to(rm).emit('state', rooms[rm].players,
-          rooms[rm].projectiles, rooms[rm].enemies);
+          rooms[rm].projectiles, rooms[rm].enemies, rooms[rm].zones);
       }
   }
 }, 1000 / 120);
@@ -342,6 +342,8 @@ function roomData(serverName) {
   room.lastSpawn = -1;
   room.spawnRate = 2000;
 
+  room.zones = {};
+
   return room
 }
 
@@ -361,6 +363,7 @@ function createRoom(serverName) {
   var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap2.json', 'utf8'));
   var processor = require('./static/objects/mapProcessor.js');
   rooms[serverName].mapData = processor.constructFromData(mapDataFromFile);
+  rooms[serverName].zones = processor.constructZone(mapDataFromFile);
   //console.log(mapData);///////*******
   // io.sockets.to(serverName).emit('create map', rooms[serverName].mapData);
   // console.log('players.numPlayers: ', rooms[serverName].players.numPlayers, ', create map called');
@@ -397,6 +400,13 @@ function movePlayer(player, data, rm) {
 function hasCollision(x, y, rm) {
   var gridX = Math.floor(x / GRID_SIZE);
   var gridY = Math.floor(y / GRID_SIZE);
+  for (zoneNum in rooms[rm].zones) {
+    if (!rooms[rm].zones[zoneNum].open
+      && rooms[rm].zones[zoneNum].inside(gridX, gridY)) {
+      console.log("collision by zone"); /////*******
+      return true;
+    }
+  }
   if(rooms[rm] == undefined || rooms[rm].mapData == undefined
     || rooms[rm].mapData[gridX] == undefined
     || rooms[rm].mapData[gridX][gridY] == undefined) {

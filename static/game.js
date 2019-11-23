@@ -184,7 +184,7 @@ window.addEventListener('mousemove', function (e) {
 });
 
   var context = canvas.getContext('2d');
-  socket.on('state', function(players, projectiles, enemies) {
+  socket.on('state', function(players, projectiles, enemies, zones) {
     //console.log("socket event state called");
     if (myId == "") {
       socket.emit('requestPassId');
@@ -238,6 +238,15 @@ window.addEventListener('mousemove', function (e) {
       context.fillStyle = 'red';
       context.fill();
     }
+
+    context.fillStyle = "rgba(100, 100, 100, 0.3)";
+    for (var id in zones) {
+      var zone = zones[id];
+      context.beginPath();
+      context.rect(zone.x*GRID_SIZE - middleX, zone.y*GRID_SIZE - middleY, zone.width*GRID_SIZE, zone.height*GRID_SIZE);
+      context.fill();
+    }
+
 
     context.fillStyle = "blue";
     context.font = "15px Arial";
