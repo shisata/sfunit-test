@@ -22,6 +22,7 @@ var messageQueue = ["Welcome to S.F.U.! \nPress B to continue."
   , "If you are bored, you can go kill the enemies."
   , "And we have a cool weather feature on top right."
   , "Good luck, have fun!"];
+var mapOn = false;
 
 var socket = io();
 socket.on('message', function(data) {
@@ -98,6 +99,7 @@ document.addEventListener('keydown', function(event) {
       break;
     case 82: // R
       action.reload = true;
+      break;
     case 66: // B
       if (messageQueue.length <= 0) {
         messageOn = false;
@@ -108,6 +110,9 @@ document.addEventListener('keydown', function(event) {
           messageOn = false;
         }
       }
+      break;
+    case 77:
+      mapOn = !mapOn;
       break;
   }
 });
@@ -271,14 +276,7 @@ window.addEventListener('mousemove', function (e) {
       context.fill();
     }
 
-
-    context.fillStyle = "blue";
     context.font = "15px Arial";
-    context.fillText("Player: x: " + (players[myId].x/GRID_SIZE) + ", y: "
-      + (players[myId].y/GRID_SIZE), canvasW-170, canvasH-50);
-    context.fillText("Mouse: x: " + (xPos+middleX)/GRID_SIZE + ", y: "
-      + (yPos+middleY)/GRID_SIZE, canvasW-170, canvasH-30);
-
     if(players[myId].clip) {
       context.fillStyle = "red";
       context.fillText("AMMO: " + players[myId].clip + "/" + players[myId].clipSize, canvasW-100, canvasH-70);
@@ -306,6 +304,56 @@ window.addEventListener('mousemove', function (e) {
       for (var i = 0; i<lines.length; i++) {
         context.fillText(lines[i], 40, 440 + i*35);
       }
+    }
+
+    //show small map!
+    if (mapOn) {
+      //hard-coded numbers.
+      var mapX = 580;
+      var mapY = 20;
+      var mapMargin = 5;
+      var mapWHRatio = 6/8;
+      var smallMapWidth = 200;
+      var smallMapHeight = smallMapWidth*mapWHRatio;
+
+      var mapLeftCut = 0;
+      var mapTopCut = 20*GRID_SIZE;
+      var mapAreaWidth = 380*GRID_SIZE;
+      var mapAreaHeight = mapAreaWidth*mapWHRatio;
+
+
+
+      //drawing black box behind the map
+      context.beginPath();
+      context.rect(mapX-mapMargin, mapY-mapMargin, smallMapWidth+2*mapMargin,
+        smallMapHeight+2*mapMargin);
+      context.fillStyle = "black";
+      context.fill();
+
+      //drawing the small map
+      context.drawImage(mapImage, mapLeftCut, mapTopCut,
+        mapAreaWidth, mapAreaHeight,
+        mapX, mapY, smallMapWidth, smallMapHeight);
+
+      //showing player and mouse coordinates.
+      context.fillStyle = "blue";
+      context.font = "15px Arial";
+      context.fillText("Player: x: " + (players[myId].x/GRID_SIZE) + ", y: "
+        + (players[myId].y/GRID_SIZE), mapX+10, mapY+smallMapHeight+30);
+      context.fillText("Mouse: x: " + (xPos+middleX)/GRID_SIZE + ", y: "
+        + (yPos+middleY)/GRID_SIZE, mapX+10, mapY+smallMapHeight+50);
+
+      //show players on small map
+      context.fillStyle = '#BBAA22';
+      for (var id in players) {
+        var player = players[id];
+        context.beginPath();
+        context.arc(mapX+(player.x-mapLeftCut)*(smallMapWidth/mapAreaWidth),
+          mapY+(player.y-mapTopCut)*(smallMapWidth/mapAreaWidth),
+          GRID_SIZE/3 , 0, 2 * Math.PI);
+        context.fill();
+      }
+
     }
 
   });
