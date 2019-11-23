@@ -690,6 +690,99 @@ function youFailed(player, rm) {
 
 }
 
+function aStarSearch(startState, goal) {
+  var explored = new Set();
+  var parents = {};
+  var fringe = new PriorityQueue();	
+
+  //State: [((x1,y1),'Direction',Cost)]
+  fringe.queue(startState);
+
+  // Perform search by expanding nodes based on the sum of their current 
+  // path cost and estimated cost to the goal, as determined by the heuristic
+  while(fringe.length) {
+    var state = fringe.dequeue();
+    var current = state[0];
+    if (explored.has(current[0])) continue;
+    else explored.add(current[0]);
+  }
+
+  //Goal check
+  if (isGoalState(current[0]), goal) return makeList(parents, current);
+
+  //Expand new successors
+  for (successor in getSuccessors(current[0])) {
+    if (!explored.has(successor[0])) {
+      parents[successor] = current;
+      fringe.queue( (successor, state[1] + successor[2]), 
+      manhattanHeuristic(successor[0], goal) + state[1] + successor[2]);
+    }
+  }
+
+  return [];
+}
+
+//Return successors of state
+function getSuccessors(state) {
+  //Use 5 as arbitraty number
+  stateL = [[state[0].x + 5, state[0].y], "left", 1];
+  stateR = [[state[0].x - 5, state[0].y], "right", 1];
+  stateU = [[state[0].x, state[0].y - 5], "up", 1];
+  stateD = [[state[0].x, state[0].y + 5], "down", 1];
+
+  return [stateL, stateR, stateU, stateD];
+}
+
+//Return true if goal state at state
+function isGoalState(state, goal) {
+  if (manhattanHeuristic(state, goal) <= 15) {
+    return true;
+  }
+  return false;
+}
+
+//Return the manhattan distance between position and goal
+function manhattanHeuristic(position, goal) {
+    // "The Manhattan distance heuristic for a PositionSearchProblem"
+    var xy1 = position;
+    var xy2 = goal;
+    return Math.abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1]);
+}
+
+//Find/return position of player closest to enemy
+function closestPlayerXY(rm, enemy) {
+  if (rooms[rm].players.numPlayers > 0) {
+      var closestPlayer;
+      var closestPlayerDistance = Infinity;
+      for (var player in rooms[rm].players) {
+        var distance = manhattanHeuristic([enemy.x, enemy.y], [player.x, player.y]);
+        if (distance < closestPlayerDistance) {
+          closestPlayer = player;
+          closestPlayerDistance = distance;
+        }
+      }
+      if (rooms[rm].players[closestPlayer] == undefined) {
+        console.log("players[closestPlayer] is undefined. Ignoring",
+          "moveEnemies() logic instead of letting program crash.",
+          "Please check the logic.");
+        return;
+      }
+  return [closestPlayer.x, closestPlayer.y];
+  }
+}
+
+//Return the path to players position
+function makeList(parents, goal) {
+  var path = [];
+  while (goal[1] != [] && parents.has(goal)) {
+    path.push(goal[1]);
+    goal = parents[goal];
+  }
+
+  return path.reverse();
+}
+
+
 //=========================================================================================
 // Testing functions
 
