@@ -185,7 +185,10 @@ var constructZone = function(json) {
     var y = json.map.zone[i].y;
     var width = json.map.zone[i].width;
     var height = json.map.zone[i].height;
-    zones[num] = new objects.Zone(num, x, y, width, height);
+    var open = json.map.zone[i].open;
+    var name = json.map.zone[i].name;
+    var description = json.map.zone[i].description;
+    zones[num] = new objects.Zone(num, x, y, width, height, open, name, description);
   }
   return zones;
 }

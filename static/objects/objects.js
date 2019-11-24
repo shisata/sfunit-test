@@ -98,13 +98,15 @@ module.exports.Floor = Floor;
 
 //Zones. blocking areas while game is running.
 class Zone {
-  constructor(num, x, y, width, height) {
+  constructor(num, x, y, width, height, open, name, description) {
     this.num = num;
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
-    this.open = false;  //will be modified during game!
+    this.open = open;
+    this.name = name;
+    this.description = description;
 
     this.inside = function(x, y) {
       return ((x >= this.x && x <= this.x + width)

@@ -27,6 +27,11 @@ var mapOn = false;
 // dead.
 var dead = false;
 
+//zoneChange function related.
+var zoneChangeOn = false;
+var zoneChangeOnTime;
+var zoneNum = 0;
+
 var socket = io();
 socket.on('message', function(data) {
   // console.log(data);
@@ -280,7 +285,7 @@ window.addEventListener('mousemove', function (e) {
     for (var id in zones) {
       var zone = zones[id];
       context.beginPath();
-      context.rect(zone.x*GRID_SIZE - middleX, zone.y*GRID_SIZE - middleY, zone.width*GRID_SIZE, zone.height*GRID_SIZE);
+      context.rect((zone.x*GRID_SIZE - middleX), (zone.y*GRID_SIZE - middleY), zone.width*GRID_SIZE, zone.height*GRID_SIZE);
       context.fill();
     }
 
@@ -402,6 +407,46 @@ window.addEventListener('mousemove', function (e) {
 
     }
 
+    //zone Change show
+    if (zoneChangeOn) {
+      var zoneElapse = new Date();
+      if (zoneElapse - zoneChangeOnTime > 5000) {
+        zoneChangeOn = false;
+        context.fillStyle = "rgba(255, 50, 50, 0)";
+        context.beginPath();
+        context.rect(10, 20, canvasW-170, 85);
+        context.fill();
+        context.fillStyle = "rgba(255, 255, 255, 0)";
+      }
+      else if (zoneElapse - zoneChangeOnTime < 800) {
+        context.fillStyle = `rgba(255, 50, 50, ${0.9*((zoneElapse - zoneChangeOnTime))/800})`;
+        context.beginPath();
+        context.rect(10, 20, canvasW-170, 85);
+        context.fill();
+        context.fillStyle = `rgba(255, 255, 255, ${0.9*((zoneElapse - zoneChangeOnTime))/800})`;
+      }
+      else if (zoneElapse - zoneChangeOnTime > 3000) {
+        context.fillStyle = `rgba(255, 50, 50, ${0.9*(3000+2000-(zoneElapse - zoneChangeOnTime))/2000})`;
+        context.beginPath();
+        context.rect(10, 20, canvasW-170, 85);
+        context.fill();
+        context.fillStyle = `rgba(255, 255, 255, ${0.9*(3000+2000-(zoneElapse - zoneChangeOnTime))/2000})`;
+      }
+      else {
+        context.fillStyle = "rgba(255, 50, 50, 0.9)";
+        context.beginPath();
+        context.rect(10, 20, canvasW-170, 85);
+        context.fill();
+        context.fillStyle = "rgba(255, 255, 255, 0.9)";
+      }
+      context.font = "italic 35px Arial";
+      context.fillText(zones[zoneNum].name, 50, 60);
+
+      context.font = "italic 15px Arial";
+      context.fillText("- " + zones[zoneNum].description, 40, 90);
+
+      context.font = "normal";
+    }
   });
 
 
@@ -499,6 +544,13 @@ function showDeadScreen() {
   context.font = "80px Arial";
   context.fillText("You Failed!", canvasW/2-200, canvasH/2-50);
 }
+
+socket.on("zoneChange", function(num){
+  //zone changed!
+  zoneChangeOn = true;
+  zoneChangeOnTime = new Date();
+  zoneNum = num;
+});
 
 //=============================================================================
 // George Workpace
