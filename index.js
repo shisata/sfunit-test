@@ -225,8 +225,12 @@ io.on('connection', function(socket) {
       var rm = getRoomBySocketId[socket.id]
 
       //astar testing here
+<<<<<<< HEAD
       // console.log(aStarSearch([100,100], [200,200]));
       // testAstar(rm);
+=======
+      // aStarSearch([100,100], [200,200]);
+>>>>>>> dc8eb16cf226eb1a329404d0e268f325d32b404e
 
       // console.log("emit sound");
       // var sound = "bang";
@@ -267,6 +271,9 @@ io.on('connection', function(socket) {
     //players[socket.id] = 0;
     delete rooms[getRoomBySocketId[socket.id]].players[socket.id];
     rooms[getRoomBySocketId[socket.id]].players.numPlayers -= 1;
+    if (rooms[getRoomBySocketId[socket.id]].players.numPlayers <= 0) {
+      delete rooms[getRoomBySocketId[socket.id]];
+    }
   });
 });
 
@@ -307,7 +314,9 @@ function createPlayer(id, serverName, username) {
     score: 0,
     gun: "pistol",
     clip: 12,
-    clipSize: 12
+    clipSize: 12,
+    zone: 0,
+    playerSocketId: id
   };
 }
 
@@ -398,6 +407,26 @@ function movePlayer(player, data, rm) {
       player.x = originX;
       player.y = originY
     }
+
+    //zone change check
+    if (player.zone == 0
+      || (rooms[rm].zones[player.zone] != undefined
+        && !rooms[rm].zones[player.zone].inside(player.x/GRID_SIZE, 
+          player.y/GRID_SIZE))) {
+      var newZone = 0;
+      for (zoneNum in rooms[rm].zones) {
+        if (rooms[rm].zones[zoneNum].inside(player.x/GRID_SIZE,
+          player.y/GRID_SIZE)) {
+          player.zone = zoneNum;
+          io.sockets.to(player.playerSocketId).emit("zoneChange", zoneNum);
+          newZone = zoneNum;
+        }
+      }
+      if (newZone == 0) {
+        player.zone = 0;
+      }
+    }
+
   }
 }
 
@@ -709,26 +738,26 @@ function youFailed(player, rm) {
 function aStarSearch(startState, goal) {
   var explored = [];
   var parents = {};
-  var fringe = new PriorityQueue();	
+  var fringe = new PriorityQueue();
 
   startState = [startState, [], 0];
   fringe.push( [[startState, 0], 0] );
 
-  // Perform search by expanding nodes based on the sum of their current 
+  // Perform search by expanding nodes based on the sum of their current
   // path cost and estimated cost to the goal, as determined by the heuristic
   while(fringe.isEmpty() == false) {
     var state = fringe.pop();
     var current = state[0];
     current = current[0];
     if (explored.find( function(item) {
-        return ( (current[0][0] == item[0]) && current[0][1] == item[1]) })) 
+        return ( (current[0][0] == item[0]) && current[0][1] == item[1]) }))
     {
       continue;
     }
     else {
       explored.push(current[0]);
     }
-  
+
     //Goal check
     if (isGoalState(current[0], goal)) {
       return makeList(parents, current);
@@ -743,7 +772,12 @@ function aStarSearch(startState, goal) {
           return ((stateCoords[0] == item[0]) && (stateCoords[1] == item[1]) ) }))
       {
         parents[expandedState] = current;
+<<<<<<< HEAD
         fringe.push([ [expandedState, state[1] + expandedState[2]], 
+=======
+        console.log("expanded state", expandedState[0]);
+        fringe.push([ [expandedState, state[1] + expandedState[2]],
+>>>>>>> dc8eb16cf226eb1a329404d0e268f325d32b404e
         manhattanHeuristic(expandedState[0], goal) + state[1] + expandedState[2] ]);
       }
     }
