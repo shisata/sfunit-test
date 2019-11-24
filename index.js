@@ -144,11 +144,11 @@ pool = new Pool({
 });
 
 app.use('/static', express.static(__dirname + '/static'));// Ring
-// app.get('/', function(request, response) {
-// // response.sendFile(path.join(__dirname, 'index.html'));
-//    var user = {'username':'uname'};
-//   response.render('pages/matchmaking', user);
-// });// Starts the server.
+app.get('/', function(request, response) {
+// response.sendFile(path.join(__dirname, 'index.html'));
+   var user = {'username':'uname'};
+  response.render('pages/matchmaking', user);
+});// Starts the server.
 server.listen(PORT, function() {
   console.log('Starting server on port 5000');
 });
@@ -293,8 +293,9 @@ function createPlayer(id, serverName, username) {
     playerID: rooms[serverName].players.numPlayers,
     username: username,
     x: 211 * GRID_SIZE,
-    y: 247 * GRID_SIZE,
-    health: 4.33,
+    y: 147 * GRID_SIZE,
+    maxHealth: 20,
+    health: 20,
     level: 1,
     damage: 5,
     speed: 3,
@@ -569,9 +570,9 @@ function moveEnemies(rm) {
        }
      }
      if (rooms[rm].players[closestPlayer] == undefined) {
-       console.log("players[closestPlayer] is undefined. Ignoring",
-         "moveEnemies() logic instead of letting program crash.",
-         "Please check the logic.");
+       // console.log("players[closestPlayer] is undefined. Ignoring",
+       //   "moveEnemies() logic instead of letting program crash.",
+       //   "Please check the logic.");
        return;
      }
      //Move to closest player
@@ -588,11 +589,15 @@ function moveEnemies(rm) {
      if ( Math.abs(distX) < 15 && Math.abs(distY) < 15 ) {
       // console.log("distX ", distX, "distY, ", distY);
       //Deplete health
-      rooms[rm].players[closestPlayer].health -= 2;
+      rooms[rm].players[closestPlayer].health -= 0.02;
       //Kill player
       if (rooms[rm].players[closestPlayer].health < 0) {
         youveBeenTerminated(closestPlayer, rm);
         // break;
+        if (rooms[rm] == undefined) {
+          return;
+        }
+
       }
 
        //Dont move any closer
@@ -610,6 +615,9 @@ function moveEnemies(rm) {
        rooms[rm].enemies[id].y = originY;
      }
    }
+ }
+ if (rooms[rm] == undefined) {
+   return;
  }
 }
 
@@ -681,8 +689,11 @@ function youveBeenTerminated(player, rm) {
   rooms[rm].players[player] = 0;
   console.log(rooms[rm].players[player]);
   rooms[rm].numPlayers -= 1;
-  //Load "YOUVE FAILED SCREEN"
 
+  if (rooms[rm].numPlayers <= 0) {
+    delete rooms[rm];
+  }
+  //Load "YOUVE FAILED SCREEN"
 }
 
 //Loads the you've failed screen
