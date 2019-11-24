@@ -225,12 +225,8 @@ io.on('connection', function(socket) {
       var rm = getRoomBySocketId[socket.id]
 
       //astar testing here
-<<<<<<< HEAD
       // console.log(aStarSearch([100,100], [200,200]));
       // testAstar(rm);
-=======
-      // aStarSearch([100,100], [200,200]);
->>>>>>> dc8eb16cf226eb1a329404d0e268f325d32b404e
 
       // console.log("emit sound");
       // var sound = "bang";
@@ -772,12 +768,7 @@ function aStarSearch(startState, goal) {
           return ((stateCoords[0] == item[0]) && (stateCoords[1] == item[1]) ) }))
       {
         parents[expandedState] = current;
-<<<<<<< HEAD
         fringe.push([ [expandedState, state[1] + expandedState[2]], 
-=======
-        console.log("expanded state", expandedState[0]);
-        fringe.push([ [expandedState, state[1] + expandedState[2]],
->>>>>>> dc8eb16cf226eb1a329404d0e268f325d32b404e
         manhattanHeuristic(expandedState[0], goal) + state[1] + expandedState[2] ]);
       }
     }
