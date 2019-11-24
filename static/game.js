@@ -550,18 +550,23 @@ function showDeadScreen() {
   }
   dead = true;
   context.clearRect(startX, startY, canvasW, canvasH);
-  context.fillStyle = "black";
+  context.beginPath();
+  context.fillStyle = "#BB0000";
+  context.rect(0, 0, canvasW, canvasH);
+  context.fill();
+
+  context.fillStyle = "white";
   context.font = "80px Arial";
   context.fillText("You Failed!", canvasW/2-200, canvasH/2-50);
 
-  context.fillStyle = "black";
+  context.fillStyle = "white";
   context.font = "20px Arial";
   var messageNum = Math.random() * deadMessage.length;
   console.log(messageNum);
   var deadMsg = deadMessage[Math.floor(messageNum)];
   var lines = deadMsg.split('\n');
   for (var i = 0; i<lines.length; i++) {
-    context.fillText(lines[i], 120, canvasH/2 + 30 + 30*i);
+    context.fillText(lines[i], 120, canvasH/2 + 50 + 30*i);
   }
 }
 
