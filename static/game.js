@@ -22,6 +22,7 @@ var messageQueue = ["Welcome to S.F.U.! \nPress B to continue."
   , "I know, I just wanted to put this in. -Hailey"
   , "If you are bored, you can go kill the enemies."
   , "And we have a cool weather feature on top right."
+  , "Don't forget to turn on the music."
   , "Good luck, have fun!"];
 var mapOn = false;
 
