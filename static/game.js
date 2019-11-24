@@ -302,28 +302,27 @@ window.addEventListener('mousemove', function (e) {
     var player = players[myId];
     context.fillStyle = "#BBB";
     context.beginPath();
-    context.rect(10, 30, 80, 15);
+    context.rect(10, 60, 80, 15);
     context.fill();
     context.fillStyle = "red";
     context.beginPath();
-    context.rect(10, 30, (player.health/player.maxHealth)*80, 15);
+    context.rect(10, 60, (player.health/player.maxHealth)*80, 15);
     context.fill();
 
-    var playerIndex = 0;
+    var playerIndex = 1;
     for (var id in players) {
-      if (id == myId) {
-        continue;
+      if (id != myId && players[id] != 0 && players[id].health != undefined) {
+        player = players[id];
+        context.fillStyle = "#BBB";
+        context.beginPath();
+        context.rect(50+80*playerIndex, 40, 50, 10);
+        context.fill();
+        context.fillStyle = "red";
+        context.beginPath();
+        context.rect(50+80*playerIndex, 40, (player.health/player.maxHealth)*50, 10);
+        context.fill();
+        playerIndex += 1;
       }
-      player = players[id];
-      context.fillStyle = "#BBB";
-      context.beginPath();
-      context.rect(20+20*i, 40, 50, 10);
-      context.fill();
-      context.fillStyle = "red";
-      context.beginPath();
-      context.rect(20+20*playerIndex, 40, (player.health/player.maxHealth)*50, 10);
-      context.fill();
-      playerIndex += 1;
     }
 
 
