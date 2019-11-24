@@ -410,40 +410,37 @@ window.addEventListener('mousemove', function (e) {
     //zone Change show
     if (zoneChangeOn) {
       var zoneElapse = new Date();
+      var zoneboxY = 500;
+      var boxLength = zones[zoneNum].description.length*13;
       if (zoneElapse - zoneChangeOnTime > 5000) {
         zoneChangeOn = false;
-        context.fillStyle = "rgba(255, 50, 50, 0)";
-        context.beginPath();
-        context.rect(10, 20, canvasW-170, 85);
-        context.fill();
-        context.fillStyle = "rgba(255, 255, 255, 0)";
       }
       else if (zoneElapse - zoneChangeOnTime < 800) {
         context.fillStyle = `rgba(255, 50, 50, ${0.9*((zoneElapse - zoneChangeOnTime))/800})`;
         context.beginPath();
-        context.rect(10, 20, canvasW-170, 85);
+        context.rect(10, zoneboxY, boxLength, 85);
         context.fill();
         context.fillStyle = `rgba(255, 255, 255, ${0.9*((zoneElapse - zoneChangeOnTime))/800})`;
       }
       else if (zoneElapse - zoneChangeOnTime > 3000) {
         context.fillStyle = `rgba(255, 50, 50, ${0.9*(3000+2000-(zoneElapse - zoneChangeOnTime))/2000})`;
         context.beginPath();
-        context.rect(10, 20, canvasW-170, 85);
+        context.rect(10, zoneboxY, boxLength, 85);
         context.fill();
         context.fillStyle = `rgba(255, 255, 255, ${0.9*(3000+2000-(zoneElapse - zoneChangeOnTime))/2000})`;
       }
       else {
         context.fillStyle = "rgba(255, 50, 50, 0.9)";
         context.beginPath();
-        context.rect(10, 20, canvasW-170, 85);
+        context.rect(10, zoneboxY, boxLength, 85);
         context.fill();
         context.fillStyle = "rgba(255, 255, 255, 0.9)";
       }
       context.font = "italic 35px Arial";
-      context.fillText(zones[zoneNum].name, 50, 60);
+      context.fillText(zones[zoneNum].name, 50, zoneboxY+40);
 
       context.font = "italic 15px Arial";
-      context.fillText("- " + zones[zoneNum].description, 40, 90);
+      context.fillText("- " + zones[zoneNum].description, 40, zoneboxY+70);
 
       context.font = "normal";
     }
