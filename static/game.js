@@ -15,7 +15,7 @@ var messageQueue = ["Welcome to S.F.U.! \nPress B to continue."
   , "What? You mean, S.F.U. is Simon Fraser University?"
   , "Well, who cares about that Simon Fraser guy who \ndestroyed aboriginal culture?"
   , "Press W/A/S/D to move, B to see next message."
-  , "Press M to view the map."
+  , "Press M to turn on/off the map."
   , "Move mouse and click to shoot."
   , "And survive."
   , "What? You mean, we didn't talk about this kind of story \nin the meetings?"
@@ -24,15 +24,11 @@ var messageQueue = ["Welcome to S.F.U.! \nPress B to continue."
   , "And we have a cool weather feature on top right."
   , "Don't forget to turn on the music."
   , "Good luck, have fun!"];
-var mapOn = false;
+var mapOn = true;
 
 // dead.
 var dead = false;
-var deadMessage = ["Enter your messages here"
-  , "Hailey is looking for a co-op job for Fall 2020!\nPlease hire her!"
-  , "Some random messages......\nWill be shown here.....1"
-  , "Some random messages......\nWill be shown here.....2"
-  , "Some random messages......\nWill be shown here.....3"]
+var deadMessage = ["We're looking for Co-op!\n\nHailey | Fall 2020 | haa40@sfu.ca   resume ready :D\nWrite you names here let's get a job"]
 
 //zoneChange function related.
 var zoneChangeOn = false;
@@ -291,9 +287,11 @@ window.addEventListener('mousemove', function (e) {
     context.fillStyle = "rgba(100, 100, 100, 0.3)";
     for (var id in zones) {
       var zone = zones[id];
-      context.beginPath();
-      context.rect((zone.x*GRID_SIZE - middleX), (zone.y*GRID_SIZE - middleY), zone.width*GRID_SIZE, zone.height*GRID_SIZE);
-      context.fill();
+      if (!zone.open) {
+        context.beginPath();
+        context.rect((zone.x*GRID_SIZE - middleX), (zone.y*GRID_SIZE - middleY), zone.width*GRID_SIZE, zone.height*GRID_SIZE);
+        context.fill();
+      }
     }
 
     context.font = "15px Arial";
@@ -521,7 +519,7 @@ function processMapDrawing(mapData){
         allMapCtx.beginPath();
         allMapCtx.rect(x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
         // allMapCtx.fillStyle = texture.src;
-        allMapCtx.fillStyle = "black";
+        allMapCtx.fillStyle = "#333";
         allMapCtx.fill();
       }
 

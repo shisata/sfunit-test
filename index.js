@@ -286,7 +286,7 @@ setInterval(function() {
           rooms[rm].projectiles, rooms[rm].enemies, rooms[rm].zones);
       }
   }
-}, 1000 / 120);
+}, 1000 / 30);
 
 
 
@@ -407,7 +407,7 @@ function movePlayer(player, data, rm) {
     //zone change check
     if (player.zone == 0
       || (rooms[rm].zones[player.zone] != undefined
-        && !rooms[rm].zones[player.zone].inside(player.x/GRID_SIZE, 
+        && !rooms[rm].zones[player.zone].inside(player.x/GRID_SIZE,
           player.y/GRID_SIZE))) {
       var newZone = 0;
       for (zoneNum in rooms[rm].zones) {
@@ -768,7 +768,7 @@ function aStarSearch(startState, goal) {
           return ((stateCoords[0] == item[0]) && (stateCoords[1] == item[1]) ) }))
       {
         parents[expandedState] = current;
-        fringe.push([ [expandedState, state[1] + expandedState[2]], 
+        fringe.push([ [expandedState, state[1] + expandedState[2]],
         manhattanHeuristic(expandedState[0], goal) + state[1] + expandedState[2] ]);
       }
     }
