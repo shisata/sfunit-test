@@ -315,11 +315,11 @@ window.addEventListener('mousemove', function (e) {
         player = players[id];
         context.fillStyle = "#BBB";
         context.beginPath();
-        context.rect(50+80*playerIndex, 40, 50, 10);
+        context.rect(50+100*playerIndex, 40, 50, 10);
         context.fill();
         context.fillStyle = "red";
         context.beginPath();
-        context.rect(50+80*playerIndex, 40, (player.health/player.maxHealth)*50, 10);
+        context.rect(50+100*playerIndex, 40, (player.health/player.maxHealth)*50, 10);
         context.fill();
         playerIndex += 1;
       }
@@ -370,6 +370,13 @@ window.addEventListener('mousemove', function (e) {
         mapAreaWidth, mapAreaHeight,
         mapX, mapY, smallMapWidth, smallMapHeight);
 
+
+      // white background for coordinates
+      context.fillStyle = "rgba(255, 255, 255, 0.82)";
+      context.beginPath();
+      context.rect(mapX+3, mapY+smallMapHeight+8, smallMapWidth,
+        smallMapHeight*(1/3));
+      context.fill();
       //showing player and mouse coordinates.
       context.fillStyle = "blue";
       context.font = "15px Arial";
@@ -379,9 +386,13 @@ window.addEventListener('mousemove', function (e) {
         + (yPos+middleY)/GRID_SIZE, mapX+10, mapY+smallMapHeight+50);
 
       //show players on small map
-      context.fillStyle = '#BBAA22';
+
       for (var id in players) {
         var player = players[id];
+        context.fillStyle = 'green';
+        if (id == myId) {
+          context.fillStyle = '#BBAA22';
+        }
         context.beginPath();
         context.arc(mapX+(player.x-mapLeftCut)*(smallMapWidth/mapAreaWidth),
           mapY+(player.y-mapTopCut)*(smallMapWidth/mapAreaWidth),
