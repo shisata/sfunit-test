@@ -13,7 +13,7 @@ var messageOn = true;
 var messageQueue = ["Welcome to S.F.U.! \nPress B to continue."
   , "S.F.U. stands for Special Fortification Unit."
   , "What? You mean, S.F.U. is Simon Fraser University?"
-  , "Well, who cares about that Simon Fraser guy who \ndestroyed aboriginal culture and became honored as \nan explorer?"
+  , "Well, who cares about that Simon Fraser guy who \ndestroyed aboriginal culture?"
   , "Press W/A/S/D to Move, B to see next message."
   , "Move mouse and click to shoot."
   , "And survive."
@@ -23,6 +23,9 @@ var messageQueue = ["Welcome to S.F.U.! \nPress B to continue."
   , "And we have a cool weather feature on top right."
   , "Good luck, have fun!"];
 var mapOn = false;
+
+// dead.
+var dead = false;
 
 var socket = io();
 socket.on('message', function(data) {
@@ -215,6 +218,11 @@ window.addEventListener('mousemove', function (e) {
   var context = canvas.getContext('2d');
   socket.on('state', function(players, projectiles, enemies, zones) {
     //console.log("socket event state called");
+    if (players[myId] == 0) {
+      //Died
+      showDeadScreen();
+      return;
+    }
     if (myId == "") {
       socket.emit('requestPassId');
       return;
@@ -443,9 +451,20 @@ function showMessage(messageString) {
   messageQueue.push(messageString);
 }
 
+function showDeadScreen() {
+  if (dead) {
+    return;
+  }
+  dead = true;
+  context.clearRect(startX, startY, canvasW, canvasH);
+  context.fillStyle = "black";
+  context.font = "80px Arial";
+  context.fillText("You Failed!", canvasW/2-200, canvasH/2-50);
+}
+
 //=============================================================================
 // George Workpace
-var logoutButton = document.getElementById('log_out_button');
+var logoutButton = document.getElementById('log_out_button' );
 logoutButton.addEventListener('click', function(event) {
   logoutButton.value = username;
 });

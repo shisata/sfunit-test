@@ -569,9 +569,9 @@ function moveEnemies(rm) {
        }
      }
      if (rooms[rm].players[closestPlayer] == undefined) {
-       console.log("players[closestPlayer] is undefined. Ignoring",
-         "moveEnemies() logic instead of letting program crash.",
-         "Please check the logic.");
+       // console.log("players[closestPlayer] is undefined. Ignoring",
+       //   "moveEnemies() logic instead of letting program crash.",
+       //   "Please check the logic.");
        return;
      }
      //Move to closest player
@@ -593,6 +593,10 @@ function moveEnemies(rm) {
       if (rooms[rm].players[closestPlayer].health < 0) {
         youveBeenTerminated(closestPlayer, rm);
         // break;
+        if (rooms[rm] == undefined) {
+          return;
+        }
+
       }
 
        //Dont move any closer
@@ -610,6 +614,9 @@ function moveEnemies(rm) {
        rooms[rm].enemies[id].y = originY;
      }
    }
+ }
+ if (rooms[rm] == undefined) {
+   return;
  }
 }
 
@@ -681,8 +688,11 @@ function youveBeenTerminated(player, rm) {
   rooms[rm].players[player] = 0;
   console.log(rooms[rm].players[player]);
   rooms[rm].numPlayers -= 1;
-  //Load "YOUVE FAILED SCREEN"
 
+  if (rooms[rm].numPlayers <= 0) {
+    delete rooms[rm];
+  }
+  //Load "YOUVE FAILED SCREEN"
 }
 
 //Loads the you've failed screen
