@@ -26,6 +26,11 @@ var mapOn = false;
 
 // dead.
 var dead = false;
+var deadMessage = ["Enter your messages here"
+  , "Hailey is looking for a co-op job for Fall 2020!\nPlease hire her!"
+  , "Some random messages......\nWill be shown here.....1"
+  , "Some random messages......\nWill be shown here.....2"
+  , "Some random messages......\nWill be shown here.....3"]
 
 //zoneChange function related.
 var zoneChangeOn = false;
@@ -548,6 +553,16 @@ function showDeadScreen() {
   context.fillStyle = "black";
   context.font = "80px Arial";
   context.fillText("You Failed!", canvasW/2-200, canvasH/2-50);
+
+  context.fillStyle = "black";
+  context.font = "20px Arial";
+  var messageNum = Math.random() * deadMessage.length;
+  console.log(messageNum);
+  var deadMsg = deadMessage[Math.floor(messageNum)];
+  var lines = deadMsg.split('\n');
+  for (var i = 0; i<lines.length; i++) {
+    context.fillText(lines[i], 120, canvasH/2 + 30 + 30*i);
+  }
 }
 
 socket.on("zoneChange", function(num){
