@@ -15,7 +15,7 @@ body{
     display: block;
     width: 800px; */
     background-color: white;
-    background-image: url(../image/darkbackground.jpg);
+    /*background-image: url(../image/darkbackground.jpg);*/
 }
 
 .tracker{
@@ -26,7 +26,7 @@ body{
     /* line-height: 100px; */
     width: 100px;
     height:50px;
-    
+
     /* margin-top: 30px; */
     font-size: 14pt;
     font-family: tahoma;
@@ -38,13 +38,13 @@ body{
 
     background-color: rgba(15, 14, 14, 0.842);
     color: rgb(66, 196, 236);
-    border: solid white 1px; 
+    border: solid white 1px;
 
 }
 
 #weather-container{
   margin-left:40px;
-  
+
 }
 
 #icon{
