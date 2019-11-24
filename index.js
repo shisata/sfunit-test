@@ -223,6 +223,10 @@ io.on('connection', function(socket) {
   socket.on('shoot', function(data) {
     if (data.shootBullet) {
       var rm = getRoomBySocketId[socket.id]
+
+      //astar testing here
+      // aStarSearch([100,100], [200,200]);
+      
       // console.log("emit sound");
       // var sound = "bang";
       // socket.emit('sound', sound);
@@ -723,6 +727,140 @@ function youFailed(player, rm) {
 
 }
 
+function aStarSearch(startState, goal) {
+  var explored = [];
+  var parents = {};
+  var fringe = new PriorityQueue();	
+
+  startState = [startState, [], 0];
+  fringe.push( [[startState, 0], 0] );
+
+  // Perform search by expanding nodes based on the sum of their current 
+  // path cost and estimated cost to the goal, as determined by the heuristic
+  while(fringe.isEmpty() == false) {
+    var state = fringe.pop();
+    var current = state[0];
+    current = current[0];
+    if (explored.find( function(item) {
+        return ( (current[0][0] == item[0]) && current[0][1] == item[1]) })) 
+    {
+      console.log("skipping");
+      continue;
+    }
+    else {
+      explored.push(current[0]);
+    }
+  
+    //Goal check
+    if (isGoalState(current[0], goal)) {
+      return makeList(parents, current);
+    }
+
+    //Expand new successors
+    successors = getSuccessors(current[0]);
+    for (successor in successors) {
+      expandedState = successors[successor];
+      stateCoords = expandedState[0]
+      if (!explored.find( function(item) {
+          return ((stateCoords[0] == item[0]) && (stateCoords[1] == item[1]) ) }))
+      {
+        parents[expandedState] = current;
+        console.log("expanded state", expandedState[0]);
+        fringe.push([ [expandedState, state[1] + expandedState[2]], 
+        manhattanHeuristic(expandedState[0], goal) + state[1] + expandedState[2] ]);
+      }
+    }
+  }
+
+  return [];
+}
+
+//Return successors of state
+function getSuccessors(state) {
+  //Use 5 as arbitraty number
+  console.log("logging state", state);
+  stateL = [[state[0] - GRID_SIZE, state[1]], "left", 1];
+  stateR = [[state[0] + GRID_SIZE, state[1]], "right", 1];
+  stateU = [[state[0], state[1] - GRID_SIZE], "up", 1];
+  stateD = [[state[0], state[1] + GRID_SIZE], "down", 1];
+  var states = [stateL, stateR, stateU, stateD];
+  // console.log("generated successors", states);
+  return states;
+}
+
+//Return true if goal state at state
+function isGoalState(state, goal) {
+  goalx = Math.floor(goal[0] / GRID_SIZE);
+  goaly = Math.floor(goal[1] / GRID_SIZE);
+  statex = Math.floor(state[0] / GRID_SIZE);
+  statey = Math.floor(state[1] / GRID_SIZE);
+
+  if ( (goalx == statex) && (goaly == statey) ) {
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+
+//Return the manhattan distance between position and goal
+function manhattanHeuristic(position, goal) {
+  // console.log("position", position, "goal", goal);
+  var xy1 = [(position[0] / GRID_SIZE), (position[1] / GRID_SIZE)];
+  var xy2 = [(goal[0] / GRID_SIZE), (goal[1] / GRID_SIZE)];
+  // console.log(Math.abs(xy1[0] - xy2[0]) + Math.abs(xy1[1] - xy2[1]));
+  return Math.abs(xy1[0] - xy2[0]) + Math.abs(xy1[1] - xy2[1]);
+}
+
+//Find/return position of player closest to enemy
+function closestPlayerXY(rm, enemy) {
+  if (rooms[rm].players.numPlayers > 0) {
+      var closestPlayer;
+      var closestPlayerDistance = Infinity;
+      for (var player in rooms[rm].players) {
+        var distance = manhattanHeuristic([enemy.x, enemy.y], [player.x, player.y]);
+        if (distance < closestPlayerDistance) {
+          closestPlayer = player;
+          closestPlayerDistance = distance;
+        }
+      }
+      if (rooms[rm].players[closestPlayer] == undefined) {
+        console.log("players[closestPlayer] is undefined. Ignoring",
+          "moveEnemies() logic instead of letting program crash.",
+          "Please check the logic.");
+        return;
+      }
+  return [closestPlayer.x, closestPlayer.y];
+  }
+}
+
+//Return the path to players position
+function makeList(parents, goal) {
+  console.log("making path");
+  var path = [];
+  while (goal[1] != [] && parents[goal]) {
+    path.push(goal[1]);
+    goal = parents[goal];
+  }
+
+  return path.reverse();
+}
+
+function testAstar(rm) {
+  if (!rooms[rm].players) {
+    return;
+  }
+  for (var playerID in rooms[rm].players) {
+    player = rooms[rm].players[playerID];
+  }
+  for (var id in rooms[rm].enemies) {
+    console.log("running A*");
+    enemy = rooms[rm].enemies[id];
+    var path = aStarSearch( [enemy.x, enemy.y], [player.x, player.y] );
+    console.log("Astar generated path: ", path);
+  }
+}
+
 //=========================================================================================
 // Testing functions
 
@@ -1126,6 +1264,75 @@ app.post('/gameroom', (request, response)=>{
   console.log("logging results", data)
   response.render('pages/index', data);
 });
+
+const top = 0;
+const parent = i => ((i + 1) >>> 1) - 1;
+const left = i => (i << 1) + 1;
+const right = i => (i + 1) << 1;
+
+class PriorityQueue {
+  constructor(comparator = (a, b) => a[1] < b[1]) {
+    this._heap = [];
+    this._comparator = comparator;
+  }
+  size() {
+    return this._heap.length;
+  }
+  isEmpty() {
+    return this.size() == 0;
+  }
+  peek() {
+    return this._heap[top];
+  }
+  push(...values) {
+    values.forEach(value => {
+      this._heap.push(value);
+      this._siftUp();
+    });
+    return this.size();
+  }
+  pop() {
+    const poppedValue = this.peek();
+    const bottom = this.size() - 1;
+    if (bottom > top) {
+      this._swap(top, bottom);
+    }
+    this._heap.pop();
+    this._siftDown();
+    return poppedValue;
+  }
+  replace(value) {
+    const replacedValue = this.peek();
+    this._heap[top] = value;
+    this._siftDown();
+    return replacedValue;
+  }
+  _greater(i, j) {
+    return this._comparator(this._heap[i], this._heap[j]);
+  }
+  _swap(i, j) {
+    [this._heap[i], this._heap[j]] = [this._heap[j], this._heap[i]];
+  }
+  _siftUp() {
+    let node = this.size() - 1;
+    while (node > top && this._greater(node, parent(node))) {
+      this._swap(node, parent(node));
+      node = parent(node);
+    }
+  }
+  _siftDown() {
+    let node = top;
+    while (
+      (left(node) < this.size() && this._greater(left(node), node)) ||
+      (right(node) < this.size() && this._greater(right(node), node))
+    ) {
+      let maxChild = (right(node) < this.size() && this._greater(right(node), left(node))) ? right(node) : left(node);
+      this._swap(node, maxChild);
+      node = maxChild;
+    }
+  }
+}
+
 
 //=============================================================================
 
