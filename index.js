@@ -226,7 +226,7 @@ io.on('connection', function(socket) {
 
       //astar testing here
       // aStarSearch([100,100], [200,200]);
-      
+
       // console.log("emit sound");
       // var sound = "bang";
       // socket.emit('sound', sound);
@@ -405,10 +405,13 @@ function movePlayer(player, data, rm) {
 
     //zone change check
     if (player.zone == 0
-      || !rooms[rm].zones[player.zone].inside(player.x/GRID_SIZE, player.y/GRID_SIZE)) {
+      || (rooms[rm].zones[player.zone] != undefined
+        && !rooms[rm].zones[player.zone].inside(player.x/GRID_SIZE, 
+          player.y/GRID_SIZE))) {
       var newZone = 0;
       for (zoneNum in rooms[rm].zones) {
-        if (rooms[rm].zones[zoneNum].inside(player.x/GRID_SIZE, player.y/GRID_SIZE)) {
+        if (rooms[rm].zones[zoneNum].inside(player.x/GRID_SIZE,
+          player.y/GRID_SIZE)) {
           player.zone = zoneNum;
           io.sockets.to(player.playerSocketId).emit("zoneChange", zoneNum);
           newZone = zoneNum;
@@ -730,19 +733,19 @@ function youFailed(player, rm) {
 function aStarSearch(startState, goal) {
   var explored = [];
   var parents = {};
-  var fringe = new PriorityQueue();	
+  var fringe = new PriorityQueue();
 
   startState = [startState, [], 0];
   fringe.push( [[startState, 0], 0] );
 
-  // Perform search by expanding nodes based on the sum of their current 
+  // Perform search by expanding nodes based on the sum of their current
   // path cost and estimated cost to the goal, as determined by the heuristic
   while(fringe.isEmpty() == false) {
     var state = fringe.pop();
     var current = state[0];
     current = current[0];
     if (explored.find( function(item) {
-        return ( (current[0][0] == item[0]) && current[0][1] == item[1]) })) 
+        return ( (current[0][0] == item[0]) && current[0][1] == item[1]) }))
     {
       console.log("skipping");
       continue;
@@ -750,7 +753,7 @@ function aStarSearch(startState, goal) {
     else {
       explored.push(current[0]);
     }
-  
+
     //Goal check
     if (isGoalState(current[0], goal)) {
       return makeList(parents, current);
@@ -766,7 +769,7 @@ function aStarSearch(startState, goal) {
       {
         parents[expandedState] = current;
         console.log("expanded state", expandedState[0]);
-        fringe.push([ [expandedState, state[1] + expandedState[2]], 
+        fringe.push([ [expandedState, state[1] + expandedState[2]],
         manhattanHeuristic(expandedState[0], goal) + state[1] + expandedState[2] ]);
       }
     }
