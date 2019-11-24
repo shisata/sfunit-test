@@ -695,27 +695,38 @@ function aStarSearch(startState, goal) {
   var parents = {};
   var fringe = new PriorityQueue();	
 
-  //State: [((x1,y1),'Direction',Cost)]
-  fringe.queue(startState);
+  startState = [startState, [], 0];
+  fringe.push( [[startState, 0], 0] );
 
   // Perform search by expanding nodes based on the sum of their current 
   // path cost and estimated cost to the goal, as determined by the heuristic
-  while(fringe.length) {
-    var state = fringe.dequeue();
+  while(!fringe.isEmpty()) {
+    // console.log("Running A*");
+    var state = fringe.pop();
+    // console.log("state:", state);
     var current = state[0];
-    if (explored.has(current[0])) continue;
+    current = current[0];
+    // console.log("logging current[0]", current[0]);
+    // console.log("logging current", current);
+    if (explored.has(current[0])) {
+      console.log("skipping");
+      continue;
+    }
     else explored.add(current[0]);
-  }
+    // console.log(explored)
+  
+    //Goal check
+    if (isGoalState(current[0], goal)) return makeList(parents, current);
 
-  //Goal check
-  if (isGoalState(current[0]), goal) return makeList(parents, current);
-
-  //Expand new successors
-  for (successor in getSuccessors(current[0])) {
-    if (!explored.has(successor[0])) {
-      parents[successor] = current;
-      fringe.queue( (successor, state[1] + successor[2]), 
-      manhattanHeuristic(successor[0], goal) + state[1] + successor[2]);
+    //Expand new successors
+    successors = getSuccessors(current[0]);
+    for (successor in successors) {
+      // console.log("logging successor", successors[successor]);
+      if (explored.has(successors[successor][0]) == false) {
+        parents[successors[successor]] = current;
+        fringe.push([ [successors[successor], state[1] + successors[successor][2]], 
+        manhattanHeuristic(successors[successor][0], goal) + state[1] + successors[successor][2] ]);
+      }
     }
   }
 
@@ -725,19 +736,22 @@ function aStarSearch(startState, goal) {
 //Return successors of state
 function getSuccessors(state) {
   //Use 5 as arbitraty number
-  stateL = [[state[0].x + 5, state[0].y], "left", 1];
-  stateR = [[state[0].x - 5, state[0].y], "right", 1];
-  stateU = [[state[0].x, state[0].y - 5], "up", 1];
-  stateD = [[state[0].x, state[0].y + 5], "down", 1];
-
-  return [stateL, stateR, stateU, stateD];
+  // console.log("logging state", state);
+  stateL = [[state[0] + 5, state[1]], "left", 1];
+  stateR = [[state[0] - 5, state[1]], "right", 1];
+  stateU = [[state[0], state[1] - 5], "up", 1];
+  stateD = [[state[0], state[1] + 5], "down", 1];
+  var states = [stateL, stateR, stateU, stateD];
+  // console.log("generated successors", states);
+  return states;
 }
 
 //Return true if goal state at state
 function isGoalState(state, goal) {
-  if (manhattanHeuristic(state, goal) <= 15) {
+  if (manhattanHeuristic(state, goal) <= 50) {
     return true;
   }
+  // console.log("manhattan returned:", manhattanHeuristic(state, goal));
   return false;
 }
 
@@ -746,7 +760,7 @@ function manhattanHeuristic(position, goal) {
     // "The Manhattan distance heuristic for a PositionSearchProblem"
     var xy1 = position;
     var xy2 = goal;
-    return Math.abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1]);
+    return Math.abs(xy1[0] - xy2[0]) + Math.abs(xy1[1] - xy2[1]);
 }
 
 //Find/return position of player closest to enemy
@@ -773,8 +787,9 @@ function closestPlayerXY(rm, enemy) {
 
 //Return the path to players position
 function makeList(parents, goal) {
+  console.log("making path");
   var path = [];
-  while (goal[1] != [] && parents.has(goal)) {
+  while (goal[1] != [] && parents[goal]) {
     path.push(goal[1]);
     goal = parents[goal];
   }
@@ -782,6 +797,20 @@ function makeList(parents, goal) {
   return path.reverse();
 }
 
+function testAstar(rm) {
+  if (!rooms[rm].players) {
+    return;
+  }
+  for (var playerID in rooms[rm].players) {
+    player = rooms[rm].players[playerID];
+  }
+  for (var id in rooms[rm].enemies) {
+    console.log("running A*");
+    enemy = rooms[rm].enemies[id];
+    var path = aStarSearch( [enemy.x, enemy.y], [player.x, player.y] );
+    console.log("Astar generated path: ", path);
+  }
+}
 
 //=========================================================================================
 // Testing functions
@@ -1186,6 +1215,75 @@ app.post('/gameroom', (request, response)=>{
   console.log("logging results", data)
   response.render('pages/index', data);
 });
+
+const top = 0;
+const parent = i => ((i + 1) >>> 1) - 1;
+const left = i => (i << 1) + 1;
+const right = i => (i + 1) << 1;
+
+class PriorityQueue {
+  constructor(comparator = (a, b) => a < b) {
+    this._heap = [];
+    this._comparator = comparator;
+  }
+  size() {
+    return this._heap.length;
+  }
+  isEmpty() {
+    return this.size() == 0;
+  }
+  peek() {
+    return this._heap[top];
+  }
+  push(...values) {
+    values.forEach(value => {
+      this._heap.push(value);
+      this._siftUp();
+    });
+    return this.size();
+  }
+  pop() {
+    const poppedValue = this.peek();
+    const bottom = this.size() - 1;
+    if (bottom > top) {
+      this._swap(top, bottom);
+    }
+    this._heap.pop();
+    this._siftDown();
+    return poppedValue;
+  }
+  replace(value) {
+    const replacedValue = this.peek();
+    this._heap[top] = value;
+    this._siftDown();
+    return replacedValue;
+  }
+  _greater(i, j) {
+    return this._comparator(this._heap[i], this._heap[j]);
+  }
+  _swap(i, j) {
+    [this._heap[i], this._heap[j]] = [this._heap[j], this._heap[i]];
+  }
+  _siftUp() {
+    let node = this.size() - 1;
+    while (node > top && this._greater(node, parent(node))) {
+      this._swap(node, parent(node));
+      node = parent(node);
+    }
+  }
+  _siftDown() {
+    let node = top;
+    while (
+      (left(node) < this.size() && this._greater(left(node), node)) ||
+      (right(node) < this.size() && this._greater(right(node), node))
+    ) {
+      let maxChild = (right(node) < this.size() && this._greater(right(node), left(node))) ? right(node) : left(node);
+      this._swap(node, maxChild);
+      node = maxChild;
+    }
+  }
+}
+
 
 //=============================================================================
 
