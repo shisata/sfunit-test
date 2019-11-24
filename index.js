@@ -225,8 +225,9 @@ io.on('connection', function(socket) {
       var rm = getRoomBySocketId[socket.id]
 
       //astar testing here
-      // aStarSearch([100,100], [200,200]);
-      
+      // console.log(aStarSearch([100,100], [200,200]));
+      // testAstar(rm);
+
       // console.log("emit sound");
       // var sound = "bang";
       // socket.emit('sound', sound);
@@ -483,7 +484,7 @@ function spawnRandomObject(rm) {
   // create A and if the random# is .50-1.00 we create B
 
   // add the new object to the objects[] array
-  if (rooms[rm].enemies.numEnemies < 10) {
+  if (rooms[rm].enemies.numEnemies < 1) {
     rooms[rm].enemies[rooms[rm].enemyID] = {
       // type: t,
       // set x randomly but at least 15px off the canvas edges
@@ -722,7 +723,6 @@ function aStarSearch(startState, goal) {
     if (explored.find( function(item) {
         return ( (current[0][0] == item[0]) && current[0][1] == item[1]) })) 
     {
-      console.log("skipping");
       continue;
     }
     else {
@@ -743,7 +743,6 @@ function aStarSearch(startState, goal) {
           return ((stateCoords[0] == item[0]) && (stateCoords[1] == item[1]) ) }))
       {
         parents[expandedState] = current;
-        console.log("expanded state", expandedState[0]);
         fringe.push([ [expandedState, state[1] + expandedState[2]], 
         manhattanHeuristic(expandedState[0], goal) + state[1] + expandedState[2] ]);
       }
@@ -756,13 +755,11 @@ function aStarSearch(startState, goal) {
 //Return successors of state
 function getSuccessors(state) {
   //Use 5 as arbitraty number
-  console.log("logging state", state);
   stateL = [[state[0] - GRID_SIZE, state[1]], "left", 1];
   stateR = [[state[0] + GRID_SIZE, state[1]], "right", 1];
   stateU = [[state[0], state[1] - GRID_SIZE], "up", 1];
   stateD = [[state[0], state[1] + GRID_SIZE], "down", 1];
   var states = [stateL, stateR, stateU, stateD];
-  // console.log("generated successors", states);
   return states;
 }
 
@@ -786,7 +783,6 @@ function manhattanHeuristic(position, goal) {
   // console.log("position", position, "goal", goal);
   var xy1 = [(position[0] / GRID_SIZE), (position[1] / GRID_SIZE)];
   var xy2 = [(goal[0] / GRID_SIZE), (goal[1] / GRID_SIZE)];
-  // console.log(Math.abs(xy1[0] - xy2[0]) + Math.abs(xy1[1] - xy2[1]));
   return Math.abs(xy1[0] - xy2[0]) + Math.abs(xy1[1] - xy2[1]);
 }
 
@@ -831,11 +827,13 @@ function testAstar(rm) {
   for (var playerID in rooms[rm].players) {
     player = rooms[rm].players[playerID];
   }
+  console.log(rooms[rm].enemies);
   for (var id in rooms[rm].enemies) {
     console.log("running A*");
     enemy = rooms[rm].enemies[id];
     var path = aStarSearch( [enemy.x, enemy.y], [player.x, player.y] );
     console.log("Astar generated path: ", path);
+    return;
   }
 }
 
