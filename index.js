@@ -223,6 +223,10 @@ io.on('connection', function(socket) {
   socket.on('shoot', function(data) {
     if (data.shootBullet) {
       var rm = getRoomBySocketId[socket.id]
+
+      //astar testing here
+      // aStarSearch([100,100], [200,200]);
+      
       // console.log("emit sound");
       // var sound = "bang";
       // socket.emit('sound', sound);
@@ -702,7 +706,7 @@ function youFailed(player, rm) {
 }
 
 function aStarSearch(startState, goal) {
-  var explored = new Set();
+  var explored = [];
   var parents = {};
   var fringe = new PriorityQueue();	
 
@@ -711,32 +715,37 @@ function aStarSearch(startState, goal) {
 
   // Perform search by expanding nodes based on the sum of their current 
   // path cost and estimated cost to the goal, as determined by the heuristic
-  while(!fringe.isEmpty()) {
-    // console.log("Running A*");
+  while(fringe.isEmpty() == false) {
     var state = fringe.pop();
-    // console.log("state:", state);
     var current = state[0];
     current = current[0];
-    // console.log("logging current[0]", current[0]);
-    // console.log("logging current", current);
-    if (explored.has(current[0])) {
+    if (explored.find( function(item) {
+        return ( (current[0][0] == item[0]) && current[0][1] == item[1]) })) 
+    {
       console.log("skipping");
       continue;
     }
-    else explored.add(current[0]);
-    // console.log(explored)
+    else {
+      explored.push(current[0]);
+    }
   
     //Goal check
-    if (isGoalState(current[0], goal)) return makeList(parents, current);
+    if (isGoalState(current[0], goal)) {
+      return makeList(parents, current);
+    }
 
     //Expand new successors
     successors = getSuccessors(current[0]);
     for (successor in successors) {
-      // console.log("logging successor", successors[successor]);
-      if (explored.has(successors[successor][0]) == false) {
-        parents[successors[successor]] = current;
-        fringe.push([ [successors[successor], state[1] + successors[successor][2]], 
-        manhattanHeuristic(successors[successor][0], goal) + state[1] + successors[successor][2] ]);
+      expandedState = successors[successor];
+      stateCoords = expandedState[0]
+      if (!explored.find( function(item) {
+          return ((stateCoords[0] == item[0]) && (stateCoords[1] == item[1]) ) }))
+      {
+        parents[expandedState] = current;
+        console.log("expanded state", expandedState[0]);
+        fringe.push([ [expandedState, state[1] + expandedState[2]], 
+        manhattanHeuristic(expandedState[0], goal) + state[1] + expandedState[2] ]);
       }
     }
   }
@@ -747,11 +756,11 @@ function aStarSearch(startState, goal) {
 //Return successors of state
 function getSuccessors(state) {
   //Use 5 as arbitraty number
-  // console.log("logging state", state);
-  stateL = [[state[0] + 5, state[1]], "left", 1];
-  stateR = [[state[0] - 5, state[1]], "right", 1];
-  stateU = [[state[0], state[1] - 5], "up", 1];
-  stateD = [[state[0], state[1] + 5], "down", 1];
+  console.log("logging state", state);
+  stateL = [[state[0] - GRID_SIZE, state[1]], "left", 1];
+  stateR = [[state[0] + GRID_SIZE, state[1]], "right", 1];
+  stateU = [[state[0], state[1] - GRID_SIZE], "up", 1];
+  stateD = [[state[0], state[1] + GRID_SIZE], "down", 1];
   var states = [stateL, stateR, stateU, stateD];
   // console.log("generated successors", states);
   return states;
@@ -759,19 +768,26 @@ function getSuccessors(state) {
 
 //Return true if goal state at state
 function isGoalState(state, goal) {
-  if (manhattanHeuristic(state, goal) <= 50) {
+  goalx = Math.floor(goal[0] / GRID_SIZE);
+  goaly = Math.floor(goal[1] / GRID_SIZE);
+  statex = Math.floor(state[0] / GRID_SIZE);
+  statey = Math.floor(state[1] / GRID_SIZE);
+
+  if ( (goalx == statex) && (goaly == statey) ) {
     return true;
   }
-  // console.log("manhattan returned:", manhattanHeuristic(state, goal));
-  return false;
+  else {
+    return false;
+  }
 }
 
 //Return the manhattan distance between position and goal
 function manhattanHeuristic(position, goal) {
-    // "The Manhattan distance heuristic for a PositionSearchProblem"
-    var xy1 = position;
-    var xy2 = goal;
-    return Math.abs(xy1[0] - xy2[0]) + Math.abs(xy1[1] - xy2[1]);
+  // console.log("position", position, "goal", goal);
+  var xy1 = [(position[0] / GRID_SIZE), (position[1] / GRID_SIZE)];
+  var xy2 = [(goal[0] / GRID_SIZE), (goal[1] / GRID_SIZE)];
+  // console.log(Math.abs(xy1[0] - xy2[0]) + Math.abs(xy1[1] - xy2[1]));
+  return Math.abs(xy1[0] - xy2[0]) + Math.abs(xy1[1] - xy2[1]);
 }
 
 //Find/return position of player closest to enemy
@@ -1233,7 +1249,7 @@ const left = i => (i << 1) + 1;
 const right = i => (i + 1) << 1;
 
 class PriorityQueue {
-  constructor(comparator = (a, b) => a < b) {
+  constructor(comparator = (a, b) => a[1] < b[1]) {
     this._heap = [];
     this._comparator = comparator;
   }
