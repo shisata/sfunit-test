@@ -444,6 +444,14 @@ window.addEventListener('mousemove', function (e) {
 
       context.font = "normal";
     }
+
+    if (players[myId].health < players[myId].maxHealth) {
+      context.fillStyle = `rgba(255, 0, 0,
+        ${0.3*((players[myId].maxHealth-players[myId].health)/players[myId].maxHealth)})`;
+        context.beginPath();
+        context.rect(0, 0, canvasW, canvasH);
+        context.fill();
+    }
   });
 
 
