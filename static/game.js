@@ -183,7 +183,7 @@ function initSound(){
   sound.reload = new Audio();
   sound.hit = new Audio();
   sound.background.src = "";
-  sound.shoot.src = "../static/audio/9mm.mp3";
+  sound.shoot.src =  "../static/audio/9mm.mp3";
   sound.reload.src = "../static/audio/reload.mp3";
   sound.hit.src = "../static/audio/HITMARKER.mp3";
 }
