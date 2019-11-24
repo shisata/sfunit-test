@@ -262,6 +262,9 @@ io.on('connection', function(socket) {
     //players[socket.id] = 0;
     delete rooms[getRoomBySocketId[socket.id]].players[socket.id];
     rooms[getRoomBySocketId[socket.id]].players.numPlayers -= 1;
+    if (rooms[getRoomBySocketId[socket.id]].players.numPlayers <= 0) {
+      delete rooms[getRoomBySocketId[socket.id]];
+    }
   });
 });
 
@@ -302,7 +305,9 @@ function createPlayer(id, serverName, username) {
     score: 0,
     gun: "pistol",
     clip: 12,
-    clipSize: 12
+    clipSize: 12,
+    zone: 0,
+    playerSocketId: id
   };
 }
 
@@ -393,6 +398,23 @@ function movePlayer(player, data, rm) {
       player.x = originX;
       player.y = originY
     }
+
+    //zone change check
+    if (player.zone == 0
+      || !rooms[rm].zones[player.zone].inside(player.x/GRID_SIZE, player.y/GRID_SIZE)) {
+      var newZone = 0;
+      for (zoneNum in rooms[rm].zones) {
+        if (rooms[rm].zones[zoneNum].inside(player.x/GRID_SIZE, player.y/GRID_SIZE)) {
+          player.zone = zoneNum;
+          io.sockets.to(player.playerSocketId).emit("zoneChange", zoneNum);
+          newZone = zoneNum;
+        }
+      }
+      if (newZone == 0) {
+        player.zone = 0;
+      }
+    }
+
   }
 }
 
