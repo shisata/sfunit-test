@@ -298,6 +298,34 @@ window.addEventListener('mousemove', function (e) {
     context.fillText(Math.round(1000 / (thisLoop - lastLoop)) + " FPS", canvasW-95, canvasH-10);
     lastLoop = thisLoop;
 
+    //showing Player health/score/etc.
+    var player = players[myId];
+    context.fillStyle = "#BBB";
+    context.beginPath();
+    context.rect(10, 30, 80, 15);
+    context.fill();
+    context.fillStyle = "red";
+    context.beginPath();
+    context.rect(10, 30, (player.health/player.maxHealth)*80, 15);
+    context.fill();
+
+    var playerIndex = 0;
+    for (var id in players) {
+      if (id == myId) {
+        continue;
+      }
+      player = players[id];
+      context.fillStyle = "#BBB";
+      context.beginPath();
+      context.rect(20+20*i, 40, 50, 10);
+      context.fill();
+      context.fillStyle = "red";
+      context.beginPath();
+      context.rect(20+20*playerIndex, 40, (player.health/player.maxHealth)*50, 10);
+      context.fill();
+      playerIndex += 1;
+    }
+
 
     // related to function 'showMessage'.
     if (messageOn && messageQueue.length >= 1) {
