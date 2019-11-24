@@ -294,7 +294,8 @@ function createPlayer(id, serverName, username) {
     username: username,
     x: 211 * GRID_SIZE,
     y: 147 * GRID_SIZE,
-    health: 4.33,
+    maxHealth: 20,
+    health: 20,
     level: 1,
     damage: 5,
     speed: 3,
@@ -588,7 +589,7 @@ function moveEnemies(rm) {
      if ( Math.abs(distX) < 15 && Math.abs(distY) < 15 ) {
       // console.log("distX ", distX, "distY, ", distY);
       //Deplete health
-      rooms[rm].players[closestPlayer].health -= 2;
+      rooms[rm].players[closestPlayer].health -= 0.02;
       //Kill player
       if (rooms[rm].players[closestPlayer].health < 0) {
         youveBeenTerminated(closestPlayer, rm);
