@@ -144,11 +144,11 @@ pool = new Pool({
 });
 
 app.use('/static', express.static(__dirname + '/static'));// Ring
-app.get('/', function(request, response) {
+// app.get('/', function(request, response) {
 // response.sendFile(path.join(__dirname, 'index.html'));
-   var user = {'username':'uname'};
-  response.render('pages/matchmaking', user);
-});// Starts the server.
+//    var user = {'username':'uname'};
+//   response.render('pages/matchmaking', user);
+// });// Starts the server.
 server.listen(PORT, function() {
   console.log('Starting server on port 5000');
 });
@@ -226,7 +226,7 @@ io.on('connection', function(socket) {
 
       //astar testing here
       // console.log(aStarSearch([100,100], [200,200]));
-      // testAstar(rm);
+      testAstar(rm);
 
       // console.log("emit sound");
       // var sound = "bang";
@@ -286,7 +286,7 @@ setInterval(function() {
           rooms[rm].projectiles, rooms[rm].enemies, rooms[rm].zones);
       }
   }
-}, 1000 / 120);
+}, 1000 / 30);
 
 
 
@@ -780,20 +780,20 @@ function aStarSearch(startState, goal) {
 //Return successors of state
 function getSuccessors(state) {
   //Use 5 as arbitraty number
-  stateL = [[state[0] - GRID_SIZE, state[1]], "left", 1];
-  stateR = [[state[0] + GRID_SIZE, state[1]], "right", 1];
-  stateU = [[state[0], state[1] - GRID_SIZE], "up", 1];
-  stateD = [[state[0], state[1] + GRID_SIZE], "down", 1];
+  stateL = [[state[0] - (4 * GRID_SIZE), state[1]], "left", 1];
+  stateR = [[state[0] + (4 * GRID_SIZE), state[1]], "right", 1];
+  stateU = [[state[0], state[1] - (4 * GRID_SIZE)], "up", 1];
+  stateD = [[state[0], state[1] + (4 * GRID_SIZE)], "down", 1];
   var states = [stateL, stateR, stateU, stateD];
   return states;
 }
 
 //Return true if goal state at state
 function isGoalState(state, goal) {
-  goalx = Math.floor(goal[0] / GRID_SIZE);
-  goaly = Math.floor(goal[1] / GRID_SIZE);
-  statex = Math.floor(state[0] / GRID_SIZE);
-  statey = Math.floor(state[1] / GRID_SIZE);
+  goalx = Math.floor(goal[0] / (4 * GRID_SIZE));
+  goaly = Math.floor(goal[1] / (4 * GRID_SIZE));
+  statex = Math.floor(state[0] / (4 * GRID_SIZE));
+  statey = Math.floor(state[1] / (4 * GRID_SIZE));
 
   if ( (goalx == statex) && (goaly == statey) ) {
     return true;
@@ -806,8 +806,8 @@ function isGoalState(state, goal) {
 //Return the manhattan distance between position and goal
 function manhattanHeuristic(position, goal) {
   // console.log("position", position, "goal", goal);
-  var xy1 = [(position[0] / GRID_SIZE), (position[1] / GRID_SIZE)];
-  var xy2 = [(goal[0] / GRID_SIZE), (goal[1] / GRID_SIZE)];
+  var xy1 = [(position[0] / (4 * GRID_SIZE)), (position[1] / (4 * GRID_SIZE))];
+  var xy2 = [(goal[0] / (4 * GRID_SIZE)), (goal[1] / (4 * GRID_SIZE))];
   return Math.abs(xy1[0] - xy2[0]) + Math.abs(xy1[1] - xy2[1]);
 }
 
