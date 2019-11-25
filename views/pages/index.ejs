@@ -10,7 +10,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src = "/static/weatherAPI.js" defer></script>
     <style>
-      canvas {
+      #canvas {
         width: 800px; /*original = 800 x 600*/
         height: 600px;
         border: 5px solid black;
@@ -21,11 +21,16 @@
     <script src="/socket.io/socket.io.js"></script>
   </head>
   <body>
-    <div id="wrapper">
-      <span id ='canvas-space'><canvas id="canvas"></canvas><span>
-      <span id = weather-container>
-        <img id = 'icon'>
-      <span>
+    <canvas class="weather_animation" id="rain1"></canvas>
+    <canvas class='weather_animation' id="rain2"></canvas>
+    <canvas class='weather_animation' id="rain3"></canvas>
+    <canvas class='weather_animation' id='moon'></canvas>
+    <canvas class='weather_animation' id ='snow'></canvas>
+    <!-- <canvas class='weather_animation' id ='sun'></canvas> -->
+    <div id='sun' class="sun"><div class="sunshine"></div></div>
+    <div id ='wrapper'>
+      <span><canvas id="canvas"></canvas></span>
+      <span id = weather-container> <img id = 'icon'></span>
     </div>
     <div id="container">
       <canvas id="viewport">

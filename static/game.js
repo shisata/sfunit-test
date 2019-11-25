@@ -14,13 +14,15 @@ var messageQueue = ["Welcome to S.F.U.! \nPress B to continue."
   , "S.F.U. stands for Special Fortification Unit."
   , "What? You mean, S.F.U. is Simon Fraser University?"
   , "Well, who cares about that Simon Fraser guy who \ndestroyed aboriginal culture?"
-  , "Press W/A/S/D to Move, B to see next message."
+  , "Press W/A/S/D to move, B to see next message."
+  , "Press M to view the map."
   , "Move mouse and click to shoot."
   , "And survive."
   , "What? You mean, we didn't talk about this kind of story \nin the meetings?"
   , "I know, I just wanted to put this in. -Hailey"
   , "If you are bored, you can go kill the enemies."
   , "And we have a cool weather feature on top right."
+  , "Don't forget to turn on the music."
   , "Good luck, have fun!"];
 var mapOn = false;
 
@@ -185,7 +187,7 @@ function initSound(){
   sound.reload = new Audio();
   sound.hit = new Audio();
   sound.background.src = "";
-  sound.shoot.src = "../static/audio/silencer.mp3";
+  sound.shoot.src =  "../static/audio/9mm.mp3";
   sound.reload.src = "../static/audio/reload.mp3";
   sound.hit.src = "../static/audio/HITMARKER.mp3";
 }
@@ -550,18 +552,23 @@ function showDeadScreen() {
   }
   dead = true;
   context.clearRect(startX, startY, canvasW, canvasH);
-  context.fillStyle = "black";
+  context.beginPath();
+  context.fillStyle = "#BB0000";
+  context.rect(0, 0, canvasW, canvasH);
+  context.fill();
+
+  context.fillStyle = "white";
   context.font = "80px Arial";
   context.fillText("You Failed!", canvasW/2-200, canvasH/2-50);
 
-  context.fillStyle = "black";
+  context.fillStyle = "white";
   context.font = "20px Arial";
   var messageNum = Math.random() * deadMessage.length;
   console.log(messageNum);
   var deadMsg = deadMessage[Math.floor(messageNum)];
   var lines = deadMsg.split('\n');
   for (var i = 0; i<lines.length; i++) {
-    context.fillText(lines[i], 120, canvasH/2 + 30 + 30*i);
+    context.fillText(lines[i], 120, canvasH/2 + 50 + 30*i);
   }
 }
 
