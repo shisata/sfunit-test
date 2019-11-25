@@ -144,11 +144,11 @@ pool = new Pool({
 });
 
 app.use('/static', express.static(__dirname + '/static'));// Ring
-// app.get('/', function(request, response) {
-// // response.sendFile(path.join(__dirname, 'index.html'));
-//    var user = {'username':'uname'};
-//   response.render('pages/matchmaking', user);
-// });// Starts the server.
+app.get('/', function(request, response) {
+// response.sendFile(path.join(__dirname, 'index.html'));
+   var user = {'username':'uname'};
+  response.render('pages/matchmaking', user);
+});// Starts the server.
 server.listen(PORT, function() {
   console.log('Starting server on port 5000');
 });
@@ -223,6 +223,11 @@ io.on('connection', function(socket) {
   socket.on('shoot', function(data) {
     if (data.shootBullet) {
       var rm = getRoomBySocketId[socket.id]
+
+      //astar testing here
+      // console.log(aStarSearch([100,100], [200,200]));
+      // testAstar(rm);
+
       // console.log("emit sound");
       // var sound = "bang";
       // socket.emit('sound', sound);
@@ -262,6 +267,9 @@ io.on('connection', function(socket) {
     //players[socket.id] = 0;
     delete rooms[getRoomBySocketId[socket.id]].players[socket.id];
     rooms[getRoomBySocketId[socket.id]].players.numPlayers -= 1;
+    if (rooms[getRoomBySocketId[socket.id]].players.numPlayers <= 0) {
+      delete rooms[getRoomBySocketId[socket.id]];
+    }
   });
 });
 
@@ -275,7 +283,7 @@ setInterval(function() {
         generateEnemies(rm);
         //console.log("LOGGING rm", rm);
         io.sockets.to(rm).emit('state', rooms[rm].players,
-          rooms[rm].projectiles, rooms[rm].enemies);
+          rooms[rm].projectiles, rooms[rm].enemies, rooms[rm].zones);
       }
   }
 }, 1000 / 120);
@@ -293,15 +301,18 @@ function createPlayer(id, serverName, username) {
     playerID: rooms[serverName].players.numPlayers,
     username: username,
     x: 211 * GRID_SIZE,
-    y: 247 * GRID_SIZE,
-    health: 4.33,
+    y: 147 * GRID_SIZE,
+    maxHealth: 20,
+    health: 20,
     level: 1,
     damage: 5,
     speed: 3,
     score: 0,
     gun: "pistol",
     clip: 12,
-    clipSize: 12
+    clipSize: 12,
+    zone: 0,
+    playerSocketId: id
   };
 }
 
@@ -342,6 +353,8 @@ function roomData(serverName) {
   room.lastSpawn = -1;
   room.spawnRate = 2000;
 
+  room.zones = {};
+
   return room
 }
 
@@ -361,6 +374,7 @@ function createRoom(serverName) {
   var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap2.json', 'utf8'));
   var processor = require('./static/objects/mapProcessor.js');
   rooms[serverName].mapData = processor.constructFromData(mapDataFromFile);
+  rooms[serverName].zones = processor.constructZone(mapDataFromFile);
   //console.log(mapData);///////*******
   // io.sockets.to(serverName).emit('create map', rooms[serverName].mapData);
   // console.log('players.numPlayers: ', rooms[serverName].players.numPlayers, ', create map called');
@@ -389,6 +403,26 @@ function movePlayer(player, data, rm) {
       player.x = originX;
       player.y = originY
     }
+
+    //zone change check
+    if (player.zone == 0
+      || (rooms[rm].zones[player.zone] != undefined
+        && !rooms[rm].zones[player.zone].inside(player.x/GRID_SIZE, 
+          player.y/GRID_SIZE))) {
+      var newZone = 0;
+      for (zoneNum in rooms[rm].zones) {
+        if (rooms[rm].zones[zoneNum].inside(player.x/GRID_SIZE,
+          player.y/GRID_SIZE)) {
+          player.zone = zoneNum;
+          io.sockets.to(player.playerSocketId).emit("zoneChange", zoneNum);
+          newZone = zoneNum;
+        }
+      }
+      if (newZone == 0) {
+        player.zone = 0;
+      }
+    }
+
   }
 }
 
@@ -397,6 +431,13 @@ function movePlayer(player, data, rm) {
 function hasCollision(x, y, rm) {
   var gridX = Math.floor(x / GRID_SIZE);
   var gridY = Math.floor(y / GRID_SIZE);
+  for (zoneNum in rooms[rm].zones) {
+    if (!rooms[rm].zones[zoneNum].open
+      && rooms[rm].zones[zoneNum].inside(gridX, gridY)) {
+      console.log("collision by zone"); /////*******
+      return true;
+    }
+  }
   if(rooms[rm] == undefined || rooms[rm].mapData == undefined
     || rooms[rm].mapData[gridX] == undefined
     || rooms[rm].mapData[gridX][gridY] == undefined) {
@@ -468,7 +509,7 @@ function spawnRandomObject(rm) {
   // create A and if the random# is .50-1.00 we create B
 
   // add the new object to the objects[] array
-  if (rooms[rm].enemies.numEnemies < 10) {
+  if (rooms[rm].enemies.numEnemies < 1) {
     rooms[rm].enemies[rooms[rm].enemyID] = {
       // type: t,
       // set x randomly but at least 15px off the canvas edges
@@ -559,9 +600,9 @@ function moveEnemies(rm) {
        }
      }
      if (rooms[rm].players[closestPlayer] == undefined) {
-       console.log("players[closestPlayer] is undefined. Ignoring",
-         "moveEnemies() logic instead of letting program crash.",
-         "Please check the logic.");
+       // console.log("players[closestPlayer] is undefined. Ignoring",
+       //   "moveEnemies() logic instead of letting program crash.",
+       //   "Please check the logic.");
        return;
      }
      //Move to closest player
@@ -578,11 +619,15 @@ function moveEnemies(rm) {
      if ( Math.abs(distX) < 15 && Math.abs(distY) < 15 ) {
       // console.log("distX ", distX, "distY, ", distY);
       //Deplete health
-      rooms[rm].players[closestPlayer].health -= 2;
+      rooms[rm].players[closestPlayer].health -= 0.02;
       //Kill player
       if (rooms[rm].players[closestPlayer].health < 0) {
         youveBeenTerminated(closestPlayer, rm);
         // break;
+        if (rooms[rm] == undefined) {
+          return;
+        }
+
       }
 
        //Dont move any closer
@@ -600,6 +645,9 @@ function moveEnemies(rm) {
        rooms[rm].enemies[id].y = originY;
      }
    }
+ }
+ if (rooms[rm] == undefined) {
+   return;
  }
 }
 
@@ -671,13 +719,147 @@ function youveBeenTerminated(player, rm) {
   rooms[rm].players[player] = 0;
   console.log(rooms[rm].players[player]);
   rooms[rm].numPlayers -= 1;
-  //Load "YOUVE FAILED SCREEN"
 
+  if (rooms[rm].numPlayers <= 0) {
+    delete rooms[rm];
+  }
+  //Load "YOUVE FAILED SCREEN"
 }
 
 //Loads the you've failed screen
 function youFailed(player, rm) {
 
+}
+
+function aStarSearch(startState, goal) {
+  var explored = [];
+  var parents = {};
+  var fringe = new PriorityQueue();
+
+  startState = [startState, [], 0];
+  fringe.push( [[startState, 0], 0] );
+
+  // Perform search by expanding nodes based on the sum of their current
+  // path cost and estimated cost to the goal, as determined by the heuristic
+  while(fringe.isEmpty() == false) {
+    var state = fringe.pop();
+    var current = state[0];
+    current = current[0];
+    if (explored.find( function(item) {
+        return ( (current[0][0] == item[0]) && current[0][1] == item[1]) }))
+    {
+      continue;
+    }
+    else {
+      explored.push(current[0]);
+    }
+
+    //Goal check
+    if (isGoalState(current[0], goal)) {
+      return makeList(parents, current);
+    }
+
+    //Expand new successors
+    successors = getSuccessors(current[0]);
+    for (successor in successors) {
+      expandedState = successors[successor];
+      stateCoords = expandedState[0]
+      if (!explored.find( function(item) {
+          return ((stateCoords[0] == item[0]) && (stateCoords[1] == item[1]) ) }))
+      {
+        parents[expandedState] = current;
+        fringe.push([ [expandedState, state[1] + expandedState[2]], 
+        manhattanHeuristic(expandedState[0], goal) + state[1] + expandedState[2] ]);
+      }
+    }
+  }
+
+  return [];
+}
+
+//Return successors of state
+function getSuccessors(state) {
+  //Use 5 as arbitraty number
+  stateL = [[state[0] - GRID_SIZE, state[1]], "left", 1];
+  stateR = [[state[0] + GRID_SIZE, state[1]], "right", 1];
+  stateU = [[state[0], state[1] - GRID_SIZE], "up", 1];
+  stateD = [[state[0], state[1] + GRID_SIZE], "down", 1];
+  var states = [stateL, stateR, stateU, stateD];
+  return states;
+}
+
+//Return true if goal state at state
+function isGoalState(state, goal) {
+  goalx = Math.floor(goal[0] / GRID_SIZE);
+  goaly = Math.floor(goal[1] / GRID_SIZE);
+  statex = Math.floor(state[0] / GRID_SIZE);
+  statey = Math.floor(state[1] / GRID_SIZE);
+
+  if ( (goalx == statex) && (goaly == statey) ) {
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+
+//Return the manhattan distance between position and goal
+function manhattanHeuristic(position, goal) {
+  // console.log("position", position, "goal", goal);
+  var xy1 = [(position[0] / GRID_SIZE), (position[1] / GRID_SIZE)];
+  var xy2 = [(goal[0] / GRID_SIZE), (goal[1] / GRID_SIZE)];
+  return Math.abs(xy1[0] - xy2[0]) + Math.abs(xy1[1] - xy2[1]);
+}
+
+//Find/return position of player closest to enemy
+function closestPlayerXY(rm, enemy) {
+  if (rooms[rm].players.numPlayers > 0) {
+      var closestPlayer;
+      var closestPlayerDistance = Infinity;
+      for (var player in rooms[rm].players) {
+        var distance = manhattanHeuristic([enemy.x, enemy.y], [player.x, player.y]);
+        if (distance < closestPlayerDistance) {
+          closestPlayer = player;
+          closestPlayerDistance = distance;
+        }
+      }
+      if (rooms[rm].players[closestPlayer] == undefined) {
+        console.log("players[closestPlayer] is undefined. Ignoring",
+          "moveEnemies() logic instead of letting program crash.",
+          "Please check the logic.");
+        return;
+      }
+  return [closestPlayer.x, closestPlayer.y];
+  }
+}
+
+//Return the path to players position
+function makeList(parents, goal) {
+  console.log("making path");
+  var path = [];
+  while (goal[1] != [] && parents[goal]) {
+    path.push(goal[1]);
+    goal = parents[goal];
+  }
+
+  return path.reverse();
+}
+
+function testAstar(rm) {
+  if (!rooms[rm].players) {
+    return;
+  }
+  for (var playerID in rooms[rm].players) {
+    player = rooms[rm].players[playerID];
+  }
+  console.log(rooms[rm].enemies);
+  for (var id in rooms[rm].enemies) {
+    console.log("running A*");
+    enemy = rooms[rm].enemies[id];
+    var path = aStarSearch( [enemy.x, enemy.y], [player.x, player.y] );
+    console.log("Astar generated path: ", path);
+    return;
+  }
 }
 
 //=========================================================================================
@@ -1083,6 +1265,75 @@ app.post('/gameroom', (request, response)=>{
   console.log("logging results", data)
   response.render('pages/index', data);
 });
+
+const top = 0;
+const parent = i => ((i + 1) >>> 1) - 1;
+const left = i => (i << 1) + 1;
+const right = i => (i + 1) << 1;
+
+class PriorityQueue {
+  constructor(comparator = (a, b) => a[1] < b[1]) {
+    this._heap = [];
+    this._comparator = comparator;
+  }
+  size() {
+    return this._heap.length;
+  }
+  isEmpty() {
+    return this.size() == 0;
+  }
+  peek() {
+    return this._heap[top];
+  }
+  push(...values) {
+    values.forEach(value => {
+      this._heap.push(value);
+      this._siftUp();
+    });
+    return this.size();
+  }
+  pop() {
+    const poppedValue = this.peek();
+    const bottom = this.size() - 1;
+    if (bottom > top) {
+      this._swap(top, bottom);
+    }
+    this._heap.pop();
+    this._siftDown();
+    return poppedValue;
+  }
+  replace(value) {
+    const replacedValue = this.peek();
+    this._heap[top] = value;
+    this._siftDown();
+    return replacedValue;
+  }
+  _greater(i, j) {
+    return this._comparator(this._heap[i], this._heap[j]);
+  }
+  _swap(i, j) {
+    [this._heap[i], this._heap[j]] = [this._heap[j], this._heap[i]];
+  }
+  _siftUp() {
+    let node = this.size() - 1;
+    while (node > top && this._greater(node, parent(node))) {
+      this._swap(node, parent(node));
+      node = parent(node);
+    }
+  }
+  _siftDown() {
+    let node = top;
+    while (
+      (left(node) < this.size() && this._greater(left(node), node)) ||
+      (right(node) < this.size() && this._greater(right(node), node))
+    ) {
+      let maxChild = (right(node) < this.size() && this._greater(right(node), left(node))) ? right(node) : left(node);
+      this._swap(node, maxChild);
+      node = maxChild;
+    }
+  }
+}
+
 
 //=============================================================================
 

@@ -8,6 +8,36 @@ var canvas = document.getElementById('canvas');
 console.log(`Hello ${username}!`);
 console.log(`Server ${servername}!`);
 
+//these two messages are related to function 'showMessage'.
+var messageOn = true;
+var messageQueue = ["Welcome to S.F.U.! \nPress B to continue."
+  , "S.F.U. stands for Special Fortification Unit."
+  , "What? You mean, S.F.U. is Simon Fraser University?"
+  , "Well, who cares about that Simon Fraser guy who \ndestroyed aboriginal culture?"
+  , "Press W/A/S/D to move, B to see next message."
+  , "Press M to view the map."
+  , "Move mouse and click to shoot."
+  , "And survive."
+  , "What? You mean, we didn't talk about this kind of story \nin the meetings?"
+  , "I know, I just wanted to put this in. -Hailey"
+  , "If you are bored, you can go kill the enemies."
+  , "And we have a cool weather feature on top right."
+  , "Don't forget to turn on the music."
+  , "Good luck, have fun!"];
+var mapOn = false;
+
+// dead.
+var dead = false;
+var deadMessage = ["Enter your messages here"
+  , "Hailey is looking for a co-op job for Fall 2020!\nPlease hire her!"
+  , "Some random messages......\nWill be shown here.....1"
+  , "Some random messages......\nWill be shown here.....2"
+  , "Some random messages......\nWill be shown here.....3"]
+
+//zoneChange function related.
+var zoneChangeOn = false;
+var zoneChangeOnTime;
+var zoneNum = 0;
 
 var socket = io();
 socket.on('message', function(data) {
@@ -85,6 +115,20 @@ document.addEventListener('keydown', function(event) {
     case 82: // R
       action.reload = true;
       break;
+    case 66: // B
+      if (messageQueue.length <= 0) {
+        messageOn = false;
+      }
+      else {
+        messageQueue.shift();
+        if (messageQueue.length <= 0) {
+          messageOn = false;
+        }
+      }
+      break;
+    case 77:
+      mapOn = !mapOn;
+      break;
   }
 });
 
@@ -143,9 +187,9 @@ function initSound(){
   sound.reload = new Audio();
   sound.hit = new Audio();
   sound.background.src = "";
-  sound.shoot.src = "../static/sound/silencer.mp3";
-  sound.reload.src = "../static/sound/reload.mp3";
-  sound.hit.src = "../static/sound/HITMARKER.mp3";
+  sound.shoot.src =  "../static/audio/9mm.mp3";
+  sound.reload.src = "../static/audio/reload.mp3";
+  sound.hit.src = "../static/audio/HITMARKER.mp3";
 }
 // socket.on('sound', function(sound){
 //   makeSound(sound);
@@ -184,8 +228,13 @@ window.addEventListener('mousemove', function (e) {
 });
 
   var context = canvas.getContext('2d');
-  socket.on('state', function(players, projectiles, enemies) {
+  socket.on('state', function(players, projectiles, enemies, zones) {
     //console.log("socket event state called");
+    if (players[myId] == 0) {
+      //Died
+      showDeadScreen();
+      return;
+    }
     if (myId == "") {
       socket.emit('requestPassId');
       return;
@@ -225,7 +274,7 @@ window.addEventListener('mousemove', function (e) {
       // context.drawImage('../public/image/George.jpeg', projectile.x - middleX, projectile.y - middleY,10,10);
       context.beginPath();
       context.arc(projectile.x - middleX, projectile.y - middleY, 2, 0, 2 * Math.PI);
-      context.fillStyle = 'white';
+      context.fillStyle = 'blue';
       context.fill();
     }
 
@@ -239,13 +288,15 @@ window.addEventListener('mousemove', function (e) {
       context.fill();
     }
 
-    context.fillStyle = "white";
-    context.font = "15px Arial";
-    context.fillText("Player: x: " + (players[myId].x/GRID_SIZE) + ", y: "
-      + (players[myId].y/GRID_SIZE), canvasW-170, canvasH-50);
-    context.fillText("Mouse: x: " + (xPos+middleX)/GRID_SIZE + ", y: "
-      + (yPos+middleY)/GRID_SIZE, canvasW-170, canvasH-30);
+    context.fillStyle = "rgba(100, 100, 100, 0.3)";
+    for (var id in zones) {
+      var zone = zones[id];
+      context.beginPath();
+      context.rect((zone.x*GRID_SIZE - middleX), (zone.y*GRID_SIZE - middleY), zone.width*GRID_SIZE, zone.height*GRID_SIZE);
+      context.fill();
+    }
 
+    context.font = "15px Arial";
     if(players[myId].clip) {
       context.fillStyle = "red";
       context.fillText("AMMO: " + players[myId].clip + "/" + players[myId].clipSize, canvasW-100, canvasH-70);
@@ -259,6 +310,155 @@ window.addEventListener('mousemove', function (e) {
     context.fillText(Math.round(1000 / (thisLoop - lastLoop)) + " FPS", canvasW-95, canvasH-10);
     lastLoop = thisLoop;
 
+    //showing Player health/score/etc.
+    var player = players[myId];
+    context.fillStyle = "#BBB";
+    context.beginPath();
+    context.rect(10, 60, 80, 15);
+    context.fill();
+    context.fillStyle = "red";
+    context.beginPath();
+    context.rect(10, 60, (player.health/player.maxHealth)*80, 15);
+    context.fill();
+
+    var playerIndex = 1;
+    for (var id in players) {
+      if (id != myId && players[id] != 0 && players[id].health != undefined) {
+        player = players[id];
+        context.fillStyle = "#BBB";
+        context.beginPath();
+        context.rect(50+100*playerIndex, 40, 50, 10);
+        context.fill();
+        context.fillStyle = "red";
+        context.beginPath();
+        context.rect(50+100*playerIndex, 40, (player.health/player.maxHealth)*50, 10);
+        context.fill();
+        playerIndex += 1;
+      }
+    }
+
+
+    // related to function 'showMessage'.
+    if (messageOn && messageQueue.length >= 1) {
+      context.fillStyle = "rgba(0, 0, 0, 0.7)";
+      var zone = zones[id];
+      context.beginPath();
+      context.rect(20, 400, canvasW - 40, canvasH - 420);
+      context.fill();
+      context.fillStyle = "white";
+      context.font = "25px Arial";
+      var lines = messageQueue[0].split('\n');
+      for (var i = 0; i<lines.length; i++) {
+        context.fillText(lines[i], 40, 440 + i*35);
+      }
+    }
+
+    //show small map!
+    if (mapOn) {
+      //hard-coded numbers.
+      var mapX = 580;
+      var mapY = 20;
+      var mapMargin = 5;
+      var mapWHRatio = 6/8;
+      var smallMapWidth = 200;
+      var smallMapHeight = smallMapWidth*mapWHRatio;
+
+      var mapLeftCut = 0;
+      var mapTopCut = 20*GRID_SIZE;
+      var mapAreaWidth = 380*GRID_SIZE;
+      var mapAreaHeight = mapAreaWidth*mapWHRatio;
+
+
+
+      //drawing black box behind the map
+      context.beginPath();
+      context.rect(mapX-mapMargin, mapY-mapMargin, smallMapWidth+2*mapMargin,
+        smallMapHeight+2*mapMargin);
+      context.fillStyle = "black";
+      context.fill();
+
+      //drawing the small map
+      context.drawImage(mapImage, mapLeftCut, mapTopCut,
+        mapAreaWidth, mapAreaHeight,
+        mapX, mapY, smallMapWidth, smallMapHeight);
+
+
+      // white background for coordinates
+      context.fillStyle = "rgba(255, 255, 255, 0.82)";
+      context.beginPath();
+      context.rect(mapX+3, mapY+smallMapHeight+8, smallMapWidth,
+        smallMapHeight*(1/3));
+      context.fill();
+      //showing player and mouse coordinates.
+      context.fillStyle = "blue";
+      context.font = "15px Arial";
+      context.fillText("Player: x: " + (players[myId].x/GRID_SIZE) + ", y: "
+        + (players[myId].y/GRID_SIZE), mapX+10, mapY+smallMapHeight+30);
+      context.fillText("Mouse: x: " + (xPos+middleX)/GRID_SIZE + ", y: "
+        + (yPos+middleY)/GRID_SIZE, mapX+10, mapY+smallMapHeight+50);
+
+      //show players on small map
+
+      for (var id in players) {
+        var player = players[id];
+        context.fillStyle = 'green';
+        if (id == myId) {
+          context.fillStyle = '#BBAA22';
+        }
+        context.beginPath();
+        context.arc(mapX+(player.x-mapLeftCut)*(smallMapWidth/mapAreaWidth),
+          mapY+(player.y-mapTopCut)*(smallMapWidth/mapAreaWidth),
+          GRID_SIZE/3 , 0, 2 * Math.PI);
+        context.fill();
+      }
+
+    }
+
+    //zone Change show
+    if (zoneChangeOn) {
+      var zoneElapse = new Date();
+      var zoneboxY = 500;
+      var boxLength = zones[zoneNum].description.length*13;
+      if (zoneElapse - zoneChangeOnTime > 5000) {
+        zoneChangeOn = false;
+      }
+      else if (zoneElapse - zoneChangeOnTime < 800) {
+        context.fillStyle = `rgba(255, 50, 50, ${0.9*((zoneElapse - zoneChangeOnTime))/800})`;
+        context.beginPath();
+        context.rect(10, zoneboxY, boxLength, 85);
+        context.fill();
+        context.fillStyle = `rgba(255, 255, 255, ${0.9*((zoneElapse - zoneChangeOnTime))/800})`;
+      }
+      else if (zoneElapse - zoneChangeOnTime > 3000) {
+        context.fillStyle = `rgba(255, 50, 50, ${0.9*(3000+2000-(zoneElapse - zoneChangeOnTime))/2000})`;
+        context.beginPath();
+        context.rect(10, zoneboxY, boxLength, 85);
+        context.fill();
+        context.fillStyle = `rgba(255, 255, 255, ${0.9*(3000+2000-(zoneElapse - zoneChangeOnTime))/2000})`;
+      }
+      else {
+        context.fillStyle = "rgba(255, 50, 50, 0.9)";
+        context.beginPath();
+        context.rect(10, zoneboxY, boxLength, 85);
+        context.fill();
+        context.fillStyle = "rgba(255, 255, 255, 0.9)";
+      }
+      context.font = "italic 35px Arial";
+      context.fillText(zones[zoneNum].name, 50, zoneboxY+40);
+
+      context.font = "italic 15px Arial";
+      context.fillText("- " + zones[zoneNum].description, 40, zoneboxY+70);
+
+      context.font = "normal";
+    }
+
+    if (players[myId].health < players[myId].maxHealth) {
+      context.fillStyle = `rgba(255, 0, 0,
+        ${0.3*((players[myId].maxHealth-players[myId].health)/players[myId].maxHealth)})`;
+        context.beginPath();
+        context.rect(0, 0, canvasW, canvasH);
+        context.fill();
+    }
   });
 
 
@@ -341,9 +541,47 @@ function processMapDrawing(mapData){
   delete allMap;
 }
 
+function showMessage(messageString) {
+  messageOn = true;
+  messageQueue.push(messageString);
+}
+
+function showDeadScreen() {
+  if (dead) {
+    return;
+  }
+  dead = true;
+  context.clearRect(startX, startY, canvasW, canvasH);
+  context.beginPath();
+  context.fillStyle = "#BB0000";
+  context.rect(0, 0, canvasW, canvasH);
+  context.fill();
+
+  context.fillStyle = "white";
+  context.font = "80px Arial";
+  context.fillText("You Failed!", canvasW/2-200, canvasH/2-50);
+
+  context.fillStyle = "white";
+  context.font = "20px Arial";
+  var messageNum = Math.random() * deadMessage.length;
+  console.log(messageNum);
+  var deadMsg = deadMessage[Math.floor(messageNum)];
+  var lines = deadMsg.split('\n');
+  for (var i = 0; i<lines.length; i++) {
+    context.fillText(lines[i], 120, canvasH/2 + 50 + 30*i);
+  }
+}
+
+socket.on("zoneChange", function(num){
+  //zone changed!
+  zoneChangeOn = true;
+  zoneChangeOnTime = new Date();
+  zoneNum = num;
+});
+
 //=============================================================================
 // George Workpace
-var logoutButton = document.getElementById('log_out_button');
+var logoutButton = document.getElementById('log_out_button' );
 logoutButton.addEventListener('click', function(event) {
   logoutButton.value = username;
 });
