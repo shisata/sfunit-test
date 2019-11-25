@@ -75,16 +75,16 @@ module.exports = {
     }
     ddx = 0; ddy = 0;
     if (directionData.left) {
-      ddx -= player.speed;
+      ddx -= player.speed/updatePerSecond;
     }
     if (directionData.right) {
-        ddx += player.speed;
+        ddx += player.speed/updatePerSecond;
     }
     if (directionData.down) {
-        ddy += player.speed;
+        ddy += player.speed/updatePerSecond;
     }
     if (directionData.up) {
-        ddy -= player.speed;
+        ddy -= player.speed/updatePerSecond;
     }
     return hasCollision((player.x + ddx), (player.y + ddy), serverName);
   },
@@ -139,6 +139,7 @@ var io = socketIO(server);
 //database
 const { Pool } = require('pg')
 var pool
+var updatePerSecond = 30;
 pool = new Pool({
   connectionString: process.env.DATABASE_URL
 });
@@ -286,7 +287,7 @@ setInterval(function() {
           rooms[rm].projectiles, rooms[rm].enemies, rooms[rm].zones);
       }
   }
-}, 1000 / 30);
+}, 1000 / updatePerSecond);
 
 
 
@@ -306,7 +307,7 @@ function createPlayer(id, serverName, username) {
     health: 20,
     level: 1,
     damage: 5,
-    speed: 3,
+    speed: 3*100,
     score: 0,
     gun: "pistol",
     clip: 12,
@@ -387,16 +388,16 @@ function movePlayer(player, data, rm) {
   var originY = player.y;
   //console.log(player.x + ", " + player.y)////*****
   if (data.left) {
-    player.x -= player.speed;
+    player.x -= player.speed/updatePerSecond;
   }
   if (data.up) {
-    player.y -= player.speed;
+    player.y -= player.speed/updatePerSecond;
   }
   if (data.right) {
-    player.x += player.speed;
+    player.x += player.speed/updatePerSecond;
   }
   if (data.down) {
-    player.y += player.speed;
+    player.y += player.speed/updatePerSecond;
   }
   if(player != undefined){
     if(hasCollision(player.x, player.y, rm)){
@@ -483,11 +484,12 @@ function generateProjectile(id, data, rm) {
     velY *= -1;
     velX *= -1;
   }
+  console.log("****bullet created: velX: ", velX, ", velY: ", velY);
 
   //Generate the projectile
   rooms[rm].projectiles[rooms[rm].bulletCount] = {
-    x: rooms[rm].players[id].x + (4 * velX),
-    y: rooms[rm].players[id].y + (4 * velY),
+    x: rooms[rm].players[id].x + (4 * velX/updatePerSecond),
+    y: rooms[rm].players[id].y + (4 * velY/updatePerSecond),
     vx: velX,
     vy: velY
   };
@@ -518,7 +520,7 @@ function spawnRandomObject(rm) {
       y: Math.random() * 300 + 2000,
       vx: 5,
       vy: 5,
-      speed: .5,
+      speed: .5*100,
       health: 4
     }
     rooms[rm].enemies.numEnemies++;
@@ -552,11 +554,12 @@ function moveProjectiles(rm) {
       var delBullet = false;
       var originX = rooms[rm].projectiles[id].x;
       var originY = rooms[rm].projectiles[id].y;
-      rooms[rm].projectiles[id].x += rooms[rm].projectiles[id].vx;
-      rooms[rm].projectiles[id].y += rooms[rm].projectiles[id].vy;
+      rooms[rm].projectiles[id].x += rooms[rm].projectiles[id].vx/updatePerSecond;
+      rooms[rm].projectiles[id].y += rooms[rm].projectiles[id].vy/updatePerSecond;
       if(hasCollision(rooms[rm].projectiles[id].x, rooms[rm].projectiles[id].y, rm)){
         rooms[rm].projectiles[id].x = originX;
         rooms[rm].projectiles[id].y = originY;
+        console.log("*****bullet deleted");
         delBullet = true;
         // deleteBullet(id);
       }
@@ -619,7 +622,7 @@ function moveEnemies(rm) {
      if ( Math.abs(distX) < 15 && Math.abs(distY) < 15 ) {
       // console.log("distX ", distX, "distY, ", distY);
       //Deplete health
-      rooms[rm].players[closestPlayer].health -= 0.02;
+      rooms[rm].players[closestPlayer].health -= 8/updatePerSecond;
       //Kill player
       if (rooms[rm].players[closestPlayer].health < 0) {
         youveBeenTerminated(closestPlayer, rm);
@@ -638,8 +641,8 @@ function moveEnemies(rm) {
      rooms[rm].enemies[id].vy =  rooms[rm].enemies[id].speed * Math.cos(attackTheta) * sign;
      var originX = rooms[rm].enemies[id].x;
      var originY = rooms[rm].enemies[id].y;
-     rooms[rm].enemies[id].x += rooms[rm].enemies[id].vx;
-     rooms[rm].enemies[id].y += rooms[rm].enemies[id].vy;
+     rooms[rm].enemies[id].x += rooms[rm].enemies[id].vx/updatePerSecond;
+     rooms[rm].enemies[id].y += rooms[rm].enemies[id].vy/updatePerSecond;
      if(hasCollision(rooms[rm].enemies[id].x, rooms[rm].enemies[id].y, rm)){
        rooms[rm].enemies[id].x = originX;
        rooms[rm].enemies[id].y = originY;
