@@ -227,7 +227,10 @@ io.on('connection', function(socket) {
 
       //astar testing here
       // console.log(aStarSearch([100,100], [200,200]));
-      testAstar(rm);
+      if (!rooms[rm]) {
+        testAstar(rm);
+      }
+
 
       // console.log("emit sound");
       // var sound = "bang";
