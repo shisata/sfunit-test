@@ -488,8 +488,8 @@ function generateProjectile(id, data, rm) {
 
   //Generate the projectile
   rooms[rm].projectiles[rooms[rm].bulletCount] = {
-    x: rooms[rm].players[id].x + (4 * velX/updatePerSecond),
-    y: rooms[rm].players[id].y + (4 * velY/updatePerSecond),
+    x: rooms[rm].players[id].x + (3 * velX/updatePerSecond),
+    y: rooms[rm].players[id].y + (3 * velY/updatePerSecond),
     vx: velX,
     vy: velY
   };
@@ -663,10 +663,9 @@ function handleBulletCollisions(rm) {
         if ( (Math.abs(rooms[rm].players[player].x - rooms[rm].projectiles[id].x) < 2) &&
             (Math.abs(rooms[rm].players[player].y - rooms[rm].projectiles[id].y) < 2) ) {
           rooms[rm].players[player].health -= 1;
-          // if (players[player].health < 0) {
-          //   players[player] = 0;
-          //   players.numPlayers -= 1;
-          // }
+          if (rooms[rm].players[player].health < 0) {
+            youveBeenTerminated(player, rm);
+          }
         }
       }
     }
@@ -724,6 +723,7 @@ function youveBeenTerminated(player, rm) {
   rooms[rm].numPlayers -= 1;
 
   if (rooms[rm].numPlayers <= 0) {
+    console.log("room deleted: number of players ", rooms[rm].numPlayers);
     delete rooms[rm];
   }
   //Load "YOUVE FAILED SCREEN"
@@ -849,6 +849,9 @@ function makeList(parents, goal) {
 }
 
 function testAstar(rm) {
+  if (!rooms[rm] || rooms[rm].numplayers <= 0) {
+    return;
+  }
   if (!rooms[rm].players) {
     return;
   }
