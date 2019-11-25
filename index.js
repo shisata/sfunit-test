@@ -286,7 +286,7 @@ setInterval(function() {
           rooms[rm].projectiles, rooms[rm].enemies, rooms[rm].zones);
       }
   }
-}, 1000 / 60);
+}, 1000 / 30);
 
 
 
