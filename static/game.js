@@ -203,7 +203,7 @@ setInterval(function() {
   socket.emit('interact', action);
   shoot.shootBullet = false;
   //makeSound("bang");
-}, 1000 / 120);
+}, 1000 / 30);
 
   //Moved canvas var to top so shoot could use it - GG
   // var canvas = document.getElementById('canvas');
