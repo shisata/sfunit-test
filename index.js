@@ -286,6 +286,7 @@ setInterval(function() {
         handleBulletCollisions(rm);
         generateEnemies(rm);
         recoverPlayerHealth(rm);
+        checkQuest(rm);
         //console.log("LOGGING rm", rm);
         io.sockets.to(rm).emit('state', rooms[rm].players,
           rooms[rm].projectiles, rooms[rm].enemies, rooms[rm].zones);
@@ -318,7 +319,14 @@ function createPlayer(id, serverName, username) {
     clip: 12,
     clipSize: 12,
     zone: 0,
-    playerSocketId: id
+    playerSocketId: id,
+    questData: {
+      bulletsTotal: 0,
+      minHealth: 20,
+      startTime: new Date(),
+      q1Over: false,
+      q2Over: false
+    }
   };
 }
 
@@ -562,6 +570,31 @@ function recoverPlayerHealth(rm) {
       }
     }
   }
+}
+
+function checkQuest(rm) {
+//checking quest conditions! This part will be very hard to refactor, don't try....
+  for (var id in rooms[rm].players) {
+    var player = rooms[rm].players[id];
+
+
+    if (player == undefined || player.questData == undefined) {
+      continue;
+    }
+    if (!player.questData.q1Over && player.questData.bulletsTotal == 30) {
+      io.sockets.to(id).emit("questOver", "Combat Ready", "Shoot 30 times", "Ready for the fight?");
+      player.questData.q1Over = true;
+    }
+
+    currentTime = new Date();
+    if (!player.questData.q2Over && currentTime - player.questData.startTime > 10*1000) {
+      io.sockets.to(id).emit("questOver", "Newbie survivor", "Survive for 10 seconds", "Hey, you're stil alive!");
+      player.questData.q2Over = true;
+      console.log("emit new survivor");
+    }
+
+  }
+
 }
 
 //Move projectiles
