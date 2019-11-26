@@ -285,6 +285,7 @@ setInterval(function() {
         moveEnemies(rm);
         handleBulletCollisions(rm);
         generateEnemies(rm);
+        recoverPlayerHealth(rm);
         //console.log("LOGGING rm", rm);
         io.sockets.to(rm).emit('state', rooms[rm].players,
           rooms[rm].projectiles, rooms[rm].enemies, rooms[rm].zones);
@@ -308,9 +309,10 @@ function createPlayer(id, serverName, username) {
     y: 147 * GRID_SIZE,
     maxHealth: 20,
     health: 20,
+    healthRecoverRate: 1,
     level: 1,
     damage: 5,
-    speed: 3*100,
+    speed: 3*50,
     score: 0,
     gun: "pistol",
     clip: 12,
@@ -487,7 +489,6 @@ function generateProjectile(id, data, rm) {
     velY *= -1;
     velX *= -1;
   }
-  console.log("****bullet created: velX: ", velX, ", velY: ", velY);
 
   //Generate the projectile
   rooms[rm].projectiles[rooms[rm].bulletCount] = {
@@ -523,7 +524,7 @@ function spawnRandomObject(rm) {
       y: Math.random() * 300 + 2000,
       vx: 5,
       vy: 5,
-      speed: .5*100,
+      speed: .8*50,
       health: 4
     }
     rooms[rm].enemies.numEnemies++;
@@ -550,6 +551,19 @@ function generateEnemies(rm) {
   }
 }
 
+//recover player Health
+function recoverPlayerHealth(rm) {
+  for (var id in rooms[rm].players) {
+    var player = rooms[rm].players[id];
+    if (player.health < player.maxHealth) {
+      player.health += player.healthRecoverRate/updatePerSecond;
+      if (player.health > player.maxHealth) {
+        player.health = player.maxHealth;
+      }
+    }
+  }
+}
+
 //Move projectiles
 function moveProjectiles(rm) {
   for (var id in rooms[rm].projectiles) {
@@ -562,7 +576,6 @@ function moveProjectiles(rm) {
       if(hasCollision(rooms[rm].projectiles[id].x, rooms[rm].projectiles[id].y, rm)){
         rooms[rm].projectiles[id].x = originX;
         rooms[rm].projectiles[id].y = originY;
-        console.log("*****bullet deleted");
         delBullet = true;
         // deleteBullet(id);
       }

@@ -1471,6 +1471,94 @@
         "height": 22,
         "color": "#69B",
         "memo": "aq pond"
+      },
+      {
+        "x" : 164,
+        "y": 168,
+        "width": 74,
+        "height": 18,
+        "color": "#cbb",
+        "memo": "convo mall large area 1"
+      },
+      {
+        "x" : 150,
+        "y": 179,
+        "width": 104,
+        "height": 7,
+        "color": "#cbb",
+        "memo": "convo mall large area 2"
+      },
+      {
+        "x" : 267,
+        "y": 77,
+        "width": 17,
+        "height": 10,
+        "color": "#cbb",
+        "memo": "rcb 2"
+      },
+      {
+        "x" : 257,
+        "y": 82,
+        "width": 28,
+        "height": 8,
+        "color": "#cbb",
+        "memo": "rcb 3"
+      },
+      {
+        "x" : 250,
+        "y": 86,
+        "width": 34,
+        "height": 28,
+        "color": "#cbb",
+        "memo": "rcb 4"
+      },
+      {
+        "x" : 247,
+        "y": 107,
+        "width": 38,
+        "height": 7,
+        "color": "#cbb",
+        "memo": "rcb 5"
+      },
+      {
+        "x" : 247,
+        "y": 112,
+        "width": 44,
+        "height": 14,
+        "color": "#cbb",
+        "memo": "rcb 6"
+      },
+      {
+        "x" : 248,
+        "y": 117,
+        "width": 74,
+        "height": 11,
+        "color": "#cbb",
+        "memo": "rcb 7"
+      },
+      {
+        "x" : 252,
+        "y": 127,
+        "width": 70,
+        "height": 7,
+        "color": "#cbb",
+        "memo": "rcb 8"
+      },
+      {
+        "x" : 252,
+        "y": 134,
+        "width": 64,
+        "height": 6,
+        "color": "#cbb",
+        "memo": "rcb 8"
+      },
+      {
+        "x" : 302,
+        "y": 77,
+        "width": 15,
+        "height": 15,
+        "color": "#cbb",
+        "memo": "rcb 9"
       }
     ],
     "zone": [
