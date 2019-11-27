@@ -16,7 +16,7 @@ var objects = require('./objects.js');
 // var mapDataFromFile =
 // JSON.parse(fs.readFileSync('static/objects/testMap.json', 'utf8'));
 // var processor = require('./static/objects/mapProcessor.js');
-// mapData = processor.constructFromData(mapDataFromFile);
+// mrftapData = processor.constructFromData(mapDataFromFile);
 var constructFromData = function(jsonContent){
   var largestPosition = findLargestPosition(jsonContent);
   var mapData = giveEmptyMap(largestPosition);

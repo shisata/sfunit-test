@@ -15,7 +15,7 @@ var messageQueue = ["Welcome to S.F.U.! \nPress B to continue."
   , "What? You mean, S.F.U. is Simon Fraser University?"
   , "Well, who cares about that Simon Fraser guy who \ndestroyed aboriginal culture?"
   , "Press W/A/S/D to move, B to see next message."
-  , "Press M to view the map."
+  , "Press M to turn on/off the map."
   , "Move mouse and click to shoot."
   , "And survive."
   , "What? You mean, we didn't talk about this kind of story \nin the meetings?"
@@ -24,20 +24,22 @@ var messageQueue = ["Welcome to S.F.U.! \nPress B to continue."
   , "And we have a cool weather feature on top right."
   , "Don't forget to turn on the music."
   , "Good luck, have fun!"];
-var mapOn = false;
+var mapOn = true;
 
 // dead.
 var dead = false;
-var deadMessage = ["Enter your messages here"
-  , "Hailey is looking for a co-op job for Fall 2020!\nPlease hire her!"
-  , "Some random messages......\nWill be shown here.....1"
-  , "Some random messages......\nWill be shown here.....2"
-  , "Some random messages......\nWill be shown here.....3"]
+var deadMessage = ["We're looking for Co-op!\n\nHailey | Fall 2020 | haa40@sfu.ca   resume ready :D\nWrite you names here let's get a job"]
 
 //zoneChange function related.
 var zoneChangeOn = false;
 var zoneChangeOnTime;
 var zoneNum = 0;
+
+var questMessageOn = false;
+var questMessageOnTime;
+var questName = "";
+var questCondition = "";
+var questDescription = "";
 
 var socket = io();
 socket.on('message', function(data) {
@@ -207,7 +209,7 @@ setInterval(function() {
   socket.emit('interact', action);
   shoot.shootBullet = false;
   //makeSound("bang");
-}, 1000 / 120);
+}, 1000 / 30);
 
   //Moved canvas var to top so shoot could use it - GG
   // var canvas = document.getElementById('canvas');
@@ -291,9 +293,11 @@ window.addEventListener('mousemove', function (e) {
     context.fillStyle = "rgba(100, 100, 100, 0.3)";
     for (var id in zones) {
       var zone = zones[id];
-      context.beginPath();
-      context.rect((zone.x*GRID_SIZE - middleX), (zone.y*GRID_SIZE - middleY), zone.width*GRID_SIZE, zone.height*GRID_SIZE);
-      context.fill();
+      if (!zone.open) {
+        context.beginPath();
+        context.rect((zone.x*GRID_SIZE - middleX), (zone.y*GRID_SIZE - middleY), zone.width*GRID_SIZE, zone.height*GRID_SIZE);
+        context.fill();
+      }
     }
 
     context.font = "15px Arial";
@@ -421,6 +425,7 @@ window.addEventListener('mousemove', function (e) {
       var boxLength = zones[zoneNum].description.length*13;
       if (zoneElapse - zoneChangeOnTime > 5000) {
         zoneChangeOn = false;
+        context.fillStyle = `rgba(255, 255, 255, 0)`;
       }
       else if (zoneElapse - zoneChangeOnTime < 800) {
         context.fillStyle = `rgba(255, 50, 50, ${0.9*((zoneElapse - zoneChangeOnTime))/800})`;
@@ -444,13 +449,53 @@ window.addEventListener('mousemove', function (e) {
         context.fillStyle = "rgba(255, 255, 255, 0.9)";
       }
       context.font = "italic 35px Arial";
-      context.fillText(zones[zoneNum].name, 50, zoneboxY+40);
+      context.fillText("ENTER: "+zones[zoneNum].name, 50, zoneboxY+40);
 
       context.font = "italic 15px Arial";
       context.fillText("- " + zones[zoneNum].description, 40, zoneboxY+70);
 
       context.font = "normal";
     }
+
+    //zone Change show
+    if (questMessageOn) {
+      var questElapse = new Date();
+      var questboxY = 500;
+      var boxLength = 700;
+      if (questElapse - questMessageOnTime > 5000) {
+        questMessageOn = false;
+        context.fillStyle = `rgba(255, 255, 255, 0)`;
+      }
+      else if (questElapse - questMessageOnTime < 800) {
+        context.fillStyle = `rgba(200, 180, 0, ${0.9*((questElapse - questMessageOnTime))/800})`;
+        context.beginPath();
+        context.rect(10, questboxY, boxLength, 85);
+        context.fill();
+        context.fillStyle = `rgba(255, 255, 255, ${0.9*((questElapse - questMessageOnTime))/800})`;
+      }
+      else if (questElapse - questMessageOnTime > 3000) {
+        context.fillStyle = `rgba(200, 180, 0, ${0.9*(3000+2000-(questElapse - questMessageOnTime))/2000})`;
+        context.beginPath();
+        context.rect(10, questboxY, boxLength, 85);
+        context.fill();
+        context.fillStyle = `rgba(255, 255, 255, ${0.9*(3000+2000-(questElapse - questMessageOnTime))/2000})`;
+      }
+      else {
+        context.fillStyle = "rgba(200, 180, 0, 0.9)";
+        context.beginPath();
+        context.rect(10, questboxY, boxLength, 85);
+        context.fill();
+        context.fillStyle = "rgba(255, 255, 255, 0.9)";
+      }
+      context.font = "italic 35px Arial";
+      context.fillText("COMPLETE: "+questName, 50, questboxY+40);
+
+      context.font = "italic 15px Arial";
+      context.fillText("["+questCondition + "]   " + questDescription, 40, questboxY+70);
+
+      context.font = "normal";
+    }
+
 
     if (players[myId].health < players[myId].maxHealth) {
       context.fillStyle = `rgba(255, 0, 0,
@@ -521,7 +566,7 @@ function processMapDrawing(mapData){
         allMapCtx.beginPath();
         allMapCtx.rect(x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
         // allMapCtx.fillStyle = texture.src;
-        allMapCtx.fillStyle = "black";
+        allMapCtx.fillStyle = "#333";
         allMapCtx.fill();
       }
 
@@ -577,6 +622,15 @@ socket.on("zoneChange", function(num){
   zoneChangeOn = true;
   zoneChangeOnTime = new Date();
   zoneNum = num;
+});
+
+socket.on("questOver", function(qName, qCondition, qDescription) {
+  questMessageOn = true;
+  questMessageOnTime = new Date();
+  questName = qName;
+  questCondition = qCondition;
+  questDescription = qDescription;
+  console.log("show quest: ", qName);
 });
 
 //=============================================================================
