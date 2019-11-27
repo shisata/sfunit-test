@@ -144,11 +144,11 @@ pool = new Pool({
 });
 
 app.use('/static', express.static(__dirname + '/static'));// Ring
-app.get('/', function(request, response) {
-// response.sendFile(path.join(__dirname, 'index.html'));
-   var user = {'username':'uname'};
-  response.render('pages/matchmaking', user);
-});// Starts the server.
+// app.get('/', function(request, response) {
+// // response.sendFile(path.join(__dirname, 'index.html'));
+//    var user = {'username':'uname'};
+//   response.render('pages/matchmaking', user);
+// });// Starts the server.
 server.listen(PORT, function() {
   console.log('Starting server on port 5000');
 });
@@ -407,7 +407,7 @@ function movePlayer(player, data, rm) {
     //zone change check
     if (player.zone == 0
       || (rooms[rm].zones[player.zone] != undefined
-        && !rooms[rm].zones[player.zone].inside(player.x/GRID_SIZE, 
+        && !rooms[rm].zones[player.zone].inside(player.x/GRID_SIZE,
           player.y/GRID_SIZE))) {
       var newZone = 0;
       for (zoneNum in rooms[rm].zones) {
@@ -768,7 +768,7 @@ function aStarSearch(startState, goal) {
           return ((stateCoords[0] == item[0]) && (stateCoords[1] == item[1]) ) }))
       {
         parents[expandedState] = current;
-        fringe.push([ [expandedState, state[1] + expandedState[2]], 
+        fringe.push([ [expandedState, state[1] + expandedState[2]],
         manhattanHeuristic(expandedState[0], goal) + state[1] + expandedState[2] ]);
       }
     }
