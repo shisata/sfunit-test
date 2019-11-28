@@ -477,6 +477,7 @@ function generateProjectile(id, data, rm) {
   if (!rooms[rm].players[id].clip) {
     return;
   }
+  rooms[rm].players[id].questData.bulletsTotal += 1;
   rooms[rm].projectiles.numProjectiles++;
 
   //Calculate projectile trajectory
@@ -533,7 +534,8 @@ function spawnRandomObject(rm) {
       vx: 5,
       vy: 5,
       speed: .8*50,
-      health: 4
+      health: 4,
+      maxHealth: 4
     }
     rooms[rm].enemies.numEnemies++;
     rooms[rm].enemyID++;
