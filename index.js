@@ -226,10 +226,11 @@ io.on('connection', function(socket) {
       var rm = getRoomBySocketId[socket.id]
 
       //astar testing here
-      // console.log(aStarSearch([100,100], [200,200]));
-      if (!rooms[rm]) {
-        testAstar(rm);
-      }
+      // console.log(aStarSearch([100,100], [200,200], rm));
+
+      // if (rooms[rm]) {
+      //   testAstar(rm);
+      // }
 
 
       // console.log("emit sound");
@@ -456,7 +457,6 @@ function hasCollision(x, y, rm) {
     || rooms[rm].mapData[gridX] == undefined
     || rooms[rm].mapData[gridX][gridY] == undefined) {
     // console.log("collision " + gridX + ", " + gridY)
-    // console.log("RETURNING FALSE, ROOM MAPDATA PROBLEM");
     return false;
   } else if(rooms[rm].mapData[gridX][gridY].collision == true){
     // console.log("collision " + gridX + ", " + gridY)
@@ -522,14 +522,24 @@ function spawnRandomObject(rm) {
   // will be A or B, we say if the random# is 0-.49 we
   // create A and if the random# is .50-1.00 we create B
 
+  spawnX = Math.random() * 350 + 1600;
+  spawnY = Math.random() * 350 + 1600;
+
+  while(hasCollision(spawnX, spawnY, rm)) {
+    spawnX = Math.random() * 350 + 1600;
+    spawnY = Math.random() * 350 + 1600;
+  }
+
+
+
   // add the new object to the objects[] array
   if (rooms[rm].enemies.numEnemies < 1) {
     rooms[rm].enemies[rooms[rm].enemyID] = {
       // type: t,
       // set x randomly but at least 15px off the canvas edges
-      x: Math.random() * 350 + 1600,
+      x: spawnX,
       // set y to start on the line where objects are spawned
-      y: Math.random() * 300 + 2000,
+      y: spawnY,
       vx: 5,
       vy: 5,
       speed: .8*50,
@@ -783,7 +793,7 @@ function youFailed(player, rm) {
 
 }
 
-function aStarSearch(startState, goal) {
+function aStarSearch(startState, goal, rm) {
   var explored = [];
   var parents = {};
   var fringe = new PriorityQueue();
@@ -812,8 +822,18 @@ function aStarSearch(startState, goal) {
     }
 
     //Expand new successors
-    successors = getSuccessors(current[0]);
+    successors = getSuccessors(current[0], rm);
     for (successor in successors) {
+      // if(successors = [0,0,0,0]) {
+      //   console.log("successors", successors)
+      //   console.log("A* path got stuck");
+      //   break;
+      // }
+      if(successors[successor] == 0) {
+        console.log("successors", successors);
+        console.log("collision detected", successor);
+        continue;
+      }
       expandedState = successors[successor];
       stateCoords = expandedState[0]
       if (!explored.find( function(item) {
@@ -825,27 +845,52 @@ function aStarSearch(startState, goal) {
       }
     }
   }
-
   return [];
 }
 
 //Return successors of state
-function getSuccessors(state) {
+//Modify this to avoid walls
+function getSuccessors(state, rm) {
   //Use 5 as arbitraty number
-  stateL = [[state[0] - (4 * GRID_SIZE), state[1]], "left", 1];
-  stateR = [[state[0] + (4 * GRID_SIZE), state[1]], "right", 1];
-  stateU = [[state[0], state[1] - (4 * GRID_SIZE)], "up", 1];
-  stateD = [[state[0], state[1] + (4 * GRID_SIZE)], "down", 1];
+  stateL = [[state[0] - (1 * GRID_SIZE), state[1]], "left", 1];
+  // stateL = [[state[0] - (5), state[1]], "left", 1];
+  console.log(rm);
+  if(hasCollision(stateL[0], stateL[1], rm)) {
+    console.log("has collision");
+    stateL = 0;
+  }
+
+  stateR = [[state[0] + (1 * GRID_SIZE), state[1]], "right", 1];
+  // stateR = [[state[0] + (5), state[1]], "right", 1];
+  if(hasCollision(stateR[0], stateR[1], rm)) {
+    console.log("has collision");
+    stateR = 0
+  }
+
+  stateU = [[state[0], state[1] - (1 * GRID_SIZE)], "up", 1];
+  // stateU = [[state[0], state[1] - (5)], "up", 1];
+  if(hasCollision(stateU[0], stateU[1], rm)) {
+    console.log("has collision");
+    stateU = 0
+  }
+
+  stateD = [[state[0], state[1] + (1 * GRID_SIZE)], "down", 1];
+  // stateD = [[state[0], state[1] + (5)], "down", 1];
+  if(hasCollision(stateD[0], stateD[1], rm)) {
+    console.log("has collision");
+    stateD = 0
+  }
+
   var states = [stateL, stateR, stateU, stateD];
   return states;
 }
 
 //Return true if goal state at state
 function isGoalState(state, goal) {
-  goalx = Math.floor(goal[0] / (4 * GRID_SIZE));
-  goaly = Math.floor(goal[1] / (4 * GRID_SIZE));
-  statex = Math.floor(state[0] / (4 * GRID_SIZE));
-  statey = Math.floor(state[1] / (4 * GRID_SIZE));
+  goalx = Math.floor(goal[0] / (1 * GRID_SIZE));
+  goaly = Math.floor(goal[1] / (1 * GRID_SIZE));
+  statex = Math.floor(state[0] / (1 * GRID_SIZE));
+  statey = Math.floor(state[1] / (1 * GRID_SIZE));
 
   if ( (goalx == statex) && (goaly == statey) ) {
     return true;
@@ -858,8 +903,8 @@ function isGoalState(state, goal) {
 //Return the manhattan distance between position and goal
 function manhattanHeuristic(position, goal) {
   // console.log("position", position, "goal", goal);
-  var xy1 = [(position[0] / (4 * GRID_SIZE)), (position[1] / (4 * GRID_SIZE))];
-  var xy2 = [(goal[0] / (4 * GRID_SIZE)), (goal[1] / (4 * GRID_SIZE))];
+  var xy1 = [(position[0] / (1 * GRID_SIZE)), (position[1] / (1 * GRID_SIZE))];
+  var xy2 = [(goal[0] / (1 * GRID_SIZE)), (goal[1] / (1 * GRID_SIZE))];
   return Math.abs(xy1[0] - xy2[0]) + Math.abs(xy1[1] - xy2[1]);
 }
 
@@ -911,7 +956,7 @@ function testAstar(rm) {
   for (var id in rooms[rm].enemies) {
     console.log("running A*");
     enemy = rooms[rm].enemies[id];
-    var path = aStarSearch( [enemy.x, enemy.y], [player.x, player.y] );
+    var path = aStarSearch( [enemy.x, enemy.y], [player.x, player.y], rm );
     console.log("Astar generated path: ", path);
     return;
   }
