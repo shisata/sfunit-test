@@ -1295,6 +1295,7 @@ app.post('/register', (request,response)=>{
                    response.end(error);
                  };
                  console.log("INSERT ACCOUNT COMPLETED");
+                 encryptPW(uname);
                  var message = {'message':'Sign-up Completed'};
                  response.render('pages/login',message)
                });
@@ -1305,6 +1306,35 @@ app.post('/register', (request,response)=>{
      };
    });
 });
+
+function encryptPW(uname) {
+  const query = `SELECT password FROM account WHERE username ='${uname}';`
+  pool.query(query, (error, results)=>{
+    if (error)
+    {
+      console.log('Encryption failed - failed to get password');
+      throw (error);
+    }
+    var pw = results.rows[0];
+    //Encrypting
+    const encryptQ =
+  `UPDATE account SET password = crypt('${pw}',gen_salt('md5')) WHERE username ='${uname}'`;
+
+    pool.query(encryptQ,(error, results)=>{
+      if (error)
+      {
+        console.log('Encryption failed - failed to encrypted');
+        throw(error);
+      }
+      console.log('Encryption Completed');
+    });
+  });
+};
+
+// Authorizing given password
+// function authorPW(uname,pw){
+
+// }
 //=============================================================================
 
 //=============================================================================
