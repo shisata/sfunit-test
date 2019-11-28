@@ -10,7 +10,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src = "/static/weatherAPI.js" defer></script>
     <style>
-      #canvas {
+      canvas {
         width: 800px; /*original = 800 x 600*/
         height: 600px;
         border: 5px solid black;
@@ -21,22 +21,11 @@
     <script src="/socket.io/socket.io.js"></script>
   </head>
   <body>
-    <!-- <canvas class="weather_animation" id="rain1"></canvas>
-    <canvas class='weather_animation' id="rain2"></canvas>
-    <canvas class='weather_animation' id="rain3"></canvas>
-    <canvas class='weather_animation' id='moon'></canvas>
-    <canvas class='weather_animation' id ='snow'></canvas> -->
-    <!-- <canvas class='weather_animation' id ='sun'></canvas> -->
-    <div id='sun' class="sun"><div class="sunshine"></div></div>
-    <div id ='wrapper'>
-      <span><canvas id="canvas"></canvas></span>
-      <span id = weather-container> <img id = 'icon'></span>
-    </div>
-    <div id="container">
-      <canvas id="viewport">
-      </canvas>
-      <menu id="controls">
-      </menu>
+    <div id="wrapper">
+      <span id ='canvas-space'><canvas id="canvas"></canvas><span>
+      <span id = weather-container>
+        <img id = 'icon'>
+      <span>
     </div>
 
     <form action="/logout" method='post'>
@@ -47,7 +36,7 @@
 
   </body>
   <audio controls autoplay loop>
-    <source src="../static/audio/Attack on Titan S3 OST - ətˈæk 0N tάɪtn ＜WMId＞.mp3" type="audio/mpeg" />
+    <source src="../static/sound/Attack on Titan S3 OST - ətˈæk 0N tάɪtn ＜WMId＞.mp3" type="audio/mpeg" />
   </audio id="volume">
   <script src="/static/game.js"></script>
 </html>

@@ -75,16 +75,16 @@ module.exports = {
     }
     ddx = 0; ddy = 0;
     if (directionData.left) {
-      ddx -= player.speed;
+      ddx -= player.speed/updatePerSecond;
     }
     if (directionData.right) {
-        ddx += player.speed;
+        ddx += player.speed/updatePerSecond;
     }
     if (directionData.down) {
-        ddy += player.speed;
+        ddy += player.speed/updatePerSecond;
     }
     if (directionData.up) {
-        ddy -= player.speed;
+        ddy -= player.speed/updatePerSecond;
     }
     return hasCollision((player.x + ddx), (player.y + ddy), serverName);
   },
@@ -139,6 +139,7 @@ var io = socketIO(server);
 //database
 const { Pool } = require('pg')
 var pool
+var updatePerSecond = 30;
 pool = new Pool({
   connectionString: process.env.DATABASE_URL
 });
@@ -226,7 +227,10 @@ io.on('connection', function(socket) {
 
       //astar testing here
       // console.log(aStarSearch([100,100], [200,200]));
-      testAstar(rm);
+      if (!rooms[rm]) {
+        testAstar(rm);
+      }
+
 
       // console.log("emit sound");
       // var sound = "bang";
@@ -281,12 +285,14 @@ setInterval(function() {
         moveEnemies(rm);
         handleBulletCollisions(rm);
         generateEnemies(rm);
+        recoverPlayerHealth(rm);
+        checkQuest(rm);
         //console.log("LOGGING rm", rm);
         io.sockets.to(rm).emit('state', rooms[rm].players,
           rooms[rm].projectiles, rooms[rm].enemies, rooms[rm].zones);
       }
   }
-}, 1000 / 30);
+}, 1000 / updatePerSecond);
 
 
 
@@ -304,15 +310,23 @@ function createPlayer(id, serverName, username) {
     y: 147 * GRID_SIZE,
     maxHealth: 20,
     health: 20,
+    healthRecoverRate: 1,
     level: 1,
     damage: 5,
-    speed: 3,
+    speed: 3*50,
     score: 0,
     gun: "pistol",
     clip: 12,
     clipSize: 12,
     zone: 0,
-    playerSocketId: id
+    playerSocketId: id,
+    questData: {
+      bulletsTotal: 0,
+      minHealth: 20,
+      startTime: new Date(),
+      q1Over: false,
+      q2Over: false
+    }
   };
 }
 
@@ -387,16 +401,16 @@ function movePlayer(player, data, rm) {
   var originY = player.y;
   //console.log(player.x + ", " + player.y)////*****
   if (data.left) {
-    player.x -= player.speed;
+    player.x -= player.speed/updatePerSecond;
   }
   if (data.up) {
-    player.y -= player.speed;
+    player.y -= player.speed/updatePerSecond;
   }
   if (data.right) {
-    player.x += player.speed;
+    player.x += player.speed/updatePerSecond;
   }
   if (data.down) {
-    player.y += player.speed;
+    player.y += player.speed/updatePerSecond;
   }
   if(player != undefined){
     if(hasCollision(player.x, player.y, rm)){
@@ -407,7 +421,7 @@ function movePlayer(player, data, rm) {
     //zone change check
     if (player.zone == 0
       || (rooms[rm].zones[player.zone] != undefined
-        && !rooms[rm].zones[player.zone].inside(player.x/GRID_SIZE, 
+        && !rooms[rm].zones[player.zone].inside(player.x/GRID_SIZE,
           player.y/GRID_SIZE))) {
       var newZone = 0;
       for (zoneNum in rooms[rm].zones) {
@@ -486,8 +500,8 @@ function generateProjectile(id, data, rm) {
 
   //Generate the projectile
   rooms[rm].projectiles[rooms[rm].bulletCount] = {
-    x: rooms[rm].players[id].x + (4 * velX),
-    y: rooms[rm].players[id].y + (4 * velY),
+    x: rooms[rm].players[id].x + (3 * velX/updatePerSecond),
+    y: rooms[rm].players[id].y + (3 * velY/updatePerSecond),
     vx: velX,
     vy: velY
   };
@@ -518,7 +532,7 @@ function spawnRandomObject(rm) {
       y: Math.random() * 300 + 2000,
       vx: 5,
       vy: 5,
-      speed: .5,
+      speed: .8*50,
       health: 4
     }
     rooms[rm].enemies.numEnemies++;
@@ -545,6 +559,44 @@ function generateEnemies(rm) {
   }
 }
 
+//recover player Health
+function recoverPlayerHealth(rm) {
+  for (var id in rooms[rm].players) {
+    var player = rooms[rm].players[id];
+    if (player.health < player.maxHealth) {
+      player.health += player.healthRecoverRate/updatePerSecond;
+      if (player.health > player.maxHealth) {
+        player.health = player.maxHealth;
+      }
+    }
+  }
+}
+
+function checkQuest(rm) {
+//checking quest conditions! This part will be very hard to refactor, don't try....
+  for (var id in rooms[rm].players) {
+    var player = rooms[rm].players[id];
+
+
+    if (player == undefined || player.questData == undefined) {
+      continue;
+    }
+    if (!player.questData.q1Over && player.questData.bulletsTotal == 30) {
+      io.sockets.to(id).emit("questOver", "Combat Ready", "Shoot 30 times", "Ready for the fight?");
+      player.questData.q1Over = true;
+    }
+
+    currentTime = new Date();
+    if (!player.questData.q2Over && currentTime - player.questData.startTime > 10*1000) {
+      io.sockets.to(id).emit("questOver", "Newbie survivor", "Survive for 10 seconds", "Hey, you're stil alive!");
+      player.questData.q2Over = true;
+      console.log("emit new survivor");
+    }
+
+  }
+
+}
+
 //Move projectiles
 function moveProjectiles(rm) {
   for (var id in rooms[rm].projectiles) {
@@ -552,8 +604,8 @@ function moveProjectiles(rm) {
       var delBullet = false;
       var originX = rooms[rm].projectiles[id].x;
       var originY = rooms[rm].projectiles[id].y;
-      rooms[rm].projectiles[id].x += rooms[rm].projectiles[id].vx;
-      rooms[rm].projectiles[id].y += rooms[rm].projectiles[id].vy;
+      rooms[rm].projectiles[id].x += rooms[rm].projectiles[id].vx/updatePerSecond;
+      rooms[rm].projectiles[id].y += rooms[rm].projectiles[id].vy/updatePerSecond;
       if(hasCollision(rooms[rm].projectiles[id].x, rooms[rm].projectiles[id].y, rm)){
         rooms[rm].projectiles[id].x = originX;
         rooms[rm].projectiles[id].y = originY;
@@ -619,7 +671,7 @@ function moveEnemies(rm) {
      if ( Math.abs(distX) < 15 && Math.abs(distY) < 15 ) {
       // console.log("distX ", distX, "distY, ", distY);
       //Deplete health
-      rooms[rm].players[closestPlayer].health -= 0.02;
+      rooms[rm].players[closestPlayer].health -= 8/updatePerSecond;
       //Kill player
       if (rooms[rm].players[closestPlayer].health < 0) {
         youveBeenTerminated(closestPlayer, rm);
@@ -638,8 +690,8 @@ function moveEnemies(rm) {
      rooms[rm].enemies[id].vy =  rooms[rm].enemies[id].speed * Math.cos(attackTheta) * sign;
      var originX = rooms[rm].enemies[id].x;
      var originY = rooms[rm].enemies[id].y;
-     rooms[rm].enemies[id].x += rooms[rm].enemies[id].vx;
-     rooms[rm].enemies[id].y += rooms[rm].enemies[id].vy;
+     rooms[rm].enemies[id].x += rooms[rm].enemies[id].vx/updatePerSecond;
+     rooms[rm].enemies[id].y += rooms[rm].enemies[id].vy/updatePerSecond;
      if(hasCollision(rooms[rm].enemies[id].x, rooms[rm].enemies[id].y, rm)){
        rooms[rm].enemies[id].x = originX;
        rooms[rm].enemies[id].y = originY;
@@ -660,10 +712,9 @@ function handleBulletCollisions(rm) {
         if ( (Math.abs(rooms[rm].players[player].x - rooms[rm].projectiles[id].x) < 2) &&
             (Math.abs(rooms[rm].players[player].y - rooms[rm].projectiles[id].y) < 2) ) {
           rooms[rm].players[player].health -= 1;
-          // if (players[player].health < 0) {
-          //   players[player] = 0;
-          //   players.numPlayers -= 1;
-          // }
+          if (rooms[rm].players[player].health < 0) {
+            youveBeenTerminated(player, rm);
+          }
         }
       }
     }
@@ -721,6 +772,7 @@ function youveBeenTerminated(player, rm) {
   rooms[rm].numPlayers -= 1;
 
   if (rooms[rm].numPlayers <= 0) {
+    console.log("room deleted: number of players ", rooms[rm].numPlayers);
     delete rooms[rm];
   }
   //Load "YOUVE FAILED SCREEN"
@@ -768,7 +820,7 @@ function aStarSearch(startState, goal) {
           return ((stateCoords[0] == item[0]) && (stateCoords[1] == item[1]) ) }))
       {
         parents[expandedState] = current;
-        fringe.push([ [expandedState, state[1] + expandedState[2]], 
+        fringe.push([ [expandedState, state[1] + expandedState[2]],
         manhattanHeuristic(expandedState[0], goal) + state[1] + expandedState[2] ]);
       }
     }
@@ -846,6 +898,9 @@ function makeList(parents, goal) {
 }
 
 function testAstar(rm) {
+  if (!rooms[rm] || rooms[rm].numplayers <= 0) {
+    return;
+  }
   if (!rooms[rm].players) {
     return;
   }
