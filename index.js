@@ -146,11 +146,7 @@ pool = new Pool({
 
 app.use('/static', express.static(__dirname + '/static'));// Ring
 // app.get('/', function(request, response) {
-<<<<<<< HEAD
-// // response.sendFile(path.join(__dirname, 'index.html'));
-=======
 // response.sendFile(path.join(__dirname, 'index.html'));
->>>>>>> f1686591b0c7051363eda42c1e4d1d83a0ae4536
 //    var user = {'username':'uname'};
 //   response.render('pages/matchmaking', user);
 // });// Starts the server.
