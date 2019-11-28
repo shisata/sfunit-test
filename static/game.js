@@ -268,6 +268,9 @@ window.addEventListener('mousemove', function (e) {
       context.beginPath();
       context.arc(player.x - middleX, player.y - middleY, GRID_SIZE/2 , 0, 2 * Math.PI);
       context.fill();
+
+      showHealthBarAbove(player.x - middleX, player.y - middleY, player.health, player.maxHealth);
+      showBulletBarAbove(player.x - middleX, player.y - middleY, player.clip, player.clipSize);
     }
 
     for (var id in projectiles) {
@@ -288,6 +291,8 @@ window.addEventListener('mousemove', function (e) {
       context.arc(enemy.x - middleX, enemy.y - middleY, GRID_SIZE/2, 0, 2 * Math.PI);
       context.fillStyle = 'red';
       context.fill();
+
+      showHealthBarAbove(enemy.x - middleX, enemy.y - middleY, enemy.health, enemy.maxHealth);
     }
 
     context.fillStyle = "rgba(100, 100, 100, 0.3)";
@@ -315,28 +320,11 @@ window.addEventListener('mousemove', function (e) {
     lastLoop = thisLoop;
 
     //showing Player health/score/etc.
-    var player = players[myId];
-    context.fillStyle = "#BBB";
-    context.beginPath();
-    context.rect(10, 60, 80, 15);
-    context.fill();
-    context.fillStyle = "red";
-    context.beginPath();
-    context.rect(10, 60, (player.health/player.maxHealth)*80, 15);
-    context.fill();
-
+    showMyData(players[myId]);
     var playerIndex = 1;
     for (var id in players) {
       if (id != myId && players[id] != 0 && players[id].health != undefined) {
-        player = players[id];
-        context.fillStyle = "#BBB";
-        context.beginPath();
-        context.rect(50+100*playerIndex, 40, 50, 10);
-        context.fill();
-        context.fillStyle = "red";
-        context.beginPath();
-        context.rect(50+100*playerIndex, 40, (player.health/player.maxHealth)*50, 10);
-        context.fill();
+        showOtherPlayerData(players[id], playerIndex);
         playerIndex += 1;
       }
     }
@@ -367,7 +355,7 @@ window.addEventListener('mousemove', function (e) {
       var smallMapWidth = 200;
       var smallMapHeight = smallMapWidth*mapWHRatio;
 
-      var mapLeftCut = 0;
+      var mapLeftCut = 60*GRID_SIZE;
       var mapTopCut = 20*GRID_SIZE;
       var mapAreaWidth = 380*GRID_SIZE;
       var mapAreaHeight = mapAreaWidth*mapWHRatio;
@@ -514,6 +502,81 @@ window.addEventListener('mousemove', function (e) {
 
 
 // Support Functions ------------------------------------
+function showMyData(player) {
+  context.fillStyle = "#BBB";
+  context.beginPath();
+  context.rect(15, 70, 100, 15);
+  context.fill();
+  context.fillStyle = "red";
+  context.beginPath();
+  context.rect(15, 70, (player.health/player.maxHealth)*100, 15);
+  context.fill();
+  context.fillStyle = "white";
+  context.font = "bold italic 12px Arial";
+  context.fillText("HP (" + Math.round(player.health) + "/" + player.maxHealth + ")", 18, 82);
+  context.fillStyle = "#BBB";
+  context.beginPath();
+  context.rect(15, 90, 100, 15);
+  context.fill();
+  context.fillStyle = "blue";
+  context.beginPath();
+  context.rect(15, 90, (player.clip/player.clipSize)*100, 15);
+  context.fill();
+  context.fillStyle = "white";
+  context.font = "bold italic 12px Arial";
+  context.fillText("CLIP (" + player.clip + "/" + player.clipSize + ")", 18, 102);
+
+  context.fillStyle = "black";
+  context.font = "bold 35px Arial";
+  context.fillText(player.username, 17, 50);
+}
+function showOtherPlayerData(player, playerIndex) {
+  context.fillStyle = "#BBB";
+  context.beginPath();
+  context.rect(70+110*playerIndex, 55, 70, 10);
+  context.fill();
+  context.fillStyle = "red";
+  context.beginPath();
+  context.rect(70+110*playerIndex, 55, (player.health/player.maxHealth)*70, 10);
+  context.fill();
+  context.fillStyle = "#BBB";
+  context.beginPath();
+  context.rect(70+110*playerIndex, 68, 70, 10);
+  context.fill();
+  context.fillStyle = "blue";
+  context.beginPath();
+  context.rect(70+110*playerIndex, 68, (player.health/player.maxHealth)*70, 10);
+  context.fill();
+
+  context.fillStyle = "black";
+  context.font = "bold 20px Arial";
+  context.fillText(player.username, 70+110*playerIndex+2, 45);
+
+
+}
+
+function showHealthBarAbove(x, y, health, maxHealth) {
+  context.fillStyle = "#BBB";
+  context.beginPath();
+  context.rect(x-20, y-30, 40, 6);
+  context.fill();
+  context.fillStyle = "red";
+  context.beginPath();
+  context.rect(x-20, y-30, (health/maxHealth)*40, 6);
+  context.fill();
+}
+function showBulletBarAbove(x, y, clip, clipSize) {
+  context.fillStyle = "#BBB";
+  context.beginPath();
+  context.rect(x-20, y-20, 40, 6);
+  context.fill();
+  context.fillStyle = "blue";
+  context.beginPath();
+  context.rect(x-20, y-20, (clip/clipSize)*40, 6);
+  context.fill();
+}
+
+
 function processMapDrawing(mapData){
   console.log(mapData);
   //called ONLY when numPlayers: 0 -> 1.

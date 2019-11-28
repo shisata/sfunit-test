@@ -270,6 +270,7 @@ io.on('connection', function(socket) {
       return;
     }
     //players[socket.id] = 0;
+    logOutPlayer(rooms[getRoomBySocketId[socket.id]].players[socket.id].username);
     delete rooms[getRoomBySocketId[socket.id]].players[socket.id];
     rooms[getRoomBySocketId[socket.id]].players.numPlayers -= 1;
     if (rooms[getRoomBySocketId[socket.id]].players.numPlayers <= 0) {
@@ -477,6 +478,7 @@ function generateProjectile(id, data, rm) {
   if (!rooms[rm].players[id].clip) {
     return;
   }
+  rooms[rm].players[id].questData.bulletsTotal += 1;
   rooms[rm].projectiles.numProjectiles++;
 
   //Calculate projectile trajectory
@@ -543,7 +545,8 @@ function spawnRandomObject(rm) {
       vx: 5,
       vy: 5,
       speed: .8*50,
-      health: 4
+      health: 4,
+      maxHealth: 4
     }
     rooms[rm].enemies.numEnemies++;
     rooms[rm].enemyID++;
@@ -1155,70 +1158,78 @@ app.get('/', function(request, response)
 app.post('/checkAccount', (request, response)=>{
   var uname = request.body.username;
   var pw = request.body.password;
+  //fetch account info
+  const fetchQ = `SELECT * FROM account WHERE username ='${uname}';`;
+  pool.query(fetchQ, (error,results)=>{
+    if (error)
+    {
+      console.log('Authorizing failed - Fetching account info failed');
+      throw(error);
+    };
+    // console.log(results);
+    var account = results.rows[0];
+    if (account)
+    {
+      console.log('Account info\n'+account);
+      const authorQ =
+    `SELECT (password=crypt('${pw}','${account.password}')) AS password FROM account WHERE username ='${uname}';`;
+  //Compare hashed pw with input pw
+      pool.query(authorQ,(error,authen)=>
+      {
+        if (error)
+        {
+          console.log('Authorization failed - Failed to compare hased password');
+          throw(error);
+        };
+        //varification succeeded
+        if (authen.rows[0]){
+          console.log('Hased pw == pw');
+          if (account.online) {
+            console.log("Redundant login attempt for user $1", [uname]);
+            var message ={'message':'Account is already logged in!'};
+            response.render('pages/login',message);
+          };
 
-  //Admin user
-  if (uname == "ADMIN301254694") {
-    pool.query('SELECT password FROM account WHERE username=$1',[uname], (error,results)=>{
-      if (error) {
-        throw(error);
-      }
-      //Check for password match
-      var result = (results.rows == '') ? '':results.rows[0].password;
-      if (result == String(pw)) {
-        //Password matched, extract all table information
-        pool.query("SELECT * FROM account;", (error,results) => {
-          if (error) {
-            throw(error);
-          }
-          var results = {'rows': results.rows };
-          response.render('pages/admin', results);
-        });
-      }
-      //Password does not match
-      else {
-        var message ={'message':'Account is not existing'};
-        response.render('pages/login', message);
-      }
-    });
-  }
-  else {
-   pool.query(
-     'SELECT password, online FROM account WHERE username=$1',[uname], (error,results)=>{
-       if (error)
-       {
-         throw(error);
-       }
-
-       var result = (results.rows == '') ? '':results.rows[0].password;
-       if (result == String(pw))
-       {
-         //If user already online, reject login attempt
-         if (results.rows[0].online) {
-          console.log("Redundant login attempt for user $1", [uname]);
-          var message ={'message':'Account is already logged in!'};
-          response.render('pages/login',message);
-         }
-         var user = {'username':uname};
-
-        //Upade online status
-        pool.query(
-          'UPDATE account SET online = true WHERE username=$1',[uname], (error,results)=>{
-            if (error)
-            {
-              throw(error);
+          if (uname == "ADMIN301254694") {
+              //Extract all table information
+              pool.query("SELECT * FROM account;", (error,results) => {
+                if (error) {
+                  throw(error);
+                }
+                var results = {'rows': results.rows };
+                response.render('pages/admin', results);
+              });
             }
-        });
-        //Log in user
-        // response.render('pages/index', user);
-        console.log(`logging in ${uname}`);
-        response.render('pages/matchmaking', user);
-       }
-       else {
-        var message ={'message':'Account is not existing'};
-        response.render('pages/login', message);
-       }
-     });
-  }
+          else {
+              var user = {'username':uname};
+
+             //Upade online status
+             pool.query(
+               'UPDATE account SET online = true WHERE username=$1',[uname], (error,results)=>{
+                 if (error)
+                 {
+                   throw(error);
+                 }
+             });
+             //Log in user
+             // response.render('pages/index', user);
+             console.log(`logging in ${uname}`);
+             response.render('pages/matchmaking', user);
+           };
+
+        }
+        else {
+          console.log('Hased pw != pw');
+          var message ={'message':'Account is not existing'};
+          response.render('pages/login', message);
+        };
+      });
+    }
+    else {
+      var message ={'message':'Account is not existing'};
+      response.render('pages/login', message);
+    }
+  });
 });
 
 //Cheking gmail data with database
@@ -1340,6 +1351,7 @@ app.post('/register', (request,response)=>{
                    response.end(error);
                  };
                  console.log("INSERT ACCOUNT COMPLETED");
+                 encryptPW(uname);
                  var message = {'message':'Sign-up Completed'};
                  response.render('pages/login',message)
                });
@@ -1350,6 +1362,33 @@ app.post('/register', (request,response)=>{
      };
    });
 });
+
+// ENcrpting password when resgister
+function encryptPW(uname) {
+  const query = `SELECT password FROM account WHERE username ='${uname}';`
+  pool.query(query, (error, results)=>{
+    if (error)
+    {
+      console.log('Encryption failed - failed to get password');
+      throw (error);
+    }
+    var pw = results.rows[0];
+    //Encrypting
+    const encryptQ =
+  `UPDATE account SET password = crypt('${pw}',gen_salt('md5')) WHERE username ='${uname}'`;
+
+    pool.query(encryptQ,(error, results)=>{
+      if (error)
+      {
+        console.log('Encryption failed - failed to encrypted');
+        throw(error);
+      }
+      console.log('Encryption Completed');
+    });
+  });
+};
+
+
 //=============================================================================
 
 //=============================================================================
