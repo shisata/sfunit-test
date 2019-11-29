@@ -145,11 +145,13 @@ pool = new Pool({
 });
 
 app.use('/static', express.static(__dirname + '/static'));// Ring
-// app.get('/', function(request, response) {
+//
+app.get('/', function(request, response) {
 // response.sendFile(path.join(__dirname, 'index.html'));
-//    var user = {'username':'uname'};
-//   response.render('pages/matchmaking', user);
-// });// Starts the server.
+   var user = {'username':'uname'};
+  response.render('pages/matchmaking', user);
+});// Starts the server.
+//
 server.listen(PORT, function() {
   console.log('Starting server on port 5000');
 });
@@ -228,9 +230,9 @@ io.on('connection', function(socket) {
       //astar testing here
       // console.log(aStarSearch([100,100], [200,200], rm));
 
-      // if (rooms[rm]) {
-      //   testAstar(rm);
-      // }
+      if (rooms[rm]) {
+        testAstar(rm);
+      }
 
 
       // console.log("emit sound");
@@ -294,7 +296,7 @@ setInterval(function() {
           rooms[rm].projectiles, rooms[rm].enemies, rooms[rm].zones);
       }
   }
-}, 1000 / updatePerSecond);
+}, 1000 / 1);
 
 
 
@@ -447,6 +449,7 @@ function movePlayer(player, data, rm) {
 function hasCollision(x, y, rm) {
   var gridX = Math.floor(x / GRID_SIZE);
   var gridY = Math.floor(y / GRID_SIZE);
+  // console.log(rooms[rm].zones)
   for (zoneNum in rooms[rm].zones) {
     if (!rooms[rm].zones[zoneNum].open
       && rooms[rm].zones[zoneNum].inside(gridX, gridY)) {
@@ -454,15 +457,22 @@ function hasCollision(x, y, rm) {
       return true;
     }
   }
+  // console.log("logging x, y", x, y, "logging grids", gridX, gridY);
   if(rooms[rm] == undefined || rooms[rm].mapData == undefined
     || rooms[rm].mapData[gridX] == undefined
     || rooms[rm].mapData[gridX][gridY] == undefined) {
     // console.log("collision " + gridX + ", " + gridY)
+    console.log("inside exception");
     return false;
   } else if(rooms[rm].mapData[gridX][gridY].collision == true){
     // console.log("collision " + gridX + ", " + gridY)
+    console.log("returning from collision");
     return true;
   }
+
+
+  console.log(rooms[rm].mapData[gridX][gridY].collision, x, y);
+  console.log("outside exception");
   return false;
 }
 
@@ -856,8 +866,13 @@ function aStarSearch(startState, goal, rm) {
 function getSuccessors(state, rm) {
   //Use 5 as arbitraty number
   stateL = [[state[0] - (1 * GRID_SIZE), state[1]], "left", 1];
+  // console.log("logging state contents", state[0], state[1]);
   // stateL = [[state[0] - (5), state[1]], "left", 1];
-  console.log(rm);
+  console.log("/////////////////////////////////////////////////////////before");
+  if(hasCollision(stateL[0], stateL[1], rm)) {
+    console.log("FAZAL IS THE BIG Guy");
+  }
+  console.log("/////////////////////////////////////////////////////////after");
   if(hasCollision(stateL[0], stateL[1], rm)) {
     console.log("has collision");
     stateL = 0;
