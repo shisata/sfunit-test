@@ -291,7 +291,7 @@ setInterval(function() {
         checkQuest(rm);
         //console.log("LOGGING rm", rm);
         io.sockets.to(rm).emit('state', rooms[rm].players,
-          rooms[rm].projectiles, rooms[rm].enemies, rooms[rm].zones);
+          rooms[rm].projectiles, rooms[rm].enemies, rooms[rm].zones, rooms[rm].teamQuests);
       }
   }
 }, 1000 / updatePerSecond);
@@ -331,85 +331,14 @@ function createPlayer(id, serverName, username) {
     },
     quests: [
     {
-      name: "Trapped on Mountain", //TODO: change after demo classroom decided!
-      isMainQuest: true,
-      isHidden: false,
-      condition: "Go to the Avocado Garden",
-      description: "The heart of the Special Fortification Unit",
-      display: true,
-      checkCondition: function(player){
-        return (player.x > 268*GRID_SIZE && player.x < 307*GRID_SIZE
-          && player.y > 153*GRID_SIZE && player.y < 196*GRID_SIZE);
-      },
-      clear: false,
-      progress: function(player){
-        return "(Incomplete)";
-      },
-      progressText: "",
-      complete: function(player) {
-        var rm = getRoomBySocketId[player.playerSocketId];
-        room = rooms[rm];
-        var qNum; //index of this quest
-        for (var q in player.quests) {
-          if (player.quests[q].name == "Trapped on Mountain") {
-            qNum = q;
-          }
-        }
-        var quest = player.quests[qNum];
-        for (var id in room.players) {
-          //Complete ALL player's this quest, with scores for all.
-          var otherPlayer = room.players[id];
-          if (!otherPlayer) {
-            continue;
-          }
-          if (!otherPlayer.quests) {
-            console.log(otherPlayer);
-            continue;
-          }
-          otherPlayer.score += 100;
-          otherPlayer.quests[qNum].clear = true;
-          otherPlayer.quests[qNum].display = false;
-          //trigger next quests
-          for (var i = 0; i < quest.trigger.length; i++) {
-            for (var nextQ in otherPlayer.quests) {
-              if (otherPlayer.quests[nextQ].name == quest.trigger[i] && !otherPlayer.quests[nextQ].clear) {
-                otherPlayer.quests[nextQ].display = true;
-              }
-            }
-          }
-        }
-        io.sockets.to(rm).emit("message",
-          "Welcome, player.");
-        io.sockets.to(rm).emit("message",
-          "I am Avocado,\nOwner of S.F.U.");
-        io.sockets.to(rm).emit("message",
-          "What story should I write here? \nGimme ideas @channel");
-        io.sockets.to(rm).emit("message",
-          "Anyway! Go to Rotunda. I will open up the space for you.");
-        //construction mall open
-        var constructionMallZoneNum = 0;
-        for (var zoneNum in room.zones) {
-          if (room.zones[zoneNum].name == "Construction Mall") {
-            constructionMallZoneNum = zoneNum;
-            break;
-          }
-        }
-        if (!room.zones[constructionMallZoneNum].open) {
-          room.zones[constructionMallZoneNum].open = true;
-          io.sockets.to(rm).emit("zoneOpen", "Avocado quest complete!");
-        }
-      },
-      trigger: []
-    },
-    {
       name: "Combat Ready",
       isMainQuest: false,
       isHidden: false,
       condition: "Shoot 30 times",
       description: "Ready for the fight?",
-      display: true,
+      display: false,
       checkCondition: function(player){
-        return (player.questData.bulletsTotal == 30);
+        return (player.questData.bulletsTotal >= 30);
       },
       clear: false,
       progress: function(player){
@@ -502,6 +431,98 @@ function roomData(serverName) {
   room.spawnRate = 2000;
 
   room.zones = {};
+
+  room.teamQuests = [
+    {
+      name: "Trapped on Mountain", //TODO: change after demo classroom decided!
+      isMainQuest: true,
+      isHidden: false,
+      condition: "Go to the Avocado Garden",
+      description: "The heart of the Special Fortification Unit",
+      display: true,
+      checkCondition: function(rm){
+        var isComplete = true;
+        for (var id in rooms[rm].players) {
+          var player = rooms[rm].players[id];
+          if (!player || !player.x) {
+            continue;
+          }
+          if (!(player.x > 268*GRID_SIZE && player.x < 307*GRID_SIZE
+            && player.y > 153*GRID_SIZE && player.y < 196*GRID_SIZE)) {
+            isComplete = false;
+          }
+        }
+        return isComplete;
+      },
+      clear: false,
+      progress: function(rm){
+        return "(Incomplete)";
+      },
+      progressText: "",
+      complete: function(rm) {
+        room = rooms[rm];
+        var qNum; //index of this quest
+        var player;
+
+        //giving values to qNum, player, and quest.
+        for (var id in room.players) {
+          //just choose one player and break
+          player = room.players[id];
+          if (!player || !player.quests) {
+            continue;
+          }
+          break;
+        }
+        for (var q in room.teamQuests) {
+          if (room.teamQuests[q].name == "Trapped on Mountain") {
+            qNum = q;
+          }
+        }
+        var quest = room.teamQuests[qNum];
+
+        //Complete ALL player's this quest, with scores for all.
+        for (var id in room.players) {
+          var otherPlayer = room.players[id];
+          if (!otherPlayer) {
+            continue;
+          }
+          if (!otherPlayer.quests) {
+            console.log(otherPlayer);
+            continue;
+          }
+          otherPlayer.score += 100;
+          //trigger next quests
+          for (var i = 0; i < quest.trigger.length; i++) {
+            for (var nextQ in otherPlayer.quests) {
+              if (otherPlayer.quests[nextQ].name == quest.trigger[i] && !otherPlayer.quests[nextQ].clear) {
+                otherPlayer.quests[nextQ].display = true;
+              }
+            }
+          }
+        }
+        io.sockets.to(rm).emit("message",
+          "Welcome, player.");
+        io.sockets.to(rm).emit("message",
+          "I am Avocado,\nOwner of S.F.U.");
+        io.sockets.to(rm).emit("message",
+          "What story should I write here? \nGimme ideas @channel");
+        io.sockets.to(rm).emit("message",
+          "Anyway! Go to Rotunda. I will open up the space for you.");
+        //construction mall open
+        var constructionMallZoneNum = 0;
+        for (var zoneNum in room.zones) {
+          if (room.zones[zoneNum].name == "Construction Mall") {
+            constructionMallZoneNum = zoneNum;
+            break;
+          }
+        }
+        if (!room.zones[constructionMallZoneNum].open) {
+          room.zones[constructionMallZoneNum].open = true;
+          io.sockets.to(rm).emit("zoneOpen", "Avocado quest complete!");
+        }
+      },
+      trigger: ["Combat Ready"]
+    }];
 
   return room
 }
@@ -717,10 +738,44 @@ function recoverPlayerHealth(rm) {
 }
 
 function checkQuest(rm) {
-//checking quest conditions! This part will be very hard to refactor, don't try....
+  for (var qNum in rooms[rm].teamQuests) {
+    if (!rooms[rm].teamQuests[qNum].clear && rooms[rm].teamQuests[qNum].display) {
+      var quest = rooms[rm].teamQuests[qNum];
+      rooms[rm].teamQuests[qNum].progressText = quest.progress(player);
+      if (quest.checkCondition(rm)) {
+        //quest complete!
+        rooms[rm].teamQuests[qNum].clear = true;
+        rooms[rm].teamQuests[qNum].display = false;
+        //trigger next quests
+        for (var i = 0; i < quest.trigger.length; i++) {
+          for (var nextQ in rooms[rm].teamQuests) {
+            if (rooms[rm].teamQuests[nextQ].name == quest.trigger[i] && !rooms[rm].teamQuests[nextQ].clear) {
+              rooms[rm].teamQuests[nextQ].display = true;
+              continue;
+            }
+          }
+          for (var id in rooms[rm].players) {
+            var player = rooms[rm].players[id];
+            for (var nextQ in player.quests) {
+              if (player.quests[nextQ].name == quest.trigger[i] && !player.quests[nextQ].clear) {
+                player.quests[nextQ].display = true;
+                continue;
+              }
+            }
+          }
+
+        }
+        quest.complete(rm);
+        console.log("***first main quest complete!!!***");
+        io.sockets.to(rm).emit("questOver", quest.name, quest.condition, quest.description);
+      }
+
+    }
+  }
+
+  //checking quest conditions! This part will be very hard to refactor, don't try....
   for (var id in rooms[rm].players) {
     var player = rooms[rm].players[id];
-
 
     if (player == undefined || player.questData == undefined) {
       continue;
@@ -735,9 +790,16 @@ function checkQuest(rm) {
           player.quests[qNum].display = false;
           //trigger next quests
           for (var i = 0; i < quest.trigger.length; i++) {
+            for (var nextQ in rooms[rm].teamQuests) {
+              if (rooms[rm].teamQuests[nextQ].name == quest.trigger[i] && !rooms[rm].teamQuests[nextQ].clear) {
+                rooms[rm].teamQuests[nextQ].display = true;
+                continue;
+              }
+            }
             for (var nextQ in player.quests) {
               if (player.quests[nextQ].name == quest.trigger[i] && !player.quests[nextQ].clear) {
                 player.quests[nextQ].display = true;
+                continue;
               }
             }
           }

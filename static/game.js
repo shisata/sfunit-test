@@ -231,7 +231,7 @@ window.addEventListener('mousemove', function (e) {
 });
 
   var context = canvas.getContext('2d');
-  socket.on('state', function(players, projectiles, enemies, zones) {
+  socket.on('state', function(players, projectiles, enemies, zones, teamQuests) {
     //console.log("socket event state called");
     if (players[myId] == 0) {
       //Died
@@ -330,7 +330,7 @@ window.addEventListener('mousemove', function (e) {
       }
     }
 
-    showQuests(players[myId]);
+    showQuests(players[myId], teamQuests);
 
     // related to function 'showMessage'.
     if (messageOn && messageQueue.length >= 1) {
@@ -556,7 +556,7 @@ function showOtherPlayerData(player, playerIndex) {
 
 
 }
-function showQuests(player) {
+function showQuests(player, teamQuests) {
   var line = 0;
   context.fillStyle = "#0AC";
   context.strokeStyle = "rgb(255, 255, 255, 0.5)";
@@ -564,16 +564,38 @@ function showQuests(player) {
   context.strokeText("Quests", 12, 150);
   context.fillText("Quests", 12, 150);
 
-  for (var i = 0; i < player.quests.length; i++) {
-    if (player.quests[i].display) {
-      if (player.quests[i].isMainQuest) {
+  context.fillStyle = "#0D8";
+  var i = 0;
+  for (; i < teamQuests.length; i++) {
+    if (teamQuests[i].display) {
+      if (teamQuests[i].isMainQuest) {
           context.font = "bold italic 13px Arial";
       }
       else {
           context.font = "italic 13px Arial";
       }
-      context.strokeText("["+player.quests[i].name + "] " + player.quests[i].condition + " " + player.quests[i].progressText, 10, 170+line*20);
-      context.fillText("["+player.quests[i].name + "] " + player.quests[i].condition + " " + player.quests[i].progressText, 10, 170+line*20);
+      context.strokeText("["+teamQuests[i].name + "] " + teamQuests[i].condition + " " + teamQuests[i].progressText, 10, 170+line*20);
+      context.fillText("["+teamQuests[i].name + "] " + teamQuests[i].condition + " " + teamQuests[i].progressText, 10, 170+line*20);
+      line += 1;
+      if (line > 10) {
+        break;
+      }
+    }
+  }
+
+  context.fillStyle = "#0AC";
+  context.strokeStyle = "rgb(255, 255, 255, 0.5)";
+  for (; i < player.quests.length+teamQuests.length; i++) {
+    var j = i-teamQuests.length;
+    if (player.quests[j].display) {
+      if (player.quests[j].isMainQuest) {
+          context.font = "bold italic 13px Arial";
+      }
+      else {
+          context.font = "italic 13px Arial";
+      }
+      context.strokeText("["+player.quests[j].name + "] " + player.quests[j].condition + " " + player.quests[j].progressText, 10, 170+line*20);
+      context.fillText("["+player.quests[j].name + "] " + player.quests[j].condition + " " + player.quests[j].progressText, 10, 170+line*20);
       line += 1;
       if (line > 10) {
         break;
