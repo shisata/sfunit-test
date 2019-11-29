@@ -43,7 +43,7 @@ var questDescription = "";
 
 var socket = io();
 socket.on('message', function(data) {
-  // console.log(data);
+  showMessage(data);
 });
 
 //socket id of the client. players[myId] will return the specific player's data.
@@ -208,6 +208,7 @@ setInterval(function() {
   socket.emit('shoot', shoot);
   socket.emit('interact', action);
   shoot.shootBullet = false;
+
   //makeSound("bang");
 }, 1000 / 30);
 
@@ -562,9 +563,15 @@ function showQuests(player) {
   context.font = "16px Arial";
   context.strokeText("Quests", 12, 150);
   context.fillText("Quests", 12, 150);
-  context.font = "italic 13px Arial";
+
   for (var i = 0; i < player.quests.length; i++) {
     if (player.quests[i].display) {
+      if (player.quests[i].isMainQuest) {
+          context.font = "bold italic 13px Arial";
+      }
+      else {
+          context.font = "italic 13px Arial";
+      }
       context.strokeText("["+player.quests[i].name + "] " + player.quests[i].condition + " " + player.quests[i].progressText, 10, 170+line*20);
       context.fillText("["+player.quests[i].name + "] " + player.quests[i].condition + " " + player.quests[i].progressText, 10, 170+line*20);
       line += 1;
@@ -672,6 +679,7 @@ function processMapDrawing(mapData){
         line += "!";
       }
     }
+
   }
   //console.log(mapData);/////*****
   mapImage.src = allMap.toDataURL();
@@ -725,6 +733,10 @@ socket.on("questOver", function(qName, qCondition, qDescription) {
   questCondition = qCondition;
   questDescription = qDescription;
   // console.log("show quest: ", qName);
+});
+
+socket.on("zoneOpen", function(zoneNum) {
+  console.log(zoneNum);
 });
 
 //=============================================================================

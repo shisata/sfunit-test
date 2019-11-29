@@ -308,8 +308,8 @@ function createPlayer(id, serverName, username) {
   rooms[serverName].players[id] = {
     playerID: rooms[serverName].players.numPlayers,
     username: username,
-    x: 211 * GRID_SIZE,
-    y: 147 * GRID_SIZE,
+    x: 259 * GRID_SIZE,
+    y: 169 * GRID_SIZE,
     maxHealth: 20,
     health: 20,
     healthRecoverRate: 1,
@@ -331,7 +331,80 @@ function createPlayer(id, serverName, username) {
     },
     quests: [
     {
+      name: "Trapped on Mountain", //TODO: change after demo classroom decided!
+      isMainQuest: true,
+      isHidden: false,
+      condition: "Go to the Avocado Garden",
+      description: "The heart of the Special Fortification Unit",
+      display: true,
+      checkCondition: function(player){
+        return (player.x > 268*GRID_SIZE && player.x < 307*GRID_SIZE
+          && player.y > 153*GRID_SIZE && player.y < 196*GRID_SIZE);
+      },
+      clear: false,
+      progress: function(player){
+        return "(Incomplete)";
+      },
+      progressText: "",
+      complete: function(player) {
+        var rm = getRoomBySocketId[player.playerSocketId];
+        room = rooms[rm];
+        var qNum; //index of this quest
+        for (var q in player.quests) {
+          if (player.quests[q].name == "Trapped on Mountain") {
+            qNum = q;
+          }
+        }
+        var quest = player.quests[qNum];
+        for (var id in room.players) {
+          //Complete ALL player's this quest, with scores for all.
+          var otherPlayer = room.players[id];
+          if (!otherPlayer) {
+            continue;
+          }
+          if (!otherPlayer.quests) {
+            console.log(otherPlayer);
+            continue;
+          }
+          otherPlayer.score += 100;
+          otherPlayer.quests[qNum].clear = true;
+          otherPlayer.quests[qNum].display = false;
+          //trigger next quests
+          for (var i = 0; i < quest.trigger.length; i++) {
+            for (var nextQ in otherPlayer.quests) {
+              if (otherPlayer.quests[nextQ].name == quest.trigger[i] && !otherPlayer.quests[nextQ].clear) {
+                otherPlayer.quests[nextQ].display = true;
+              }
+            }
+          }
+        }
+        io.sockets.to(rm).emit("message",
+          "Welcome, player.");
+        io.sockets.to(rm).emit("message",
+          "I am Avocado,\nOwner of S.F.U.");
+        io.sockets.to(rm).emit("message",
+          "What story should I write here? \nGimme ideas @channel");
+        io.sockets.to(rm).emit("message",
+          "Anyway! Go to Rotunda. I will open up the space for you.");
+        //construction mall open
+        var constructionMallZoneNum = 0;
+        for (var zoneNum in room.zones) {
+          if (room.zones[zoneNum].name == "Construction Mall") {
+            constructionMallZoneNum = zoneNum;
+            break;
+          }
+        }
+        if (!room.zones[constructionMallZoneNum].open) {
+          room.zones[constructionMallZoneNum].open = true;
+          io.sockets.to(rm).emit("zoneOpen", "Avocado quest complete!");
+        }
+      },
+      trigger: []
+    },
+    {
       name: "Combat Ready",
+      isMainQuest: false,
+      isHidden: false,
       condition: "Shoot 30 times",
       description: "Ready for the fight?",
       display: true,
@@ -347,6 +420,8 @@ function createPlayer(id, serverName, username) {
     },
     {
       name: "Newbie survivor",
+      isMainQuest: false,
+      isHidden: false,
       condition: "Survive for 60 seconds",
       description: "Hey, you're stil alive!",
       display: true,
@@ -360,10 +435,14 @@ function createPlayer(id, serverName, username) {
         return "("+Math.round((currentTime-player.questData.startTime)/1000)+"/"+60+")";
       },
       progressText: "",
+      complete: function(player) {
+
+      },
       trigger: ["Experienced survivor"]
     },
     {
       name: "Experienced survivor",
+      isMainQuest: false,
       condition: "Survive for 5 minutes",
       description: "Hey, you're stil alive!",
       display: false,
@@ -377,6 +456,9 @@ function createPlayer(id, serverName, username) {
         return "("+Math.round((currentTime-player.questData.startTime)/60000)+"/"+5+")";
       },
       progressText: "",
+      complete: function(player) {
+
+      },
       trigger: []
     }]
   };
@@ -500,7 +582,6 @@ function hasCollision(x, y, rm) {
   for (zoneNum in rooms[rm].zones) {
     if (!rooms[rm].zones[zoneNum].open
       && rooms[rm].zones[zoneNum].inside(gridX, gridY)) {
-      console.log("collision by zone"); /////*******
       return true;
     }
   }
@@ -660,6 +741,7 @@ function checkQuest(rm) {
               }
             }
           }
+          quest.complete(player);
           io.sockets.to(id).emit("questOver", quest.name, quest.condition, quest.description);
         }
       }
