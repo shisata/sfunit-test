@@ -329,6 +329,7 @@ window.addEventListener('mousemove', function (e) {
       }
     }
 
+    showQuests(players[myId]);
 
     // related to function 'showMessage'.
     if (messageOn && messageQueue.length >= 1) {
@@ -554,6 +555,25 @@ function showOtherPlayerData(player, playerIndex) {
 
 
 }
+function showQuests(player) {
+  var line = 0;
+  context.fillStyle = "#0AC";
+  context.strokeStyle = "rgb(255, 255, 255, 0.5)";
+  context.font = "16px Arial";
+  context.strokeText("Quests", 12, 150);
+  context.fillText("Quests", 12, 150);
+  context.font = "italic 13px Arial";
+  for (var i = 0; i < player.quests.length; i++) {
+    if (player.quests[i].display) {
+      context.strokeText("["+player.quests[i].name + "] " + player.quests[i].condition + " " + player.quests[i].progressText, 10, 170+line*20);
+      context.fillText("["+player.quests[i].name + "] " + player.quests[i].condition + " " + player.quests[i].progressText, 10, 170+line*20);
+      line += 1;
+      if (line > 10) {
+        break;
+      }
+    }
+  }
+}
 
 function showHealthBarAbove(x, y, health, maxHealth) {
   context.fillStyle = "#BBB";
@@ -614,6 +634,11 @@ function processMapDrawing(mapData){
       // img.onload = function(){
       //   allMapCtx.drawImage(img, 300, 300, 300, 300);
       // }
+      var textureLoaded = false;
+      texture.onload = function(){
+        textureLoaded = true;
+      }
+
       if(mapData[x][y] != '' && mapData[x][y].name == "floor")
       {
         allMapCtx.beginPath();
@@ -628,10 +653,16 @@ function processMapDrawing(mapData){
         // var pattern = ctx.createPattern(source, "repeat");
         allMapCtx.beginPath();
         allMapCtx.rect(x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+        //TODO: MAPTEXTURE Problem here below lines!!
         // allMapCtx.fillStyle = texture.src;
         allMapCtx.fillStyle = "#333";
+        // while (!textureLoaded) {
+        //   console.log("waiting for the texture...");
+        // }
+
         allMapCtx.fill();
       }
+
 
       if (mapData[x][y] == ''){
         line += "0";
@@ -693,7 +724,7 @@ socket.on("questOver", function(qName, qCondition, qDescription) {
   questName = qName;
   questCondition = qCondition;
   questDescription = qDescription;
-  console.log("show quest: ", qName);
+  // console.log("show quest: ", qName);
 });
 
 //=============================================================================
