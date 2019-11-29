@@ -107,7 +107,7 @@ function getWeather(position,time) {
 function rain() {
   console.log('rain() called');
   var canvas = $('#rain1')[0];
-  
+
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   canvas.style.visibility = "visible";
@@ -815,10 +815,10 @@ function disableWeather(){
 // ============ END SNOW =============
 //When the document is ready, evoke the followed function
 $(document).ready(function(){
-  // getLocation();
-  // setInterval(getLocation,30000);
+  getLocation();
+  setInterval(getLocation,30000);
   // moon();
-  rain();
+  // rain();
   // rainLightning();
   // sun();
   // snowy();
