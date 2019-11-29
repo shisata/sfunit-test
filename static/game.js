@@ -43,7 +43,7 @@ var questDescription = "";
 
 var socket = io();
 socket.on('message', function(data) {
-  // console.log(data);
+  showMessage(data);
 });
 
 //socket id of the client. players[myId] will return the specific player's data.
@@ -208,6 +208,7 @@ setInterval(function() {
   socket.emit('shoot', shoot);
   socket.emit('interact', action);
   shoot.shootBullet = false;
+
   //makeSound("bang");
 }, 1000 / 30);
 
@@ -230,7 +231,7 @@ window.addEventListener('mousemove', function (e) {
 });
 
   var context = canvas.getContext('2d');
-  socket.on('state', function(players, projectiles, enemies, zones) {
+  socket.on('state', function(players, projectiles, enemies, zones, teamQuests) {
     //console.log("socket event state called");
     if (players[myId] == 0) {
       //Died
@@ -329,6 +330,7 @@ window.addEventListener('mousemove', function (e) {
       }
     }
 
+    showQuests(players[myId], teamQuests);
 
     // related to function 'showMessage'.
     if (messageOn && messageQueue.length >= 1) {
@@ -554,6 +556,53 @@ function showOtherPlayerData(player, playerIndex) {
 
 
 }
+function showQuests(player, teamQuests) {
+  var line = 0;
+  context.fillStyle = "#0AC";
+  context.strokeStyle = "rgb(255, 255, 255, 0.5)";
+  context.font = "16px Arial";
+  context.strokeText("Quests", 12, 150);
+  context.fillText("Quests", 12, 150);
+
+  context.fillStyle = "#0D8";
+  var i = 0;
+  for (; i < teamQuests.length; i++) {
+    if (teamQuests[i].display) {
+      if (teamQuests[i].isMainQuest) {
+          context.font = "bold italic 13px Arial";
+      }
+      else {
+          context.font = "italic 13px Arial";
+      }
+      context.strokeText("["+teamQuests[i].name + "] " + teamQuests[i].condition + " " + teamQuests[i].progressText, 10, 170+line*20);
+      context.fillText("["+teamQuests[i].name + "] " + teamQuests[i].condition + " " + teamQuests[i].progressText, 10, 170+line*20);
+      line += 1;
+      if (line > 10) {
+        break;
+      }
+    }
+  }
+
+  context.fillStyle = "#0AC";
+  context.strokeStyle = "rgb(255, 255, 255, 0.5)";
+  for (; i < player.quests.length+teamQuests.length; i++) {
+    var j = i-teamQuests.length;
+    if (player.quests[j].display) {
+      if (player.quests[j].isMainQuest) {
+          context.font = "bold italic 13px Arial";
+      }
+      else {
+          context.font = "italic 13px Arial";
+      }
+      context.strokeText("["+player.quests[j].name + "] " + player.quests[j].condition + " " + player.quests[j].progressText, 10, 170+line*20);
+      context.fillText("["+player.quests[j].name + "] " + player.quests[j].condition + " " + player.quests[j].progressText, 10, 170+line*20);
+      line += 1;
+      if (line > 10) {
+        break;
+      }
+    }
+  }
+}
 
 function showHealthBarAbove(x, y, health, maxHealth) {
   context.fillStyle = "#BBB";
@@ -614,6 +663,11 @@ function processMapDrawing(mapData){
       // img.onload = function(){
       //   allMapCtx.drawImage(img, 300, 300, 300, 300);
       // }
+      var textureLoaded = false;
+      texture.onload = function(){
+        textureLoaded = true;
+      }
+
       if(mapData[x][y] != '' && mapData[x][y].name == "floor")
       {
         allMapCtx.beginPath();
@@ -628,10 +682,16 @@ function processMapDrawing(mapData){
         // var pattern = ctx.createPattern(source, "repeat");
         allMapCtx.beginPath();
         allMapCtx.rect(x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+        //TODO: MAPTEXTURE Problem here below lines!!
         // allMapCtx.fillStyle = texture.src;
         allMapCtx.fillStyle = "#333";
+        // while (!textureLoaded) {
+        //   console.log("waiting for the texture...");
+        // }
+
         allMapCtx.fill();
       }
+
 
       if (mapData[x][y] == ''){
         line += "0";
@@ -641,6 +701,7 @@ function processMapDrawing(mapData){
         line += "!";
       }
     }
+
   }
   //console.log(mapData);/////*****
   mapImage.src = allMap.toDataURL();
@@ -693,7 +754,11 @@ socket.on("questOver", function(qName, qCondition, qDescription) {
   questName = qName;
   questCondition = qCondition;
   questDescription = qDescription;
-  console.log("show quest: ", qName);
+  // console.log("show quest: ", qName);
+});
+
+socket.on("zoneOpen", function(zoneNum) {
+  console.log(zoneNum);
 });
 
 //=============================================================================
