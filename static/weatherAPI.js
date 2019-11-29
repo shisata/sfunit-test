@@ -107,6 +107,7 @@ function getWeather(position,time) {
 function rain() {
   console.log('rain() called');
   var canvas = $('#rain1')[0];
+  
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   canvas.style.visibility = "visible";
