@@ -817,9 +817,9 @@ $(document).ready(function(){
   // getLocation();
   // setInterval(getLocation,30000);
   // moon();
-  // rain();
+  rain();
   // rainLightning();
   // sun();
-  snowy();
+  // snowy();
   // disableWeather();
 });
