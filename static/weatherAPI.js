@@ -105,7 +105,9 @@ function getWeather(position,time) {
 };
 
 function rain() {
+  console.log('rain() called');
   var canvas = $('#rain1')[0];
+
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   canvas.style.visibility = "visible";
@@ -165,6 +167,7 @@ function rain() {
 
 
 function rainLightning() {
+    console.log('rainLightning() evoked');
     var canvas1 = document.getElementById('rain1');
     var canvas2 = document.getElementById('rain2');
     var canvas3 = document.getElementById('rain3');
@@ -372,7 +375,7 @@ function rainLightning() {
 
 
 function moon(){
-
+  console.log('moon() called');
 	var meteorSky = document.getElementById('moon');
   meteorSky.style.visibility = 'visible';
   meteorSky.width = window.innerWidth;
@@ -667,6 +670,7 @@ function nightSky(id, w, h, options) {
 // ========== MOON ===============
 // =========== SUN =============
 function sun(){
+  console.log('Sun() called');
   document.querySelector('#sun').style.visibility = 'visible';
 
   // var game = document.getElementById('canvas');
@@ -680,7 +684,7 @@ function sun(){
 // ============= END SUN ============
 // =========== SNOW ================
 function snowy() {
-
+  console.log('snowy() evoked');
   (function() {
       var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame ||
       function(callback) {

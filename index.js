@@ -293,10 +293,10 @@ setInterval(function() {
         checkQuest(rm);
         //console.log("LOGGING rm", rm);
         io.sockets.to(rm).emit('state', rooms[rm].players,
-          rooms[rm].projectiles, rooms[rm].enemies, rooms[rm].zones);
+          rooms[rm].projectiles, rooms[rm].enemies, rooms[rm].zones, rooms[rm].teamQuests);
       }
   }
-}, 1000 / 1);
+}, 1000 / 30);
 
 
 
@@ -310,8 +310,8 @@ function createPlayer(id, serverName, username) {
   rooms[serverName].players[id] = {
     playerID: rooms[serverName].players.numPlayers,
     username: username,
-    x: 211 * GRID_SIZE,
-    y: 147 * GRID_SIZE,
+    x: 259 * GRID_SIZE,
+    y: 169 * GRID_SIZE,
     maxHealth: 20,
     health: 20,
     healthRecoverRate: 1,
@@ -330,7 +330,68 @@ function createPlayer(id, serverName, username) {
       startTime: new Date(),
       q1Over: false,
       q2Over: false
-    }
+    },
+    quests: [
+    {
+      name: "Combat Ready",
+      isMainQuest: false,
+      isHidden: false,
+      condition: "Shoot 30 times",
+      description: "Ready for the fight?",
+      display: false,
+      checkCondition: function(player){
+        return (player.questData.bulletsTotal >= 30);
+      },
+      clear: false,
+      progress: function(player){
+        return "("+player.questData.bulletsTotal+"/"+30+")";
+      },
+      progressText: "",
+      trigger: []
+    },
+    {
+      name: "Newbie survivor",
+      isMainQuest: false,
+      isHidden: false,
+      condition: "Survive for 60 seconds",
+      description: "Hey, you're stil alive!",
+      display: true,
+      checkCondition: function(player){
+        var currentTime = new Date();
+        return (currentTime - player.questData.startTime > 60*1000);
+      },
+      clear: false,
+      progress: function(player){
+        var currentTime = new Date();
+        return "("+Math.round((currentTime-player.questData.startTime)/1000)+"/"+60+")";
+      },
+      progressText: "",
+      complete: function(player) {
+
+      },
+      trigger: ["Experienced survivor"]
+    },
+    {
+      name: "Experienced survivor",
+      isMainQuest: false,
+      condition: "Survive for 5 minutes",
+      description: "Hey, you're stil alive!",
+      display: false,
+      checkCondition: function(player){
+        var currentTime = new Date();
+        return (currentTime - player.questData.startTime > 5*60*1000);
+      },
+      clear: false,
+      progress: function(player){
+        var currentTime = new Date();
+        return "("+Math.round((currentTime-player.questData.startTime)/60000)+"/"+5+")";
+      },
+      progressText: "",
+      complete: function(player) {
+
+      },
+      trigger: []
+    }]
   };
 }
 
@@ -372,6 +433,98 @@ function roomData(serverName) {
   room.spawnRate = 2000;
 
   room.zones = {};
+
+  room.teamQuests = [
+    {
+      name: "Trapped on Mountain", //TODO: change after demo classroom decided!
+      isMainQuest: true,
+      isHidden: false,
+      condition: "Go to the Avocado Garden",
+      description: "The heart of the Special Fortification Unit",
+      display: true,
+      checkCondition: function(rm){
+        var isComplete = true;
+        for (var id in rooms[rm].players) {
+          var player = rooms[rm].players[id];
+          if (!player || !player.x) {
+            continue;
+          }
+          if (!(player.x > 268*GRID_SIZE && player.x < 307*GRID_SIZE
+            && player.y > 153*GRID_SIZE && player.y < 196*GRID_SIZE)) {
+            isComplete = false;
+          }
+        }
+        return isComplete;
+      },
+      clear: false,
+      progress: function(rm){
+        return "(Incomplete)";
+      },
+      progressText: "",
+      complete: function(rm) {
+        room = rooms[rm];
+        var qNum; //index of this quest
+        var player;
+
+        //giving values to qNum, player, and quest.
+        for (var id in room.players) {
+          //just choose one player and break
+          player = room.players[id];
+          if (!player || !player.quests) {
+            continue;
+          }
+          break;
+        }
+        for (var q in room.teamQuests) {
+          if (room.teamQuests[q].name == "Trapped on Mountain") {
+            qNum = q;
+          }
+        }
+        var quest = room.teamQuests[qNum];
+
+        //Complete ALL player's this quest, with scores for all.
+        for (var id in room.players) {
+          var otherPlayer = room.players[id];
+          if (!otherPlayer) {
+            continue;
+          }
+          if (!otherPlayer.quests) {
+            console.log(otherPlayer);
+            continue;
+          }
+          otherPlayer.score += 100;
+          //trigger next quests
+          for (var i = 0; i < quest.trigger.length; i++) {
+            for (var nextQ in otherPlayer.quests) {
+              if (otherPlayer.quests[nextQ].name == quest.trigger[i] && !otherPlayer.quests[nextQ].clear) {
+                otherPlayer.quests[nextQ].display = true;
+              }
+            }
+          }
+        }
+        io.sockets.to(rm).emit("message",
+          "Welcome, player.");
+        io.sockets.to(rm).emit("message",
+          "I am Avocado,\nOwner of S.F.U.");
+        io.sockets.to(rm).emit("message",
+          "What story should I write here? \nGimme ideas @channel");
+        io.sockets.to(rm).emit("message",
+          "Anyway! Go to Rotunda. I will open up the space for you.");
+        //construction mall open
+        var constructionMallZoneNum = 0;
+        for (var zoneNum in room.zones) {
+          if (room.zones[zoneNum].name == "Construction Mall") {
+            constructionMallZoneNum = zoneNum;
+            break;
+          }
+        }
+        if (!room.zones[constructionMallZoneNum].open) {
+          room.zones[constructionMallZoneNum].open = true;
+          io.sockets.to(rm).emit("zoneOpen", "Avocado quest complete!");
+        }
+      },
+      trigger: ["Combat Ready"]
+    }];
 
   return room
 }
@@ -453,7 +606,6 @@ function hasCollision(x, y, rm) {
   for (zoneNum in rooms[rm].zones) {
     if (!rooms[rm].zones[zoneNum].open
       && rooms[rm].zones[zoneNum].inside(gridX, gridY)) {
-      console.log("collision by zone"); /////*******
       return true;
     }
   }
@@ -462,17 +614,17 @@ function hasCollision(x, y, rm) {
     || rooms[rm].mapData[gridX] == undefined
     || rooms[rm].mapData[gridX][gridY] == undefined) {
     // console.log("collision " + gridX + ", " + gridY)
-    console.log("inside exception");
+    // console.log("inside exception");
     return false;
   } else if(rooms[rm].mapData[gridX][gridY].collision == true){
     // console.log("collision " + gridX + ", " + gridY)
-    console.log("returning from collision");
+    // console.log("returning from collision");
     return true;
   }
 
 
   console.log(rooms[rm].mapData[gridX][gridY].collision, x, y);
-  console.log("outside exception");
+  // console.log("outside exception");
   return false;
 }
 
@@ -596,24 +748,75 @@ function recoverPlayerHealth(rm) {
 }
 
 function checkQuest(rm) {
-//checking quest conditions! This part will be very hard to refactor, don't try....
+  for (var qNum in rooms[rm].teamQuests) {
+    if (!rooms[rm].teamQuests[qNum].clear && rooms[rm].teamQuests[qNum].display) {
+      var quest = rooms[rm].teamQuests[qNum];
+      rooms[rm].teamQuests[qNum].progressText = quest.progress(player);
+      if (quest.checkCondition(rm)) {
+        //quest complete!
+        rooms[rm].teamQuests[qNum].clear = true;
+        rooms[rm].teamQuests[qNum].display = false;
+        //trigger next quests
+        for (var i = 0; i < quest.trigger.length; i++) {
+          for (var nextQ in rooms[rm].teamQuests) {
+            if (rooms[rm].teamQuests[nextQ].name == quest.trigger[i] && !rooms[rm].teamQuests[nextQ].clear) {
+              rooms[rm].teamQuests[nextQ].display = true;
+              continue;
+            }
+          }
+          for (var id in rooms[rm].players) {
+            var player = rooms[rm].players[id];
+            for (var nextQ in player.quests) {
+              if (player.quests[nextQ].name == quest.trigger[i] && !player.quests[nextQ].clear) {
+                player.quests[nextQ].display = true;
+                continue;
+              }
+            }
+          }
+
+        }
+        quest.complete(rm);
+        console.log("***first main quest complete!!!***");
+        io.sockets.to(rm).emit("questOver", quest.name, quest.condition, quest.description);
+      }
+
+    }
+  }
+
+  //checking quest conditions! This part will be very hard to refactor, don't try....
   for (var id in rooms[rm].players) {
     var player = rooms[rm].players[id];
-
 
     if (player == undefined || player.questData == undefined) {
       continue;
     }
-    if (!player.questData.q1Over && player.questData.bulletsTotal == 30) {
-      io.sockets.to(id).emit("questOver", "Combat Ready", "Shoot 30 times", "Ready for the fight?");
-      player.questData.q1Over = true;
-    }
-
-    currentTime = new Date();
-    if (!player.questData.q2Over && currentTime - player.questData.startTime > 10*1000) {
-      io.sockets.to(id).emit("questOver", "Newbie survivor", "Survive for 10 seconds", "Hey, you're stil alive!");
-      player.questData.q2Over = true;
-      console.log("emit new survivor");
+    for (var qNum in player.quests) {
+      if (!player.quests[qNum].clear && player.quests[qNum].display) {
+        var quest = player.quests[qNum];
+        player.quests[qNum].progressText = quest.progress(player);
+        if (quest.checkCondition(player)) {
+          //quest complete!
+          player.quests[qNum].clear = true;
+          player.quests[qNum].display = false;
+          //trigger next quests
+          for (var i = 0; i < quest.trigger.length; i++) {
+            for (var nextQ in rooms[rm].teamQuests) {
+              if (rooms[rm].teamQuests[nextQ].name == quest.trigger[i] && !rooms[rm].teamQuests[nextQ].clear) {
+                rooms[rm].teamQuests[nextQ].display = true;
+                continue;
+              }
+            }
+            for (var nextQ in player.quests) {
+              if (player.quests[nextQ].name == quest.trigger[i] && !player.quests[nextQ].clear) {
+                player.quests[nextQ].display = true;
+                continue;
+              }
+            }
+          }
+          quest.complete(player);
+          io.sockets.to(id).emit("questOver", quest.name, quest.condition, quest.description);
+        }
+      }
     }
 
   }
@@ -864,15 +1067,44 @@ function aStarSearch(startState, goal, rm) {
 //Return successors of state
 //Modify this to avoid walls
 function getSuccessors(state, rm) {
-  //Use 5 as arbitraty number
-  stateL = [[state[0] - (1 * GRID_SIZE), state[1]], "left", 1];
-  // console.log("logging state contents", state[0], state[1]);
-  // stateL = [[state[0] - (5), state[1]], "left", 1];
-  console.log("/////////////////////////////////////////////////////////before");
-  if(hasCollision(stateL[0], stateL[1], rm)) {
-    console.log("FAZAL IS THE BIG Guy");
+
+  console.log("running assertions");
+
+  var gridX = Math.floor(state[0] / GRID_SIZE);
+  var gridY = Math.floor(state[1] / GRID_SIZE);
+
+  console.log("for one");
+  for (zoneNum in rooms[rm].zones) {
+    if (!rooms[rm].zones[zoneNum].open
+      && rooms[rm].zones[zoneNum].inside(gridX, gridY)) {
+      console.log("true one");
+      return true;
+      }
   }
-  console.log("/////////////////////////////////////////////////////////after");
+
+  // // console.log("logging x, y", x, y, "logging grids", gridX, gridY);
+  // if(rooms[rm] == undefined || rooms[rm].mapData == undefined
+  //   || rooms[rm].mapData[gridX] == undefined
+  //   || rooms[rm].mapData[gridX][gridY] == undefined) {
+  //   // console.log("collision " + gridX + ", " + gridY)
+  //   // console.log("inside exception");
+  //   return false;
+  // } else if(rooms[rm].mapData[gridX][gridY].collision == true){
+  //   // console.log("collision " + gridX + ", " + gridY)
+  //   // console.log("returning from collision");
+  //   return true;
+  // }
+
+  console.log("if one");
+  console.log("rooms[rm] == undefined", rooms[rm] == undefined);
+  console.log("rooms[rm].mapData == undefined", rooms[rm].mapData == undefined);
+  console.log("rooms[rm].mapData[gridX] == undefined", rooms[rm].mapData[gridX] == undefined);
+  console.log("rooms[rm].mapData[gridX][gridY] == undefined", rooms[rm].mapData[gridX][gridY] == undefined);
+  console.log("rooms[rm].mapData[gridX][gridY].collision == true", rooms[rm].mapData[gridX][gridY].collision == true);
+  console.log("end assertions");
+
+  stateL = [[state[0] - (1 * GRID_SIZE), state[1]], "left", 1];
+
   if(hasCollision(stateL[0], stateL[1], rm)) {
     console.log("has collision");
     stateL = 0;
