@@ -623,7 +623,7 @@ function hasCollision(x, y, rm) {
   }
 
 
-  console.log(rooms[rm].mapData[gridX][gridY].collision, x, y);
+  // console.log(rooms[rm].mapData[gridX][gridY].collision, x, y);
   // console.log("outside exception");
   return false;
 }
@@ -918,6 +918,7 @@ function moveEnemies(rm) {
      var originY = rooms[rm].enemies[id].y;
      rooms[rm].enemies[id].x += rooms[rm].enemies[id].vx/updatePerSecond;
      rooms[rm].enemies[id].y += rooms[rm].enemies[id].vy/updatePerSecond;
+    //  console.log("logging enemy coordinates", rooms[rm].enemies[id].x, rooms[rm].enemies[id].y);
      if(hasCollision(rooms[rm].enemies[id].x, rooms[rm].enemies[id].y, rm)){
        rooms[rm].enemies[id].x = originX;
        rooms[rm].enemies[id].y = originY;
@@ -1009,6 +1010,7 @@ function youFailed(player, rm) {
 
 }
 
+//Runs A* to generate a route to get to the player
 function aStarSearch(startState, goal, rm) {
   var explored = [];
   var parents = {};
@@ -1040,16 +1042,7 @@ function aStarSearch(startState, goal, rm) {
     //Expand new successors
     successors = getSuccessors(current[0], rm);
     for (successor in successors) {
-      // if(successors = [0,0,0,0]) {
-      //   console.log("successors", successors)
-      //   console.log("A* path got stuck");
-      //   break;
-      // }
-      if(successors[successor] == 0) {
-        console.log("successors", successors);
-        console.log("collision detected", successor);
-        continue;
-      }
+      if(successors[successor] == 0) continue;
       expandedState = successors[successor];
       stateCoords = expandedState[0]
       if (!explored.find( function(item) {
@@ -1068,68 +1061,25 @@ function aStarSearch(startState, goal, rm) {
 //Modify this to avoid walls
 function getSuccessors(state, rm) {
 
-  console.log("running assertions");
+  //Move Left
+  stateL = [[state[0] - (2 * GRID_SIZE), state[1]], "left", 1];
+  stateLCoords = stateL[0];
+  if(hasCollision(stateLCoords[0], stateLCoords[1], rm)) stateL = 0;
 
-  var gridX = Math.floor(state[0] / GRID_SIZE);
-  var gridY = Math.floor(state[1] / GRID_SIZE);
+  //Move Right
+  stateR = [[state[0] + (2 * GRID_SIZE), state[1]], "right", 1];
+  stateRCoords = stateR[0];
+  if(hasCollision(stateRCoords[0], stateRCoords[1], rm)) stateR = 0
 
-  console.log("for one");
-  for (zoneNum in rooms[rm].zones) {
-    if (!rooms[rm].zones[zoneNum].open
-      && rooms[rm].zones[zoneNum].inside(gridX, gridY)) {
-      console.log("true one");
-      return true;
-      }
-  }
+  //Move Up
+  stateU = [[state[0], state[1] - (2 * GRID_SIZE)], "up", 1];
+  stateUCoords = stateU[0];
+  if(hasCollision(stateUCoords[0], stateUCoords[1], rm)) stateU = 0
 
-  // // console.log("logging x, y", x, y, "logging grids", gridX, gridY);
-  // if(rooms[rm] == undefined || rooms[rm].mapData == undefined
-  //   || rooms[rm].mapData[gridX] == undefined
-  //   || rooms[rm].mapData[gridX][gridY] == undefined) {
-  //   // console.log("collision " + gridX + ", " + gridY)
-  //   // console.log("inside exception");
-  //   return false;
-  // } else if(rooms[rm].mapData[gridX][gridY].collision == true){
-  //   // console.log("collision " + gridX + ", " + gridY)
-  //   // console.log("returning from collision");
-  //   return true;
-  // }
-
-  console.log("if one");
-  console.log("rooms[rm] == undefined", rooms[rm] == undefined);
-  console.log("rooms[rm].mapData == undefined", rooms[rm].mapData == undefined);
-  console.log("rooms[rm].mapData[gridX] == undefined", rooms[rm].mapData[gridX] == undefined);
-  console.log("rooms[rm].mapData[gridX][gridY] == undefined", rooms[rm].mapData[gridX][gridY] == undefined);
-  console.log("rooms[rm].mapData[gridX][gridY].collision == true", rooms[rm].mapData[gridX][gridY].collision == true);
-  console.log("end assertions");
-
-  stateL = [[state[0] - (1 * GRID_SIZE), state[1]], "left", 1];
-
-  if(hasCollision(stateL[0], stateL[1], rm)) {
-    console.log("has collision");
-    stateL = 0;
-  }
-
-  stateR = [[state[0] + (1 * GRID_SIZE), state[1]], "right", 1];
-  // stateR = [[state[0] + (5), state[1]], "right", 1];
-  if(hasCollision(stateR[0], stateR[1], rm)) {
-    console.log("has collision");
-    stateR = 0
-  }
-
-  stateU = [[state[0], state[1] - (1 * GRID_SIZE)], "up", 1];
-  // stateU = [[state[0], state[1] - (5)], "up", 1];
-  if(hasCollision(stateU[0], stateU[1], rm)) {
-    console.log("has collision");
-    stateU = 0
-  }
-
-  stateD = [[state[0], state[1] + (1 * GRID_SIZE)], "down", 1];
-  // stateD = [[state[0], state[1] + (5)], "down", 1];
-  if(hasCollision(stateD[0], stateD[1], rm)) {
-    console.log("has collision");
-    stateD = 0
-  }
+  //Move Down
+  stateD = [[state[0], state[1] + (2 * GRID_SIZE)], "down", 1];
+  stateDCoords = stateD[0];
+  if(hasCollision(stateDCoords[0], stateDCoords[1], rm)) stateD = 0
 
   var states = [stateL, stateR, stateU, stateD];
   return states;
@@ -1142,20 +1092,26 @@ function isGoalState(state, goal) {
   statex = Math.floor(state[0] / (1 * GRID_SIZE));
   statey = Math.floor(state[1] / (1 * GRID_SIZE));
 
-  if ( (goalx == statex) && (goaly == statey) ) {
-    return true;
-  }
-  else {
-    return false;
-  }
+  if ((goalx == statex) && (goaly == statey)) return true;
+  else return false;
 }
 
 //Return the manhattan distance between position and goal
 function manhattanHeuristic(position, goal) {
-  // console.log("position", position, "goal", goal);
   var xy1 = [(position[0] / (1 * GRID_SIZE)), (position[1] / (1 * GRID_SIZE))];
   var xy2 = [(goal[0] / (1 * GRID_SIZE)), (goal[1] / (1 * GRID_SIZE))];
   return Math.abs(xy1[0] - xy2[0]) + Math.abs(xy1[1] - xy2[1]);
+}
+
+//Return the path to players position
+function makeList(parents, goal) {
+  console.log("making path");
+  var path = [];
+  while (goal[1] != [] && parents[goal]) {
+    path.push(goal[1]);
+    goal = parents[goal];
+  }
+  return path.reverse();
 }
 
 //Find/return position of player closest to enemy
@@ -1180,17 +1136,6 @@ function closestPlayerXY(rm, enemy) {
   }
 }
 
-//Return the path to players position
-function makeList(parents, goal) {
-  console.log("making path");
-  var path = [];
-  while (goal[1] != [] && parents[goal]) {
-    path.push(goal[1]);
-    goal = parents[goal];
-  }
-
-  return path.reverse();
-}
 
 function testAstar(rm) {
   if (!rooms[rm] || rooms[rm].numplayers <= 0) {
