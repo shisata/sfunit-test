@@ -57,7 +57,7 @@ function getWeather(position,time) {
     var weather = data.weather[0].main;
     var icon = `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
       // $('#label').html(weather);
-    const nighttime ='18:00:00';
+    const nighttime ='17:00:00';
     if (icon)
       $("#icon").attr("src",icon);
     else {
@@ -815,8 +815,8 @@ function disableWeather(){
 // ============ END SNOW =============
 //When the document is ready, evoke the followed function
 $(document).ready(function(){
-    // getLocation();
-    // setInterval(getLocation,30000);
+  getLocation();
+  setInterval(getLocation,30000);
   // moon();
   // rain();
   // rainLightning();
