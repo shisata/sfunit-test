@@ -1406,9 +1406,51 @@
       {
         "x": 102,
         "y": 202,
-        "width": 10,
+        "width": 15,
         "height": 2,
         "memo":"Rotunda lower end _"
+      },
+      {
+        "x":117,
+        "y":198,
+        "width":2,
+        "height":6,
+        "memo":"Rotunda low"
+      },
+      {
+        "x": 117,
+        "y": 198,
+        "width": 8,
+        "height": 2,
+        "memo":"Rotunda low"
+      },
+      {
+        "x": 125,
+        "y": 191,
+        "width": 2,
+        "height": 8,
+        "memo":"Rotunda low"
+      },
+      {
+        "x": 125,
+        "y": 191,
+        "width": 6,
+        "height": 2,
+        "memo":"Rotunda low"
+      },
+      {
+        "x": 130,
+        "y": 185,
+        "width": 2,
+        "height": 8,
+        "memo":"Rotunda low"
+      },
+      {
+        "x": 130,
+        "y": 185,
+        "width": 21,
+        "height": 2,
+        "memo":"Rotunda low"
       },
       {
         "x": 138,
@@ -1563,11 +1605,380 @@
       {
         "x" : 296,
         "y": 92,
-        "width": 26,
+        "width": 30,
         "height": 4,
         "color": "#cbb",
         "memo": "rcb extra 2"
+      },
+      {
+        "x" : 307,
+        "y": 95,
+        "width": 5,
+        "height": 17,
+        "color": "#cbb",
+        "memo": "rcb extra 3"
+      },
+      {
+        "x" : 300,
+        "y": 111,
+        "width": 18,
+        "height": 7,
+        "color": "#cbb",
+        "memo": "rcb extra 4"
+      },
+      {
+        "x" : 316,
+        "y": 135,
+        "width": 12,
+        "height": 11,
+        "color": "#cbb",
+        "memo": "south-western hallway"
+      },
+      {
+        "x" : 327,
+        "y": 139,
+        "width": 98,
+        "height": 9,
+        "color": "#cbb",
+        "memo": "south-western hallway"
+      },
+      {
+        "x" : 337,
+        "y": 130,
+        "width": 31,
+        "height": 11,
+        "color": "#cbb",
+        "memo": "south-western hallway"
+      },
+      {
+        "x" : 374,
+        "y": 130,
+        "width": 40,
+        "height": 11,
+        "color": "#cbb",
+        "memo": "south-western hallway"
+      },
+      {
+        "x" : 399,
+        "y": 108,
+        "width": 13,
+        "height": 24,
+        "color": "#cbb",
+        "memo": "south-western hallway"
+      },
+      {
+        "x" : 399,
+        "y": 97,
+        "width": 18,
+        "height": 11,
+        "color": "#cbb",
+        "memo": "south-western hallway"
+      },
+      {
+        "x" : 376,
+        "y": 97,
+        "width": 24,
+        "height": 5,
+        "color": "#cbb",
+        "memo": "south-western hallway"
+      },
+      {
+        "x" : 338,
+        "y": 97,
+        "width": 28,
+        "height": 5,
+        "color": "#cbb",
+        "memo": "south-western hallway"
+      },
+      {
+        "x" : 338,
+        "y": 97,
+        "width": 6,
+        "height": 41,
+        "color": "#cbb",
+        "memo": "south-western hallway"
+      },
+      {
+        "x" : 366,
+        "y": 100,
+        "width": 10,
+        "height": 2,
+        "color": "#cbb",
+        "memo": "SCK"
+      },
+      {
+        "x" : 377,
+        "y": 244,
+        "width": 50,
+        "height": 23,
+        "color": "#cbb",
+        "memo": "SCK"
+      },
+      {
+        "x" : 377,
+        "y": 226,
+        "width": 43,
+        "height": 19,
+        "color": "#cbb",
+        "memo": "SCK"
+      },
+      {
+        "x" : 377,
+        "y": 223,
+        "width": 43,
+        "height": 4,
+        "color": "#cbb",
+        "memo": "SCK"
+      },
+      {
+        "x" : 382,
+        "y": 218,
+        "width": 33,
+        "height": 5,
+        "color": "#cbb",
+        "memo": "SCK"
+      },
+      {
+        "x" : 380,
+        "y": 210,
+        "width": 45,
+        "height": 8,
+        "color": "#cbb",
+        "memo": "SCK"
+      },
+      {
+        "x" : 307,
+        "y": 204,
+        "width": 85,
+        "height": 13,
+        "color": "#cbb",
+        "memo": "SCK"
+      },
+      {
+        "x" : 300,
+        "y": 212,
+        "width": 67,
+        "height": 52,
+        "color": "#cbb",
+        "memo": "SCK"
+      },
+      {
+        "x" : 326,
+        "y": 217,
+        "width": 12,
+        "height": 17,
+        "color": "white",
+        "memo": "SCK"
+      },
+      {
+        "x" : 362,
+        "y": 217,
+        "width": 5,
+        "height": 15,
+        "color": "white",
+        "memo": "SCK"
+      },
+      {
+        "x" : 360,
+        "y": 240,
+        "width": 7,
+        "height": 17,
+        "color": "white",
+        "memo": "SCK"
+      },
+      {
+        "x" : 352,
+        "y": 244,
+        "width": 8,
+        "height": 13,
+        "color": "white",
+        "memo": "SCK"
+      },
+      {
+        "x" : 324,
+        "y": 243,
+        "width": 18,
+        "height": 14,
+        "color": "white",
+        "memo": "SCK"
+      },
+      {
+        "x" : 321,
+        "y": 253,
+        "width": 3,
+        "height": 4,
+        "color": "white",
+        "memo": "SCK"
+      },
+      {
+        "x" : 366,
+        "y": 233,
+        "width": 11,
+        "height": 5,
+        "color": "#cbb",
+        "memo": "SCK"
+      },
+      {
+        "x" : 259,
+        "y": 205,
+        "width": 32,
+        "height": 59,
+        "color": "#cbb",
+        "memo": "SCK"
+      },
+      {
+        "x" : 249,
+        "y": 211,
+        "width": 10,
+        "height": 53,
+        "color": "#cbb",
+        "memo": "SCK"
+      },
+      {
+        "x" : 242,
+        "y": 259,
+        "width": 7,
+        "height": 6,
+        "color": "#cbb",
+        "memo": "SCK"
+      },
+      {
+        "x" : 245,
+        "y": 228,
+        "width": 4,
+        "height": 5,
+        "color": "#cbb",
+        "memo": "SCK"
+      },
+      {
+        "x" : 291,
+        "y": 230,
+        "width": 10,
+        "height": 5,
+        "color": "#cbb",
+        "memo": "SCK"
+      },
+      {
+        "x" : 291,
+        "y": 259,
+        "width": 9,
+        "height": 5,
+        "color": "#cbb",
+        "memo": "SCK"
+      },
+      {
+        "x" : 271,
+        "y": 236,
+        "width": 4,
+        "height": 14,
+        "color": "white",
+        "memo": "SCK"
+      },
+      {
+        "x" : 271,
+        "y": 250,
+        "width": 2,
+        "height": 7,
+        "color": "white",
+        "memo": "SCK"
+      },
+      {
+        "x" : 267,
+        "y": 206,
+        "width": 11,
+        "height": 2,
+        "color": "white",
+        "memo": "SCK"
+      },
+      {
+        "x" : 272,
+        "y": 208,
+        "width": 6,
+        "height": 2,
+        "color": "white",
+        "memo": "SCK"
+      },
+      {
+        "x" : 272,
+        "y": 210,
+        "width": 3,
+        "height": 18,
+        "color": "white",
+        "memo": "SCK"
+      },
+      {
+        "x" : 174,
+        "y": 144,
+        "width": 50,
+        "height": 24,
+        "color": "#cbb",
+        "memo": "library"
+      },
+      {
+        "x" : 180,
+        "y": 186,
+        "width": 42,
+        "height": 7,
+        "color": "#cbb",
+        "memo": "bookstore"
+      },
+      {
+        "x" : 172,
+        "y": 192,
+        "width": 55,
+        "height": 5,
+        "color": "#cbb",
+        "memo": "bookstore"
+      },
+      {
+        "x" : 166,
+        "y": 197,
+        "width": 61,
+        "height": 19,
+        "color": "#cbb",
+        "memo": "bookstore"
+      },
+      {
+        "x" : 170,
+        "y": 216,
+        "width": 47,
+        "height": 4,
+        "color": "#cbb",
+        "memo": "bookstore"
+      },
+      {
+        "x" : 178,
+        "y": 220,
+        "width": 39,
+        "height": 2,
+        "color": "#cbb",
+        "memo": "bookstore"
+      },
+      {
+        "x" : 178,
+        "y": 222,
+        "width": 37,
+        "height": 4,
+        "color": "#cbb",
+        "memo": "bookstore"
+      },
+      {
+        "x" : 189,
+        "y": 226,
+        "width": 24,
+        "height": 6,
+        "color": "#cbb",
+        "memo": "bookstore"
+      },
+      {
+        "x" : 200,
+        "y": 231,
+        "width": 13,
+        "height": 14,
+        "color": "#cbb",
+        "memo": "bookstore"
       }
+
     ],
     "zone": [
       {
@@ -1655,7 +2066,7 @@
         "num": 8,
         "name": "Construction Mall",
         "description": "Meant to be Convocation Mall, however...",
-        "open": false,
+        "open": true,
         "memo": "zone locking thing. number should NEVER be 0!"
       },
       {
