@@ -777,7 +777,7 @@ function spawnEnemies(rm) {
       spawnX = Math.random() * 150 + spawn[0];
       spawnY = Math.random() * 150 + spawn[1];
     }
-    
+
     // add the new object to the objects[] array
     if (rooms[rm].enemies.numEnemies < 30) {
       rooms[rm].enemies[rooms[rm].enemyID] = {
@@ -1802,6 +1802,16 @@ app.post('/register', (request,response)=>{
        }
      };
    });
+});
+
+app.post('/disconnect', (request,response)=>{
+  const query =`UPDATE account SET online='false'`;
+  pool.query(query,(error,results)=>{
+      if (error)
+        throw(error);
+      var message = {'message':'Disconnect everyone'};
+      response.render('pages/login',message)
+  });
 });
 
 // ENcrpting password when resgister
