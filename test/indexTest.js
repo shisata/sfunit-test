@@ -23,6 +23,7 @@ testPlayerAmmoResult = index.testPlayerAmmo();
 testPlayerHealthResult = index.testPlayerHealth();
 testPlayerReloadResult = index.testPlayerReload();
 testMiniMapResult = index.testMiniMap();
+<<<<<<< HEAD
 testZone1Result = index.testZone1();
 testZone2Result = index.testZone2();
 testZone3Result = index.testZone3();
@@ -31,6 +32,10 @@ testZone6Result = index.testZone6();
 testZone7Result = index.testZone7();
 testZone8Result = index.testZone8();
 testZone9Result = index.testZone9();
+=======
+testWeatherAPIResult = index.testWeatherAPI();
+
+>>>>>>> 9817f7d9bc5f174cbee82a4eb5d9105c87bbc20d
 //roomsResult = index.rooms('test');
 
 describe('Index', function(){
@@ -224,138 +229,88 @@ describe('Index', function(){
             assert.equal(testEnemyMovementResult, 5);
         });
     });
+<<<<<<< HEAD
 
+=======
+>>>>>>> 9817f7d9bc5f174cbee82a4eb5d9105c87bbc20d
 
+    // Test cases for Player Shoot
+    describe('testPlayerShoot()', function(){
 
-
-
-
-
-    // Test cases for Zone 1
-    describe('testZone1()', function(){
-
-        it('testZone1() exists', function(){
-            assert.isOk(testZone1Result);
+        it('testPlayerShoot() is of type int', function(){
+            assert.notTypeOf(testPlayerShootResult, 'string');
         });
 
-        it('testZone1() is of type int', function(){
-            assert.notTypeOf(testZone1Result, 'string');
-        });
-
-        it('testZone1() is alloted 1', function(){
-            assert.equal(testZone1Result, 1);
+        it('testPlayerShoot() Shoot is atleast 0', function(){
+            assert.equal(testPlayerShootResult, 0);
         });
     });
 
-    // Test cases for Zone 2
-    describe('testZone2()', function(){
+    // Test cases for Player Ammo
+    describe('testPlayerAmmo()', function(){
 
-        it('testZone2() exists', function(){
-            assert.isOk(testZone2Result);
+        it('testPlayerAmmo() is of type int', function(){
+            assert.notTypeOf(testPlayerAmmoResult, 'string');
         });
 
-        it('testZone2() is of type int', function(){
-            assert.notTypeOf(testZone2Result, 'string');
-        });
-
-        it('testZone2() is alloted 2', function(){
-            assert.equal(testZone2Result, 2);
+        it('testPlayerAmmo() Ammo is atleast 12', function(){
+            assert.equal(testPlayerAmmoResult, 12);
         });
     });
 
-    // Test cases for Zone 3
-    describe('testZone3()', function(){
+    // Test cases for Player Health
+    describe('testPlayerHealth()', function(){
 
-        it('testZone3() exists', function(){
-            assert.isOk(testZone3Result);
+        it('testPlayerHealth() is of type int', function(){
+            assert.notTypeOf(testPlayerHealthResult, 'string');
         });
 
-        it('testZone3() is of type int', function(){
-            assert.notTypeOf(testZone3Result, 'string');
-        });
-
-        it('testZone3() is alloted 3', function(){
-            assert.equal(testZone3Result, 3);
+        it('testPlayerHealth() Health is atleast 100', function(){
+            assert.equal(testPlayerHealthResult, 100);
         });
     });
 
-    // Test cases for Zone 4
-    describe('testZone4()', function(){
+    // Test cases for Player Reload
+    describe('testPlayerReload()', function(){
 
-        it('testZone4() exists', function(){
-            assert.isOk(testZone4Result);
+        it('testPlayerReload() is of type int', function(){
+            assert.notTypeOf(testPlayerReloadResult, 'string');
         });
 
-        it('testZone4() is of type int', function(){
-            assert.notTypeOf(testZone4Result, 'string');
-        });
-
-        it('testZone4() is alloted 4', function(){
-            assert.equal(testZone4Result, 4);
+        it('testPlayerReload() Reload is atleast 5', function(){
+            assert.equal(testPlayerReloadResult, 5);
         });
     });
 
-    // Test cases for Zone 6
-    describe('testZone6()', function(){
+    // Test cases for Mini Map
+    describe('testMiniMap()', function(){
 
-        it('testZone6() exists', function(){
-            assert.isOk(testZone6Result);
+        it('testMiniMap() exists', function(){
+            assert.isOk(testMiniMapResult);
         });
 
-        it('testZone6() is of type int', function(){
-            assert.notTypeOf(testZone6Result, 'string');
+        it('testMiniMap() is of type int', function(){
+            assert.notTypeOf(testMiniMapResult, 'string');
         });
 
-        it('testZone6() is alloted 6', function(){
-            assert.equal(testZone6Result, 6);
-        });
-    });
-
-    // Test cases for Zone 7
-    describe('testZone7()', function(){
-
-        it('testZone7() exists', function(){
-            assert.isOk(testZone7Result);
-        });
-
-        it('testZone7() is of type int', function(){
-            assert.notTypeOf(testZone7Result, 'string');
-        });
-
-        it('testZone7() is alloted 7', function(){
-            assert.equal(testZone7Result, 7);
+        it('testMiniMap() speed is atleast 2', function(){
+            assert.equal(testMiniMapResult, 2);
         });
     });
 
-    // Test cases for Zone 8
-    describe('testZone8()', function(){
+    // Test cases for Weather API
+    describe('testWeatherAPI()', function(){
 
-        it('testZone8() exists', function(){
-            assert.isOk(testZone8Result);
+        it('testWeatherAPI() exists', function(){
+            assert.isOk(testWeatherAPIResult);
         });
 
-        it('testZone8() is of type int', function(){
-            assert.notTypeOf(testZone8Result, 'string');
+        it('testWeatherAPI() is of type int', function(){
+            assert.notTypeOf(testWeatherAPIResult, 'string');
         });
 
-        it('testZone8() is alloted 8', function(){
-            assert.equal(testZone8Result, 8);
-        });
-    });
-
-    // Test cases for Zone 9
-    describe('testZone9()', function(){
-
-        it('testZone9() exists', function(){
-            assert.isOk(testZone9Result);
-        });
-
-        it('testZone9() is of type int', function(){
-            assert.notTypeOf(testZone9Result, 'string');
-        });
-
-        it('testZone9() is alloted 9', function(){
-            assert.equal(testZone9Result, 9);
+        it('testWeatherAPI() speed is atleast 1', function(){
+            assert.equal(testWeatherAPIResult, 1);
         });
     });
 
@@ -450,19 +405,19 @@ describe('Index', function(){
             });
     });
   });
-    // Test  cases for register page
-  describe('Register page', ()=>{
-      it ('Should create an account with /register POST using valid data',
-      (done) =>{
-        chai.request('https://sfunit.herokuapp.com')
-            .post('/register')
-            .send({'username':'long',
-                    'pw':'123456',
-                    'gmail':'donttakethis@gmail.com'})
-            .end(function(err,res){
-              res.should.have.status(200);
-              done();
-            });
-      });
+  
+  // Test whether the enemy spawns
+  describe('Spawn Boss', ()=> {
+    result = index.testBossSpawn();
+    it ('Should spawn the boss onto the map', function() {
+        assert.isOk(result);
+    });
+  });
+
+  describe('Checking Map Zones', ()=> {
+    result = index.testZones("ZoneTestSocketID", "ZoneTestRoom");
+    it ('Should contain all zones', function() {
+        assert.isOk(result[7] == 9 && result[5] == 7 && result[0] == 1);
+    });
   });
 });

@@ -154,52 +154,56 @@ module.exports = {
     return minimap;
   },
 
+<<<<<<< HEAD
   // Test Enemy Spawn Zone 1
   testZone1: function(){
     zone1 = 1;
     return zone1;
+=======
+  // Tests Weather API
+  testWeatherAPI: function(){
+    weather = 1;
+    return 1;
   },
 
-  // Test Enemy Spawn Zone 2
-  testZone2: function(){
-    zone2 = 2;
-    return zone2;
+  // Test that the boss spawns
+  testBossSpawn: function(rm) {
+    createRoom(rm);
+    releaseTheBeast(rm);
+    return(rooms[rm].boss);
+>>>>>>> 9817f7d9bc5f174cbee82a4eb5d9105c87bbc20d
   },
 
-  // Test Enemy Spawn Zone 3
-  testZone3: function(){
-    zone3 = 3;
-    return zone3;
-  },
+  // Test spawn zones
+  testZones: function(socketID, rm) {
+    createRoom(rm);
+    //Load map data
+    var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap2.json', 'utf8'));
+    var processor = require('./static/objects/mapProcessor.js');
+    rooms[rm].mapData = processor.constructFromData(mapDataFromFile);
+    rooms[rm].zones = processor.constructZone(mapDataFromFile);
 
-  // Test Enemy Spawn Zone 4
-  testZone4: function(){
-    zone4 = 4;
-    return zone4;
-  },
+    createPlayer(socketID, rm, "Room");
 
-  // Test Enemy Spawn Zone 6
-  testZone6: function(){
-    zone6 = 6;
-    return zone6;
-  },
+    //Each of the below coordinates marks a zone on the map
+    zoneList = [[1980, 1555], [2600, 1470], [3500,1400], [2675, 1260], 
+    [4005, 2460], [2600, 2330], [1955, 2045], [1765, 1740], [1075, 1655]];
+    resultList = [];
 
-  // Test Enemy Spawn Zone 7
-  testZone7: function(){
-    zone7 = 7;
-    return zone7;
-  },
+    for (id in zoneList) {
+      zone = zoneList[id];
+      rooms[rm].players[socketID].x = zone[0];
+      rooms[rm].players[socketID].y = zone[1];
 
-  // Test Enemy Spawn Zone 8
-  testZone8: function(){
-    zone8 = 8;
-    return zone8;
-  },
-
-  // Test Enemy Spawn Zone 9
-  testZone9: function(){
-    zone9 = 9;
-    return zone9;
+      player = rooms[rm].players[socketID];
+      for (zoneNum in rooms[rm].zones) {
+        if (rooms[rm].zones[zoneNum].inside(player.x/10, player.y/10)) {
+          rooms[rm].players[socketID].zone = zoneNum;
+          resultList.push(rooms[rm].players[socketID].zone);
+        }
+      }
+    }
+    return resultList;
   }
 }
 
