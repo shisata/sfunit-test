@@ -278,11 +278,7 @@ window.addEventListener('mousemove', function (e) {
     //Draw the bawss
     var bossImg = document.getElementById("boss");
     context.drawImage(bossImg, boss.x - middleX + 20, boss.y - middleY - 100, 100, 130);
-
-    // context.beginPath();
-    // context.arc(boss.x - middleX, boss.y - middleY, GRID_SIZE/2 , 0, 2 * Math.PI);
-    // context.fill();
-
+    showHealthBarAbove(boss.x - middleX + 20, boss.y - middleY - 100, boss.health, boss.maxHealth);
 
     for (var id in projectiles) {
       var projectile = projectiles[id];
@@ -373,8 +369,6 @@ window.addEventListener('mousemove', function (e) {
       var mapAreaWidth = 380*GRID_SIZE;
       var mapAreaHeight = mapAreaWidth*mapWHRatio;
 
-
-
       //drawing black box behind the map
       context.beginPath();
       context.rect(mapX-mapMargin, mapY-mapMargin, smallMapWidth+2*mapMargin,
@@ -403,7 +397,6 @@ window.addEventListener('mousemove', function (e) {
         + (yPos+middleY)/GRID_SIZE, mapX+10, mapY+smallMapHeight+50);
 
       //show players on small map
-
       for (var id in players) {
         var player = players[id];
         context.fillStyle = 'green';
@@ -416,7 +409,6 @@ window.addEventListener('mousemove', function (e) {
           GRID_SIZE/3 , 0, 2 * Math.PI);
         context.fill();
       }
-
     }
 
     //zone Change show
