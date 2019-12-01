@@ -106,7 +106,7 @@ module.exports = {
   },
   // Tests randomObjects aka enemies spawn correctlty
   testSpawn: function(){
-    //spawnRandomObject();
+    //spawnEnemies();
     return 1;
   },
 
@@ -227,12 +227,15 @@ io.on('connection', function(socket) {
     if (data.shootBullet) {
       var rm = getRoomBySocketId[socket.id]
 
+      for (id in rooms[rm].players) {
+        player = rooms[rm].players[id];
+      }
       //astar testing here
       // console.log(aStarSearch([100,100], [200,200], rm));
 
-      if (rooms[rm]) {
-        testAstar(rm);
-      }
+      // if (rooms[rm]) {
+      //   testAstar(rm);
+      // }
 
 
       // console.log("emit sound");
@@ -673,46 +676,108 @@ function generateProjectile(id, data, rm) {
 
   //reset bullet count if too high
   if (rooms[rm].bulletCount > 100) {
-    spawnRandomObjectbulletCount = 0;
+    spawnEnemiesbulletCount = 0;
   }
 }
 
 //Spawn a random enemy
-function spawnRandomObject(rm) {
+function spawnEnemies(rm) {
 
-  // About Math.random()
-  // Math.random() generates a semi-random number
-  // between 0-1. So to randomly decide if the next object
-  // will be A or B, we say if the random# is 0-.49 we
-  // create A and if the random# is .50-1.00 we create B
+  //Collects map zones that are occupied
+  zonez = getZones(rm);
 
-  spawnX = Math.random() * 350 + 1600;
-  spawnY = Math.random() * 350 + 1600;
+  //Gets the spawn locations of the occupied zones
+  spawnZones = getspawnZones(zonez);
+  console.log(spawnZones);
 
-  while(hasCollision(spawnX, spawnY, rm)) {
-    spawnX = Math.random() * 350 + 1600;
-    spawnY = Math.random() * 350 + 1600;
-  }
+  for (id in spawnZones) {
+    spawn = spawnZones[id]
+    // spawnX = Math.random() * 50 + spawn.x
+    // spawnY = Math.random() * 50 + spawn.y
+    spawnX = Math.random() * 200 + spawn[0];
+    spawnY = Math.random() * 200 + spawn[1];
 
-
-
-  // add the new object to the objects[] array
-  if (rooms[rm].enemies.numEnemies < 1) {
-    rooms[rm].enemies[rooms[rm].enemyID] = {
-      // type: t,
-      // set x randomly but at least 15px off the canvas edges
-      x: spawnX,
-      // set y to start on the line where objects are spawned
-      y: spawnY,
-      vx: 5,
-      vy: 5,
-      speed: .8*50,
-      health: 4,
-      maxHealth: 4
+    //Enemy spawning can be modelled with X ~ Bernoulli(pi)
+    //with pi = p(spawn inside wall). This function respawns enemies repeatedly
+    //until they are not inside a wall. Expected #spawns = 1/(1-pi), pi ~= .05
+    while(hasCollision(spawnX, spawnY, rm)) {
+      spawnX = Math.random() * 200 + spawn[0];
+      spawnY = Math.random() * 200 + spawn[1];
     }
-    rooms[rm].enemies.numEnemies++;
-    rooms[rm].enemyID++;
+    
+    // add the new object to the objects[] array
+    if (rooms[rm].enemies.numEnemies < 100) {
+      rooms[rm].enemies[rooms[rm].enemyID] = {
+        x: spawnX,
+        y: spawnY,
+        vx: 50,
+        vy: 50,
+        speed: .8*140,
+        health: 4,
+        maxHealth: 4
+      }
+      rooms[rm].enemies.numEnemies++;
+      rooms[rm].enemyID++;
+    }
+    // console.log(rooms[rm].enemies)
   }
+}
+
+//Returns a list of zones that are currently occupied by a player
+function getZones(rm) {
+  occupiedZones = [];
+  for (var id in rooms[rm].players) {
+    var player = rooms[rm].players[id];
+
+    //Add zones to occupiedZones
+    if(player.zone) {
+      //Treat occupiedZones as a set, do not add idential elements
+      if (occupiedZones.find( function(item) {
+      return (player.zone == item) })) continue;
+      else occupiedZones.push(player.zone);
+      }
+  }
+  return occupiedZones;
+}
+
+//Returns the coordinates of spawn locations
+function getspawnZones(zones) {
+
+  occupiedZones = []
+
+  for (id in zonez) {
+    zone = zones[id];
+    switch(zone){
+      case "1":
+         occupiedZones.push([1980,1555]);
+         break;
+      case "2":
+         occupiedZones.push([2950,1750]);
+         break;
+      case "3":
+         occupiedZones.push([3500,1400]);
+         break;
+      case "4":
+         occupiedZones.push([2675,1260]);
+         break;
+      case "5":
+         occupiedZones.push([4005,2400]);
+         break;
+      case "6":
+         occupiedZones.push([3130,2320]);
+         break;
+      case "7":
+         occupiedZones.push([1955,2045]);
+         break;
+      case "8":
+         occupiedZones.push([1765,1740]);
+         break;
+      case "9":
+         occupiedZones.push([1075,1655]);
+    }
+  }
+  return occupiedZones;
+
 }
 
 //Generate enemies
@@ -729,7 +794,7 @@ function generateEnemies(rm) {
   // see if its time to spawn a new object
   if (time > (rooms[rm].lastSpawn + rooms[rm].spawnRate)) {
     rooms[rm].lastSpawn = time;
-    spawnRandomObject(rm);
+    spawnEnemies(rm);
     //console.log('emeny spawned. spawnRate: ', spawnRate);
   }
 }
@@ -813,7 +878,7 @@ function checkQuest(rm) {
               }
             }
           }
-          quest.complete(player);
+          // quest.complete(player);
           io.sockets.to(id).emit("questOver", quest.name, quest.condition, quest.description);
         }
       }
@@ -1010,7 +1075,7 @@ function youFailed(player, rm) {
 
 }
 
-//Runs A* to generate a route to get to the player
+//Runs A* to generate the optimal route to get to the player
 function aStarSearch(startState, goal, rm) {
   var explored = [];
   var parents = {};
@@ -1135,7 +1200,6 @@ function closestPlayerXY(rm, enemy) {
   return [closestPlayer.x, closestPlayer.y];
   }
 }
-
 
 function testAstar(rm) {
   if (!rooms[rm] || rooms[rm].numplayers <= 0) {
