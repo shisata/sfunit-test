@@ -158,6 +158,12 @@ module.exports = {
   testWeatherAPI: function(){
     weather = 1;
     return 1;
+  },
+
+  // Test Enemy Spawn Zone 1
+  testZone1: function(){
+    zone1 = 1;
+    return zone1;
   }
   
 }

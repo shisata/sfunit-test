@@ -23,6 +23,7 @@ testPlayerHealthResult = index.testPlayerHealth();
 testPlayerReloadResult = index.testPlayerReload();
 testMiniMapResult = index.testMiniMap();
 testWeatherAPIResult = index.testWeatherAPI();
+testZone1Result = index.testZone1();
 //roomsResult = index.rooms('test');
 
 describe('Index', function(){
@@ -294,6 +295,22 @@ describe('Index', function(){
 
         it('testWeatherAPI() speed is atleast 1', function(){
             assert.equal(testWeatherAPIResult, 1);
+        });
+    });
+
+    // Test cases for Zone 1
+    describe('testZone1()', function(){
+
+        it('testZone1() exists', function(){
+            assert.isOk(testZone1Result);
+        });
+
+        it('testZone1() is of type int', function(){
+            assert.notTypeOf(testZone1Result, 'string');
+        });
+
+        it('testZone1() is alloted 1', function(){
+            assert.equal(testZone1Result, 1);
         });
     });
 
