@@ -25,6 +25,8 @@ testMiniMapResult = index.testMiniMap();
 testWeatherAPIResult = index.testWeatherAPI();
 testZone1Result = index.testZone1();
 testZone2Result = index.testZone2();
+testZone3Result = index.testZone3();
+testZone4Result = index.testZone4();
 //roomsResult = index.rooms('test');
 
 describe('Index', function(){
@@ -328,6 +330,38 @@ describe('Index', function(){
 
         it('testZone2() is alloted 2', function(){
             assert.equal(testZone2Result, 2);
+        });
+    });
+
+    // Test cases for Zone 3
+    describe('testZone3()', function(){
+
+        it('testZone3() exists', function(){
+            assert.isOk(testZone3Result);
+        });
+
+        it('testZone3() is of type int', function(){
+            assert.notTypeOf(testZone3Result, 'string');
+        });
+
+        it('testZone3() is alloted 3', function(){
+            assert.equal(testZone3Result, 3);
+        });
+    });
+
+    // Test cases for Zone 4
+    describe('testZone4()', function(){
+
+        it('testZone4() exists', function(){
+            assert.isOk(testZone4Result);
+        });
+
+        it('testZone4() is of type int', function(){
+            assert.notTypeOf(testZone4Result, 'string');
+        });
+
+        it('testZone4() is alloted 4', function(){
+            assert.equal(testZone4Result, 4);
         });
     });
 
