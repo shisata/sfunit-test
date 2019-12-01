@@ -374,9 +374,9 @@ setInterval(function() {
     if(rooms[rm].players.numPlayers > 0){
       //  console.log("interval player")
         moveProjectiles(rm);
-        // moveEnemies(rm);
+        moveEnemies(rm);
         handleBulletCollisions(rm);
-        // generateEnemies(rm);
+        generateEnemies(rm);
         recoverPlayerHealth(rm);
         checkQuest(rm);
         if(!rooms[rm].boss) releaseTheBeast(rm);
@@ -954,7 +954,7 @@ function moveTheBeast(rm) {
       rooms[rm].boss.y = originY;
     }
   }
-  
+
   //Find the optimal path to closest player using A*
   // goal = [rooms[rm].players[closestPlayer].x, rooms[rm].players[closestPlayer].y];
   // startState = [rooms[rm].boss.x, rooms[rm].boss.y];
