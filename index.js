@@ -158,8 +158,12 @@ module.exports = {
   testWeatherAPI: function(){
     weather = 1;
     return 1;
+  },
+
+  getspawnZones: function(zones){
+    return getspawnZones(zone);
   }
-  
+
 }
 
 // Dependencies
@@ -785,7 +789,7 @@ function getspawnZones(zones) {
 
   occupiedZones = []
 
-  for (id in zonez) {
+  for (id in zones) {
     zone = zones[id];
     switch(zone){
       case "1":
