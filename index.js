@@ -178,6 +178,7 @@ module.exports = {
 
     createPlayer(socketID, rm, "Room");
 
+    //Each of the below coordinates marks a zone on the map
     zoneList = [[1980, 1555], [2600, 1470], [3500,1400], [2675, 1260], 
     [4005, 2460], [2600, 2330], [1955, 2045], [1765, 1740], [1075, 1655]];
     resultList = [];

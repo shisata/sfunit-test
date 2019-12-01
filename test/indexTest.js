@@ -390,22 +390,6 @@ describe('Index', function(){
     });
   });
   
-// Test  cases for register page
-//   describe('Register page', ()=>{
-//       it ('Should create an account with /register POST using valid data',
-//       (done) =>{
-//         chai.request('https://sfunit.herokuapp.com')
-//             .post('/register')
-//             .send({'username':'long',
-//                     'pw':'123456',
-//                     'gmail':'test@gmail.com'}
-//             .end(function(err,res){
-//               res.should.have.status(200);
-//               done();
-//             });
-//       });
-//   });
-
   // Test whether the enemy spawns
   describe('Spawn Boss', ()=> {
     result = index.testBossSpawn();
