@@ -124,10 +124,16 @@ module.exports = {
     return enemyMove;
   },
 
-  // Player Shoot
+  // Tests Player Shoot
   testPlayerShoot: function(){
     shoot = 0;
     return shoot;
+  },
+
+  // Tests Player Ammo
+  testPlayerAmmo: function(){
+    ammo = 12;
+    return ammo;
   }
   
 }

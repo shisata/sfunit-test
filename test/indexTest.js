@@ -18,6 +18,7 @@ testSpawnResult = index.testSpawn();
 testGenerateEnemiesResult = index.testGenerateEnemies();
 testEnemyMovementResult = index.testEnemyMovement();
 testPlayerShootResult = index.testPlayerShoot();
+testPlayerAmmoResult = index.testPlayerAmmo();
 //roomsResult = index.rooms('test');
 
 describe('Index', function(){
@@ -221,6 +222,18 @@ describe('Index', function(){
 
         it('testPlayerShoot() Shoot is atleast 0', function(){
             assert.equal(testPlayerShootResult, 0);
+        });
+    });
+
+    // Test cases for Player Ammo
+    describe('testPlayerAmmo()', function(){
+
+        it('testPlayerAmmo() is of type int', function(){
+            assert.notTypeOf(testPlayerAmmoResult, 'string');
+        });
+
+        it('testPlayerShoot() Shoot is atleast 0', function(){
+            assert.equal(testPlayerAmmoResult, 12);
         });
     });
 
