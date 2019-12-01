@@ -384,9 +384,12 @@ function moon(){
 	var h = meteorSky.height;//document.body.clientHeight;
 
 	var sky = new nightSky(meteorSky, w, h, {
-		silverRiverNum : 1000,
-		lineNumMax: 30,
-		middleNum:7,
+		// silverRiverNum : 1000,
+		// lineNumMax: 30,
+		// middleNum:7,
+    silverRiverNum : 0,
+		lineNumMax: 0,
+		middleNum:0,
 	});
 }
 

@@ -128,7 +128,7 @@ document.addEventListener('keydown', function(event) {
         }
       }
       break;
-    case 77:
+    case 77: //M
       mapOn = !mapOn;
       break;
   }
