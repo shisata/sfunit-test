@@ -381,7 +381,7 @@ describe('Index', function(){
             assert.notTypeOf(testZone6Result, 'string');
         });
 
-        it('testZone4() is alloted 6', function(){
+        it('testZone6() is alloted 6', function(){
             assert.equal(testZone6Result, 6);
         });
     });
@@ -397,7 +397,7 @@ describe('Index', function(){
             assert.notTypeOf(testZone7Result, 'string');
         });
 
-        it('testZone4() is alloted 7', function(){
+        it('testZone7() is alloted 7', function(){
             assert.equal(testZone7Result, 7);
         });
     });
@@ -429,7 +429,7 @@ describe('Index', function(){
             assert.notTypeOf(testZone9Result, 'string');
         });
 
-        it('testZone8() is alloted 9', function(){
+        it('testZone9() is alloted 9', function(){
             assert.equal(testZone9Result, 9);
         });
     });
