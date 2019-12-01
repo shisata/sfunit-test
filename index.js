@@ -200,6 +200,12 @@ module.exports = {
   testZone8: function(){
     zone8 = 8;
     return zone8;
+  },
+
+  // Test Enemy Spawn Zone 9
+  testZone9: function(){
+    zone9 = 9;
+    return zone9;
   }
   
 }

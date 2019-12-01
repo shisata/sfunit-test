@@ -30,6 +30,8 @@ testZone4Result = index.testZone4();
 testZone6Result = index.testZone6();
 testZone7Result = index.testZone7();
 testZone8Result = index.testZone8();
+testZone9Result = index.testZone9();
+
 //roomsResult = index.rooms('test');
 
 describe('Index', function(){
@@ -413,6 +415,22 @@ describe('Index', function(){
 
         it('testZone8() is alloted 8', function(){
             assert.equal(testZone8Result, 8);
+        });
+    });
+
+    // Test cases for Zone 9
+    describe('testZone9()', function(){
+
+        it('testZone9() exists', function(){
+            assert.isOk(testZone9Result);
+        });
+
+        it('testZone9() is of type int', function(){
+            assert.notTypeOf(testZone9Result, 'string');
+        });
+
+        it('testZone8() is alloted 9', function(){
+            assert.equal(testZone9Result, 9);
         });
     });
 
