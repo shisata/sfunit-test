@@ -312,9 +312,9 @@ io.on('connection', function(socket) {
     if (data.shootBullet) {
       var rm = getRoomBySocketId[socket.id]
 
-      for (id in rooms[rm].players) {
-        player = rooms[rm].players[id];
-      }
+      // for (id in rooms[rm].players) {
+      //   player = rooms[rm].players[id];
+      // }
       //astar testing here
       // console.log(aStarSearch([100,100], [200,200], rm));
 
@@ -379,17 +379,14 @@ setInterval(function() {
         generateEnemies(rm);
         recoverPlayerHealth(rm);
         checkQuest(rm);
-        if(!rooms[rm.boss]) releaseTheBeast(rm);
-        // if(rooms[rm.boss])  moveTheBeast(rm);
+        if(!rooms[rm].boss) releaseTheBeast(rm);
+        if(rooms[rm].boss) moveTheBeast(rm);
 
-        //console.log("LOGGING rm", rm);
         io.sockets.to(rm).emit('state', rooms[rm].players,
           rooms[rm].projectiles, rooms[rm].enemies, rooms[rm].zones, rooms[rm].teamQuests, rooms[rm].boss);
       }
   }
 }, 1000 / 30);
-
-
 
 //=============================================================================
 //Functions
@@ -496,6 +493,7 @@ function playerHealth(){
 
 }
 
+//Fills a room with data
 function roomData(serverName) {
   //Players object will contain all information about each player's position,
   var room = {}
@@ -776,7 +774,6 @@ function spawnEnemies(rm) {
 
   //Gets the spawn locations of the occupied zones
   spawnZones = getspawnZones(zonez);
-  console.log(spawnZones);
 
   for (id in spawnZones) {
     spawn = spawnZones[id]
@@ -833,7 +830,7 @@ function getspawnZones(zones) {
 
   occupiedZones = []
 
-  for (id in zonez) {
+  for (id in zones) {
     zone = zones[id];
     switch(zone){
       case "1":
@@ -894,10 +891,94 @@ function releaseTheBeast(rm) {
     y: 1750,
     vx: 50,
     vy: 50,
-    speed: .8*175,
+    speed: .8*100,
     health: 300,
     maxHealth: 300
   }
+}
+
+//Move the boss
+function moveTheBeast(rm) {
+
+  //Find the closest player
+  if ( rooms[rm].players.numPlayers > 0 ) {
+    
+    var closestPlayer;
+      var closestPlayerDistance = Infinity;
+      for (var player in rooms[rm].players) {
+        var distX = rooms[rm].players[player].x - rooms[rm].boss.x;
+        var distY = rooms[rm].players[player].y - rooms[rm].boss.y;
+        var distance = Math.sqrt( distX * distX + distY * distY );
+        if (distance < closestPlayerDistance) {
+          closestPlayer = player;
+          closestPlayerDistance = distance;
+        }
+      }
+
+    if (rooms[rm].players[closestPlayer] == undefined) {
+      return;
+    }
+
+    distX = rooms[rm].boss.x - rooms[rm].players[closestPlayer].x;
+    distY = rooms[rm].boss.y - rooms[rm].players[closestPlayer].y;
+
+    var attackTheta = Math.atan(distX / distY);
+
+    var sign = -1;
+    if (rooms[rm].boss.y < rooms[rm].players[closestPlayer].y) {
+      sign = 1;
+    }
+
+    if ( Math.abs(distX) < 15 && Math.abs(distY) < 15 ) {
+      // console.log("distX ", distX, "distY, ", distY);
+      //Deplete health
+      rooms[rm].players[closestPlayer].health -= 20/updatePerSecond;
+      //Kill player
+      if (rooms[rm].players[closestPlayer].health < 0) {
+        youveBeenTerminated(closestPlayer, rm);
+        // break;
+        if (rooms[rm] == undefined) {
+          return;
+        }
+      }
+    }
+
+    rooms[rm].boss.vx =  rooms[rm].boss.speed * Math.sin(attackTheta) * sign;
+    rooms[rm].boss.vy =  rooms[rm].boss.speed * Math.cos(attackTheta) * sign;
+    var originX = rooms[rm].boss.x;
+    var originY = rooms[rm].boss.y;
+    rooms[rm].boss.x += rooms[rm].boss.vx/updatePerSecond;
+    rooms[rm].boss.y += rooms[rm].boss.vy/updatePerSecond;
+    if(hasCollision(rooms[rm].boss.x, rooms[rm].boss.y, rm)){
+      rooms[rm].boss.x = originX;
+      rooms[rm].boss.y = originY;
+    }
+  }
+
+  //Find the optimal path to closest player using A*
+  // goal = [rooms[rm].players[closestPlayer].x, rooms[rm].players[closestPlayer].y];
+  // startState = [rooms[rm].boss.x, rooms[rm].boss.y];
+  // console.log("logging goa;l". goal);
+  // path = aStarSearch(startState, goal, rm);
+  // speed = rooms[rm].boss.speed  
+
+  // console.log("moving the big boy");
+
+  // console.log(path)
+
+  // switch(path[0]) {
+  //   case "left":
+  //     rooms[rm].boss.x -= speed;
+  //     break;
+  //   case "right":
+  //     rooms[rm].boss.x += speed;
+  //     break;
+  //   case "up":
+  //     rooms[rm].boss.y -= speed;
+  //     break;
+  //   case "down":
+  //     rooms[rm].boss.y += speed;
+  // }
 }
 
 //recover player Health
@@ -1302,6 +1383,7 @@ function closestPlayerXY(rm, enemy) {
   }
 }
 
+//Tests the A* function
 function testAstar(rm) {
   if (!rooms[rm] || rooms[rm].numplayers <= 0) {
     return;
