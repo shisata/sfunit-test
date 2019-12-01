@@ -17,6 +17,20 @@ addNumbersResult = index.addNumbers(5, 5);
 testSpawnResult = index.testSpawn();
 testGenerateEnemiesResult = index.testGenerateEnemies();
 testEnemyMovementResult = index.testEnemyMovement();
+testPlayerShootResult = index.testPlayerShoot();
+testPlayerAmmoResult = index.testPlayerAmmo();
+testPlayerHealthResult = index.testPlayerHealth();
+testPlayerReloadResult = index.testPlayerReload();
+testMiniMapResult = index.testMiniMap();
+testWeatherAPIResult = index.testWeatherAPI();
+testZone1Result = index.testZone1();
+testZone2Result = index.testZone2();
+testZone3Result = index.testZone3();
+testZone4Result = index.testZone4();
+testZone6Result = index.testZone6();
+testZone7Result = index.testZone7();
+testZone8Result = index.testZone8();
+testZone9Result = index.testZone9();
 
 //roomsResult = index.rooms('test');
 
@@ -217,6 +231,134 @@ describe('Index', function(){
 
 
 
+
+    // Test cases for Zone 1
+    describe('testZone1()', function(){
+
+        it('testZone1() exists', function(){
+            assert.isOk(testZone1Result);
+        });
+
+        it('testZone1() is of type int', function(){
+            assert.notTypeOf(testZone1Result, 'string');
+        });
+
+        it('testZone1() is alloted 1', function(){
+            assert.equal(testZone1Result, 1);
+        });
+    });
+
+    // Test cases for Zone 2
+    describe('testZone2()', function(){
+
+        it('testZone2() exists', function(){
+            assert.isOk(testZone2Result);
+        });
+
+        it('testZone2() is of type int', function(){
+            assert.notTypeOf(testZone2Result, 'string');
+        });
+
+        it('testZone2() is alloted 2', function(){
+            assert.equal(testZone2Result, 2);
+        });
+    });
+
+    // Test cases for Zone 3
+    describe('testZone3()', function(){
+
+        it('testZone3() exists', function(){
+            assert.isOk(testZone3Result);
+        });
+
+        it('testZone3() is of type int', function(){
+            assert.notTypeOf(testZone3Result, 'string');
+        });
+
+        it('testZone3() is alloted 3', function(){
+            assert.equal(testZone3Result, 3);
+        });
+    });
+
+    // Test cases for Zone 4
+    describe('testZone4()', function(){
+
+        it('testZone4() exists', function(){
+            assert.isOk(testZone4Result);
+        });
+
+        it('testZone4() is of type int', function(){
+            assert.notTypeOf(testZone4Result, 'string');
+        });
+
+        it('testZone4() is alloted 4', function(){
+            assert.equal(testZone4Result, 4);
+        });
+    });
+
+    // Test cases for Zone 6
+    describe('testZone6()', function(){
+
+        it('testZone6() exists', function(){
+            assert.isOk(testZone6Result);
+        });
+
+        it('testZone6() is of type int', function(){
+            assert.notTypeOf(testZone6Result, 'string');
+        });
+
+        it('testZone4() is alloted 6', function(){
+            assert.equal(testZone6Result, 6);
+        });
+    });
+
+    // Test cases for Zone 7
+    describe('testZone7()', function(){
+
+        it('testZone7() exists', function(){
+            assert.isOk(testZone7Result);
+        });
+
+        it('testZone7() is of type int', function(){
+            assert.notTypeOf(testZone7Result, 'string');
+        });
+
+        it('testZone4() is alloted 7', function(){
+            assert.equal(testZone7Result, 7);
+        });
+    });
+
+    // Test cases for Zone 8
+    describe('testZone8()', function(){
+
+        it('testZone8() exists', function(){
+            assert.isOk(testZone8Result);
+        });
+
+        it('testZone8() is of type int', function(){
+            assert.notTypeOf(testZone8Result, 'string');
+        });
+
+        it('testZone8() is alloted 8', function(){
+            assert.equal(testZone8Result, 8);
+        });
+    });
+
+    // Test cases for Zone 9
+    describe('testZone9()', function(){
+
+        it('testZone9() exists', function(){
+            assert.isOk(testZone9Result);
+        });
+
+        it('testZone9() is of type int', function(){
+            assert.notTypeOf(testZone9Result, 'string');
+        });
+
+        it('testZone8() is alloted 9', function(){
+            assert.equal(testZone9Result, 9);
+        });
+    });
 
 
 // GET and POST testing functions start from below, just uncomment them to make them work

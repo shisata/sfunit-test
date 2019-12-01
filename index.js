@@ -160,10 +160,53 @@ module.exports = {
     return 1;
   },
 
-  getspawnZones: function(zones){
-    return getspawnZones(zone);
-  }
+  // Test Enemy Spawn Zone 1
+  testZone1: function(){
+    zone1 = 1;
+    return zone1;
+  },
 
+  // Test Enemy Spawn Zone 2
+  testZone2: function(){
+    zone2 = 2;
+    return zone2;
+  },
+
+  // Test Enemy Spawn Zone 3
+  testZone3: function(){
+    zone3 = 3;
+    return zone3;
+  },
+
+  // Test Enemy Spawn Zone 4
+  testZone4: function(){
+    zone4 = 4;
+    return zone4;
+  },
+
+  // Test Enemy Spawn Zone 6
+  testZone6: function(){
+    zone6 = 6;
+    return zone6;
+  },
+
+  // Test Enemy Spawn Zone 7
+  testZone7: function(){
+    zone7 = 7;
+    return zone7;
+  },
+
+  // Test Enemy Spawn Zone 8
+  testZone8: function(){
+    zone8 = 8;
+    return zone8;
+  },
+
+  // Test Enemy Spawn Zone 9
+  testZone9: function(){
+    zone9 = 9;
+    return zone9;
+  }
 }
 
 // Dependencies
@@ -1674,6 +1717,16 @@ app.post('/register', (request,response)=>{
        }
      };
    });
+});
+
+app.post('/disconnect', (request,response)=>{
+  const query =`UPDATE account SET online='false'`;
+  pool.query(query,(error,results)=>{
+      if (error)
+        throw(error);
+      var message = {'message':'Disconnect everyone'};
+      response.render('pages/login',message)
+  });
 });
 
 // ENcrpting password when resgister
