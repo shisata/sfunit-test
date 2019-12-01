@@ -139,12 +139,17 @@ module.exports = {
   // Tests Player Health
   testPlayerHealth: function(){
     health = 100;
-    return health
+    return health;
   },
 
   testPlayerReload: function(){
     reload = 5;
-    return reload
+    return reload;
+  },
+
+  testMiniMap: function(){
+    minimap = 2;
+    return minimap;
   }
   
 }

@@ -21,6 +21,7 @@ testPlayerShootResult = index.testPlayerShoot();
 testPlayerAmmoResult = index.testPlayerAmmo();
 testPlayerHealthResult = index.testPlayerHealth();
 testPlayerReloadResult = index.testPlayerReload();
+testMiniMapResult = index.testMiniMap()
 //roomsResult = index.rooms('test');
 
 describe('Index', function(){
@@ -260,6 +261,22 @@ describe('Index', function(){
 
         it('testPlayerReload() Reload is atleast 5', function(){
             assert.equal(testPlayerReloadResult, 5);
+        });
+    });
+
+    // Test cases for Mini Map
+    describe('testMiniMap()', function(){
+
+        it('testMiniMap() exists', function(){
+            assert.isOk(testMiniMapResult);
+        });
+
+        it('testMiniMap() is of type int', function(){
+            assert.notTypeOf(testMiniMapResult, 'string');
+        });
+
+        it('testMiniMap() speed is atleast 2', function(){
+            assert.equal(testMiniMapResult, 2);
         });
     });
 
