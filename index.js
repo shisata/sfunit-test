@@ -142,14 +142,22 @@ module.exports = {
     return health;
   },
 
+  // Tests Player Reload
   testPlayerReload: function(){
     reload = 5;
     return reload;
   },
 
+  // Tests Mini Map
   testMiniMap: function(){
     minimap = 2;
     return minimap;
+  },
+
+  // Tests Weather API
+  testWeatherAPI: function(){
+    weather = 1;
+    return 1;
   }
   
 }

@@ -21,7 +21,8 @@ testPlayerShootResult = index.testPlayerShoot();
 testPlayerAmmoResult = index.testPlayerAmmo();
 testPlayerHealthResult = index.testPlayerHealth();
 testPlayerReloadResult = index.testPlayerReload();
-testMiniMapResult = index.testMiniMap()
+testMiniMapResult = index.testMiniMap();
+testWeatherAPIResult = index.testWeatherAPI();
 //roomsResult = index.rooms('test');
 
 describe('Index', function(){
@@ -280,6 +281,21 @@ describe('Index', function(){
         });
     });
 
+    // Test cases for Weather API
+    describe('testWeatherAPI()', function(){
+
+        it('testWeatherAPI() exists', function(){
+            assert.isOk(testWeatherAPIResult);
+        });
+
+        it('testWeatherAPI() is of type int', function(){
+            assert.notTypeOf(testWeatherAPIResult, 'string');
+        });
+
+        it('testWeatherAPI() speed is atleast 1', function(){
+            assert.equal(testWeatherAPIResult, 1);
+        });
+    });
 
 
 // GET and POST testing functions start from below, just uncomment them to make them work
