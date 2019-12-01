@@ -122,7 +122,14 @@ module.exports = {
     // enemies = generateEnemies();
     // enemyMove = moveEnemies(enemies);
     return enemyMove;
+  },
+
+  // Player Shoot
+  testPlayerShoot: function(){
+    shoot = 0;
+    return shoot;
   }
+  
 }
 
 // Dependencies

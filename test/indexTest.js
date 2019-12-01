@@ -17,7 +17,7 @@ addNumbersResult = index.addNumbers(5, 5);
 testSpawnResult = index.testSpawn();
 testGenerateEnemiesResult = index.testGenerateEnemies();
 testEnemyMovementResult = index.testEnemyMovement();
-
+testPlayerShootResult = index.testPlayerShoot();
 //roomsResult = index.rooms('test');
 
 describe('Index', function(){
@@ -212,6 +212,17 @@ describe('Index', function(){
         });
     });
 
+    // Test cases for Player Shoot
+    describe('testPlayerShoot()', function(){
+
+        it('testPlayerShoot() is of type int', function(){
+            assert.notTypeOf(testPlayerShootResult, 'string');
+        });
+
+        it('testPlayerShoot() Shoot is atleast 0', function(){
+            assert.equal(testPlayerShootResult, 0);
+        });
+    });
 
 
 
