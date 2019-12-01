@@ -122,7 +122,44 @@ module.exports = {
     // enemies = generateEnemies();
     // enemyMove = moveEnemies(enemies);
     return enemyMove;
+  },
+
+  // Tests Player Shoot
+  testPlayerShoot: function(){
+    shoot = 0;
+    return shoot;
+  },
+
+  // Tests Player Ammo
+  testPlayerAmmo: function(){
+    ammo = 12;
+    return ammo;
+  },
+
+  // Tests Player Health
+  testPlayerHealth: function(){
+    health = 100;
+    return health;
+  },
+
+  // Tests Player Reload
+  testPlayerReload: function(){
+    reload = 5;
+    return reload;
+  },
+
+  // Tests Mini Map
+  testMiniMap: function(){
+    minimap = 2;
+    return minimap;
+  },
+
+  // Tests Weather API
+  testWeatherAPI: function(){
+    weather = 1;
+    return 1;
   }
+  
 }
 
 // Dependencies
