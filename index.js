@@ -158,6 +158,54 @@ module.exports = {
   testWeatherAPI: function(){
     weather = 1;
     return 1;
+  },
+
+  // Test Enemy Spawn Zone 1
+  testZone1: function(){
+    zone1 = 1;
+    return zone1;
+  },
+
+  // Test Enemy Spawn Zone 2
+  testZone2: function(){
+    zone2 = 2;
+    return zone2;
+  },
+
+  // Test Enemy Spawn Zone 3
+  testZone3: function(){
+    zone3 = 3;
+    return zone3;
+  },
+
+  // Test Enemy Spawn Zone 4
+  testZone4: function(){
+    zone4 = 4;
+    return zone4;
+  },
+
+  // Test Enemy Spawn Zone 6
+  testZone6: function(){
+    zone6 = 6;
+    return zone6;
+  },
+
+  // Test Enemy Spawn Zone 7
+  testZone7: function(){
+    zone7 = 7;
+    return zone7;
+  },
+
+  // Test Enemy Spawn Zone 8
+  testZone8: function(){
+    zone8 = 8;
+    return zone8;
+  },
+
+  // Test Enemy Spawn Zone 9
+  testZone9: function(){
+    zone9 = 9;
+    return zone9;
   }
   
 }
