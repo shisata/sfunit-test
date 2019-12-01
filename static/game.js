@@ -231,7 +231,7 @@ window.addEventListener('mousemove', function (e) {
 });
 
   var context = canvas.getContext('2d');
-  socket.on('state', function(players, projectiles, enemies, zones, teamQuests) {
+  socket.on('state', function(players, projectiles, enemies, zones, teamQuests, boss) {
     //console.log("socket event state called");
     if (players[myId] == 0) {
       //Died
@@ -274,6 +274,15 @@ window.addEventListener('mousemove', function (e) {
       showBulletBarAbove(player.x - middleX, player.y - middleY, player.clip, player.clipSize);
     }
 
+    //Draw the bawss
+    var bossImg = document.getElementById("boss");
+    context.drawImage(bossImg, boss.x - middleX, boss.y - middleY, 100, 130);
+
+    // context.beginPath();
+    // context.arc(boss.x - middleX, boss.y - middleY, GRID_SIZE/2 , 0, 2 * Math.PI);
+    // context.fill();
+
+
     for (var id in projectiles) {
       var projectile = projectiles[id];
       //Determines how the bullets look
@@ -288,10 +297,11 @@ window.addEventListener('mousemove', function (e) {
 
       var enemy = enemies[id];
       //Determines how the bullets look // old radius = 6
-      context.beginPath();
-      context.arc(enemy.x - middleX, enemy.y - middleY, GRID_SIZE/2, 0, 2 * Math.PI);
-      context.fillStyle = 'red';
-      context.fill();
+      context.drawImage(bossImg, enemy.x - middleX, enemy.y - middleY, 50, 65);
+      // context.beginPath();
+      // context.arc(enemy.x - middleX, enemy.y - middleY, GRID_SIZE/2, 0, 2 * Math.PI);
+      // context.fillStyle = 'red';
+      // context.fill();
 
       showHealthBarAbove(enemy.x - middleX, enemy.y - middleY, enemy.health, enemy.maxHealth);
     }

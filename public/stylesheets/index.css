@@ -61,6 +61,11 @@ body{
   margin:auto;
 }
 
+#boss {
+  margin-left: 75%;
+  display: none;
+}
+
 /* ========== SUN ============  */
 .sunshine::before {
     position: absolute;
