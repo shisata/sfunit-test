@@ -277,7 +277,11 @@ window.addEventListener('mousemove', function (e) {
 
     //Draw the bawss
     var bossImg = document.getElementById("boss");
-    context.drawImage(bossImg, boss.x - middleX + 20, boss.y - middleY - 100, 100, 130);
+    // context.drawImage(bossImg, boss.x - middleX + 20, boss.y - middleY - 100, 100, 130);
+    context.beginPath();
+    context.arc(boss.x - middleX, boss.y - middleY, 2*GRID_SIZE/2, 0, 2 * Math.PI);
+    context.fillStyle = 'red';
+    context.fill();
     showHealthBarAbove(boss.x - middleX + 20, boss.y - middleY - 100, boss.health, boss.maxHealth);
 
     for (var id in projectiles) {
@@ -294,11 +298,11 @@ window.addEventListener('mousemove', function (e) {
 
       var enemy = enemies[id];
       //Determines how the bullets look // old radius = 6
-      context.drawImage(bossImg, enemy.x - middleX + 5, enemy.y - middleY - 40, 50, 65);
-      // context.beginPath();
-      // context.arc(enemy.x - middleX, enemy.y - middleY, GRID_SIZE/2, 0, 2 * Math.PI);
-      // context.fillStyle = 'red';
-      // context.fill();
+      // context.drawImage(bossImg, enemy.x - middleX + 5, enemy.y - middleY - 40, 50, 65);
+      context.beginPath();
+      context.arc(enemy.x - middleX, enemy.y - middleY, GRID_SIZE/2, 0, 2 * Math.PI);
+      context.fillStyle = 'red';
+      context.fill();
 
       showHealthBarAbove(enemy.x - middleX, enemy.y - middleY, enemy.health, enemy.maxHealth);
     }

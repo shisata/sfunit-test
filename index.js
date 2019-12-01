@@ -154,12 +154,12 @@ module.exports = {
     return minimap;
   },
 
-<<<<<<< HEAD
   // Test Enemy Spawn Zone 1
   testZone1: function(){
     zone1 = 1;
     return zone1;
-=======
+  },
+
   // Tests Weather API
   testWeatherAPI: function(){
     weather = 1;
@@ -171,7 +171,6 @@ module.exports = {
     createRoom(rm);
     releaseTheBeast(rm);
     return(rooms[rm].boss);
->>>>>>> 9817f7d9bc5f174cbee82a4eb5d9105c87bbc20d
   },
 
   // Test spawn zones
@@ -186,7 +185,7 @@ module.exports = {
     createPlayer(socketID, rm, "Room");
 
     //Each of the below coordinates marks a zone on the map
-    zoneList = [[1980, 1555], [2600, 1470], [3500,1400], [2675, 1260], 
+    zoneList = [[1980, 1555], [2600, 1470], [3500,1400], [2675, 1260],
     [4005, 2460], [2600, 2330], [1955, 2045], [1765, 1740], [1075, 1655]];
     resultList = [];
 
@@ -396,8 +395,8 @@ function createPlayer(id, serverName, username) {
     username: username,
     x: 259 * GRID_SIZE,
     y: 169 * GRID_SIZE,
-    maxHealth: 20,
-    health: 20,
+    maxHealth: 100,
+    health: 100,
     healthRecoverRate: 1,
     level: 1,
     damage: 5,
