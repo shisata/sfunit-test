@@ -372,7 +372,6 @@ io.on('connection', function(socket) {
 setInterval(function() {
   for (var rm in rooms) {
     if(rooms[rm].players.numPlayers > 0){
-      //  console.log("interval player")
         moveProjectiles(rm);
         moveEnemies(rm);
         handleBulletCollisions(rm);
@@ -1208,6 +1207,20 @@ function handleBulletCollisions(rm) {
                 rooms[rm].enemies.numEnemies -= 1;
               }
         }
+      }
+    }
+  }
+  //Boss-projectile collision handler
+  if(rooms[rm].boss) {
+    for (var id in rooms[rm].projectiles) {
+      if (rooms[rm].projectiles[id]) { 
+        if ((Math.abs(rooms[rm].boss.x - rooms[rm].projectiles[id].x) < 30) &&
+            (Math.abs(rooms[rm].boss.y - rooms[rm].projectiles[id].y) < 30)) {
+              rooms[rm].boss.health -= 1;
+              if(rooms[rm].boss.health < 0) {
+                rooms[rm].boss = 0;
+              }
+            }
       }
     }
   }
