@@ -140,6 +140,11 @@ module.exports = {
   testPlayerHealth: function(){
     health = 100;
     return health
+  },
+
+  testPlayerReload: function(){
+    reload = 5;
+    return reload
   }
   
 }

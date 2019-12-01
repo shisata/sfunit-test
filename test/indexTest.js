@@ -20,6 +20,7 @@ testEnemyMovementResult = index.testEnemyMovement();
 testPlayerShootResult = index.testPlayerShoot();
 testPlayerAmmoResult = index.testPlayerAmmo();
 testPlayerHealthResult = index.testPlayerHealth();
+testPlayerReloadResult = index.testPlayerReload();
 //roomsResult = index.rooms('test');
 
 describe('Index', function(){
@@ -250,6 +251,17 @@ describe('Index', function(){
         });
     });
 
+    // Test cases for Player Reload
+    describe('testPlayerReload()', function(){
+
+        it('testPlayerReload() is of type int', function(){
+            assert.notTypeOf(testPlayerReloadResult, 'string');
+        });
+
+        it('testPlayerReload() Reload is atleast 5', function(){
+            assert.equal(testPlayerReloadResult, 5);
+        });
+    });
 
 
 
