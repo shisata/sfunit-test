@@ -264,9 +264,9 @@ io.on('connection', function(socket) {
     if (data.shootBullet) {
       var rm = getRoomBySocketId[socket.id]
 
-      for (id in rooms[rm].players) {
-        player = rooms[rm].players[id];
-      }
+      // for (id in rooms[rm].players) {
+      //   player = rooms[rm].players[id];
+      // }
       //astar testing here
       // console.log(aStarSearch([100,100], [200,200], rm));
 
@@ -728,7 +728,6 @@ function spawnEnemies(rm) {
 
   //Gets the spawn locations of the occupied zones
   spawnZones = getspawnZones(zonez);
-  console.log(spawnZones);
 
   for (id in spawnZones) {
     spawn = spawnZones[id]
