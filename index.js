@@ -154,12 +154,6 @@ module.exports = {
     return minimap;
   },
 
-  // Tests Weather API
-  testWeatherAPI: function(){
-    weather = 1;
-    return 1;
-  },
-
   // Test Enemy Spawn Zone 1
   testZone1: function(){
     zone1 = 1;
@@ -900,7 +894,7 @@ function moveTheBeast(rm) {
 
   //Find the closest player
   if ( rooms[rm].players.numPlayers > 0 ) {
-    
+
     var closestPlayer;
       var closestPlayerDistance = Infinity;
       for (var player in rooms[rm].players) {
@@ -958,7 +952,7 @@ function moveTheBeast(rm) {
   // startState = [rooms[rm].boss.x, rooms[rm].boss.y];
   // console.log("logging goa;l". goal);
   // path = aStarSearch(startState, goal, rm);
-  // speed = rooms[rm].boss.speed  
+  // speed = rooms[rm].boss.speed
 
   // console.log("moving the big boy");
 
@@ -1212,7 +1206,7 @@ function handleBulletCollisions(rm) {
   //Boss-projectile collision handler
   if(rooms[rm].boss) {
     for (var id in rooms[rm].projectiles) {
-      if (rooms[rm].projectiles[id]) { 
+      if (rooms[rm].projectiles[id]) {
         if ((Math.abs(rooms[rm].boss.x - rooms[rm].projectiles[id].x) < 30) &&
             (Math.abs(rooms[rm].boss.y - rooms[rm].projectiles[id].y) < 30)) {
               rooms[rm].boss.health -= 1;
