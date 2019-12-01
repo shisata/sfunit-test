@@ -188,6 +188,18 @@ module.exports = {
   testZone6: function(){
     zone6 = 6;
     return zone6;
+  },
+
+  // Test Enemy Spawn Zone 7
+  testZone7: function(){
+    zone7 = 7;
+    return zone7;
+  },
+
+  // Test Enemy Spawn Zone 8
+  testZone8: function(){
+    zone8 = 8;
+    return zone8;
   }
   
 }

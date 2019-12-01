@@ -28,6 +28,8 @@ testZone2Result = index.testZone2();
 testZone3Result = index.testZone3();
 testZone4Result = index.testZone4();
 testZone6Result = index.testZone6();
+testZone7Result = index.testZone7();
+testZone8Result = index.testZone8();
 //roomsResult = index.rooms('test');
 
 describe('Index', function(){
@@ -379,6 +381,38 @@ describe('Index', function(){
 
         it('testZone4() is alloted 6', function(){
             assert.equal(testZone6Result, 6);
+        });
+    });
+
+    // Test cases for Zone 7
+    describe('testZone7()', function(){
+
+        it('testZone7() exists', function(){
+            assert.isOk(testZone7Result);
+        });
+
+        it('testZone7() is of type int', function(){
+            assert.notTypeOf(testZone7Result, 'string');
+        });
+
+        it('testZone4() is alloted 7', function(){
+            assert.equal(testZone7Result, 7);
+        });
+    });
+
+    // Test cases for Zone 8
+    describe('testZone8()', function(){
+
+        it('testZone8() exists', function(){
+            assert.isOk(testZone8Result);
+        });
+
+        it('testZone8() is of type int', function(){
+            assert.notTypeOf(testZone8Result, 'string');
+        });
+
+        it('testZone8() is alloted 8', function(){
+            assert.equal(testZone8Result, 8);
         });
     });
 
