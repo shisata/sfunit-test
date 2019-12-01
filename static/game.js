@@ -136,6 +136,7 @@ document.addEventListener('keydown', function(event) {
 
 canvas.addEventListener('click', function(event) {
   var newAudio = sound.shoot.cloneNode()
+  newAudio.volume = 0.05;
   newAudio.play()
   shoot.shootBullet = true;
   shoot.x = xPos;
@@ -276,7 +277,7 @@ window.addEventListener('mousemove', function (e) {
 
     //Draw the bawss
     var bossImg = document.getElementById("boss");
-    context.drawImage(bossImg, boss.x - middleX, boss.y - middleY, 100, 130);
+    context.drawImage(bossImg, boss.x - middleX + 20, boss.y - middleY - 100, 100, 130);
 
     // context.beginPath();
     // context.arc(boss.x - middleX, boss.y - middleY, GRID_SIZE/2 , 0, 2 * Math.PI);
@@ -297,7 +298,7 @@ window.addEventListener('mousemove', function (e) {
 
       var enemy = enemies[id];
       //Determines how the bullets look // old radius = 6
-      context.drawImage(bossImg, enemy.x - middleX, enemy.y - middleY, 50, 65);
+      context.drawImage(bossImg, enemy.x - middleX + 5, enemy.y - middleY - 40, 50, 65);
       // context.beginPath();
       // context.arc(enemy.x - middleX, enemy.y - middleY, GRID_SIZE/2, 0, 2 * Math.PI);
       // context.fillStyle = 'red';
