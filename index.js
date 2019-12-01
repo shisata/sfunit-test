@@ -294,9 +294,12 @@ setInterval(function() {
         generateEnemies(rm);
         recoverPlayerHealth(rm);
         checkQuest(rm);
+        if(!rooms[rm.boss]) releaseTheBeast(rm);
+        // if(rooms[rm.boss])  moveTheBeast(rm);
+
         //console.log("LOGGING rm", rm);
         io.sockets.to(rm).emit('state', rooms[rm].players,
-          rooms[rm].projectiles, rooms[rm].enemies, rooms[rm].zones, rooms[rm].teamQuests);
+          rooms[rm].projectiles, rooms[rm].enemies, rooms[rm].zones, rooms[rm].teamQuests, rooms[rm].boss);
       }
   }
 }, 1000 / 30);
@@ -667,8 +670,8 @@ function generateProjectile(id, data, rm) {
 
   //Generate the projectile
   rooms[rm].projectiles[rooms[rm].bulletCount] = {
-    x: rooms[rm].players[id].x + (3 * velX/updatePerSecond),
-    y: rooms[rm].players[id].y + (3 * velY/updatePerSecond),
+    x: rooms[rm].players[id].x + (1 * velX/updatePerSecond),
+    y: rooms[rm].players[id].y + (1 * velY/updatePerSecond),
     vx: velX,
     vy: velY
   };
@@ -694,27 +697,27 @@ function spawnEnemies(rm) {
     spawn = spawnZones[id]
     // spawnX = Math.random() * 50 + spawn.x
     // spawnY = Math.random() * 50 + spawn.y
-    spawnX = Math.random() * 200 + spawn[0];
-    spawnY = Math.random() * 200 + spawn[1];
+    spawnX = Math.random() * 150 + spawn[0];
+    spawnY = Math.random() * 150 + spawn[1];
 
     //Enemy spawning can be modelled with X ~ Bernoulli(pi)
     //with pi = p(spawn inside wall). This function respawns enemies repeatedly
     //until they are not inside a wall. Expected #spawns = 1/(1-pi), pi ~= .05
     while(hasCollision(spawnX, spawnY, rm)) {
-      spawnX = Math.random() * 200 + spawn[0];
-      spawnY = Math.random() * 200 + spawn[1];
+      spawnX = Math.random() * 150 + spawn[0];
+      spawnY = Math.random() * 150 + spawn[1];
     }
     
     // add the new object to the objects[] array
-    if (rooms[rm].enemies.numEnemies < 100) {
+    if (rooms[rm].enemies.numEnemies < 30) {
       rooms[rm].enemies[rooms[rm].enemyID] = {
         x: spawnX,
         y: spawnY,
         vx: 50,
         vy: 50,
         speed: .8*140,
-        health: 4,
-        maxHealth: 4
+        health: 10,
+        maxHealth: 10
       }
       rooms[rm].enemies.numEnemies++;
       rooms[rm].enemyID++;
@@ -752,7 +755,7 @@ function getspawnZones(zones) {
          occupiedZones.push([1980,1555]);
          break;
       case "2":
-         occupiedZones.push([2950,1750]);
+         occupiedZones.push([2900,1750]);
          break;
       case "3":
          occupiedZones.push([3500,1400]);
@@ -784,7 +787,7 @@ function getspawnZones(zones) {
 function generateEnemies(rm) {
 
   // spawn a new object
-  if (rooms[rm].spawnRate > 1000) {
+  if (rooms[rm].spawnRate > 900) {
     rooms[rm].spawnRate = rooms[rm].spawnRate -= 1;
   }
 
@@ -796,6 +799,19 @@ function generateEnemies(rm) {
     rooms[rm].lastSpawn = time;
     spawnEnemies(rm);
     //console.log('emeny spawned. spawnRate: ', spawnRate);
+  }
+}
+
+//Generates bosses
+function releaseTheBeast(rm) {
+  rooms[rm].boss = {
+    x: 2950,
+    y: 1750,
+    vx: 50,
+    vy: 50,
+    speed: .8*175,
+    health: 300,
+    maxHealth: 300
   }
 }
 
@@ -1015,8 +1031,8 @@ function handleBulletCollisions(rm) {
   for (var enemy in rooms[rm].enemies) {
     for (var id in rooms[rm].projectiles) {
       if (rooms[rm].projectiles[id]) {
-        if ( (Math.abs(rooms[rm].enemies[enemy].x - rooms[rm].projectiles[id].x) < 5) &&
-            (Math.abs(rooms[rm].enemies[enemy].y - rooms[rm].projectiles[id].y) < 5) ) {
+        if ( (Math.abs(rooms[rm].enemies[enemy].x - rooms[rm].projectiles[id].x) < 12) &&
+            (Math.abs(rooms[rm].enemies[enemy].y - rooms[rm].projectiles[id].y) < 12) ) {
               rooms[rm].enemies[enemy].health -= 1;
               if (rooms[rm].enemies[enemy].health < 0) {
                 var temp = rooms[rm].enemies[rooms[rm].enemyID -= 1];
