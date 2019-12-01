@@ -134,6 +134,12 @@ module.exports = {
   testPlayerAmmo: function(){
     ammo = 12;
     return ammo;
+  },
+
+  // Tests Player Health
+  testPlayerHealth: function(){
+    health = 100;
+    return health
   }
   
 }

@@ -19,6 +19,7 @@ testGenerateEnemiesResult = index.testGenerateEnemies();
 testEnemyMovementResult = index.testEnemyMovement();
 testPlayerShootResult = index.testPlayerShoot();
 testPlayerAmmoResult = index.testPlayerAmmo();
+testPlayerHealthResult = index.testPlayerHealth();
 //roomsResult = index.rooms('test');
 
 describe('Index', function(){
@@ -232,12 +233,22 @@ describe('Index', function(){
             assert.notTypeOf(testPlayerAmmoResult, 'string');
         });
 
-        it('testPlayerShoot() Shoot is atleast 0', function(){
+        it('testPlayerAmmo() Ammo is atleast 12', function(){
             assert.equal(testPlayerAmmoResult, 12);
         });
     });
 
+    // Test cases for Player Health
+    describe('testPlayerHealth()', function(){
 
+        it('testPlayerHealth() is of type int', function(){
+            assert.notTypeOf(testPlayerHealthResult, 'string');
+        });
+
+        it('testPlayerHealth() Health is atleast 100', function(){
+            assert.equal(testPlayerHealthResult, 100);
+        });
+    });
 
 
 
