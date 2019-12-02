@@ -32,7 +32,7 @@ body{
 }
 
 #canvas:active {
-  animation: shake 0.001s;
+  animation: shake 0.05s;
   animation-iteration-count: 1;
 }
 
@@ -40,7 +40,7 @@ body{
   10% { transform: translate(-0.1px, -0.2px) rotate(-0.197deg); }
   40% { transform: translate(0.5px, -0.5px) rotate(0.21deg); }
   50% { transform: translate(-0.1px, 0.2px) rotate(-0.123deg); }
-  /* 100% { transform: translate(0.5px, -0.2px) rotate(-0.851deg); } */
+  100% { transform: translate(0.5px, -0.5px) rotate(-0.851deg); }
 }
 .weather_animation{
   /* visibility:hidden; */
