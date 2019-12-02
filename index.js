@@ -105,9 +105,20 @@ module.exports = {
     return returnProjectiles(rm);
   },
   // Tests randomObjects aka enemies spawn correctlty
-  testSpawn: function(){
-    //spawnEnemies();
-    return 1;
+  testSpawn: function(rm) {
+    createRoom(rm);
+    var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap2.json', 'utf8'));
+    var processor = require('./static/objects/mapProcessor.js');
+    rooms[rm].mapData = processor.constructFromData(mapDataFromFile);
+    rooms[rm].zones = processor.constructZone(mapDataFromFile);
+    spawnEnemies(rm);
+
+    var enemySuccessfullySpawns = 0
+    console.log("logging the room's enemies", rooms[rm].enemies);
+    if(rooms[rm].enemies) {
+      enemySuccessfullySpawns = 1
+    }
+    return enemySuccessfullySpawns;
   },
 
   // Tests generateEnemies
