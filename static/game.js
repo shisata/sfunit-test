@@ -139,7 +139,7 @@ document.addEventListener('keydown', function(event) {
 
 canvas.addEventListener('click', function(event) {
   var newAudio = sound.shoot.cloneNode()
-  newAudio.volume = 0.05;
+  newAudio.volume = 0.5;
   newAudio.play()
   shoot.shootBullet = true;
   shoot.x = xPos;
@@ -193,7 +193,7 @@ function initSound(){
   sound.reload = new Audio();
   sound.hit = new Audio();
   sound.background.src = "";
-  sound.shoot.src =  "../static/audio/9mm.mp3";
+  sound.shoot.src =  "../static/audio/Woosh-Mark_DiAngelo-4778593.mp3";
   sound.reload.src = "../static/audio/reload.mp3";
   sound.hit.src = "../static/audio/HITMARKER.mp3";
 }
@@ -287,7 +287,7 @@ window.addEventListener('mousemove', function (e) {
     // context.arc(boss.x - middleX, boss.y - middleY, 2*GRID_SIZE/2, 0, 2 * Math.PI);
     // context.fillStyle = 'red';
     // context.fill();
-    context.drawImage(bossImg, boss.x - middleX, boss.y - middleY, GRID_SIZE + 20, GRID_SIZE + 100);
+    context.drawImage(bossImg, boss.x - middleX, boss.y - middleY, 100, 100);
     showHealthBarAbove(boss.x - middleX + 20, boss.y - middleY - 100, boss.health, boss.maxHealth);
 
     for (var id in projectiles) {
@@ -296,7 +296,7 @@ window.addEventListener('mousemove', function (e) {
       // context.drawImage('../public/image/George.jpeg', projectile.x - middleX, projectile.y - middleY,10,10);
       context.beginPath();
       context.arc(projectile.x - middleX, projectile.y - middleY, 2, 0, 2 * Math.PI);
-      context.fillStyle = 'blue';
+      context.fillStyle = '#eeeeee';
       context.fill();
     }
 
