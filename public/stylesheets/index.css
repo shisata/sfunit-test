@@ -32,15 +32,15 @@ body{
 }
 
 #canvas:active {
-  animation: shake 0.005s;
-  animation-iteration-count: infinite;
+  animation: shake 0.001s;
+  animation-iteration-count: 1;
 }
 
 @keyframes shake {
-  10% { transform: translate(-1.1px, -1.2px) rotate(-0.197deg); }
-  40% { transform: translate(0.5px, -1.5px) rotate(0.421deg); }
-  50% { transform: translate(-0.1px, 2px) rotate(-0.123deg); }
-  100% { transform: translate(0.5px, -0.2px) rotate(-0.851deg); }
+  10% { transform: translate(-0.1px, -0.2px) rotate(-0.197deg); }
+  40% { transform: translate(0.5px, -0.5px) rotate(0.21deg); }
+  50% { transform: translate(-0.1px, 0.2px) rotate(-0.123deg); }
+  /* 100% { transform: translate(0.5px, -0.2px) rotate(-0.851deg); } */
 }
 .weather_animation{
   /* visibility:hidden; */

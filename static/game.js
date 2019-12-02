@@ -139,7 +139,7 @@ document.addEventListener('keydown', function(event) {
 
 canvas.addEventListener('click', function(event) {
   var newAudio = sound.shoot.cloneNode()
-  newAudio.volume = 0.05;
+  newAudio.volume = 0.5;
   newAudio.play()
   shoot.shootBullet = true;
   shoot.x = xPos;
