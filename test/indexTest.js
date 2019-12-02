@@ -15,7 +15,7 @@ chai.use(chaiHttp);
 // Results
 sayHelloResult = index.sayHello();
 addNumbersResult = index.addNumbers(5, 5);
-testSpawnResult = index.testSpawn();
+testSpawnResult = index.testSpawn("testSpawnofEnemyRoom");
 testGenerateEnemiesResult = index.testGenerateEnemies();
 testEnemyMovementResult = index.testEnemyMovement();
 testPlayerShootResult = index.testPlayerShoot();
@@ -175,7 +175,9 @@ describe('Index', function(){
     // Test cases for spawning Random enemies
     describe('testSpawn()', function(){
 
-        it('testSpawn() exists', function(){
+        console.log("returning test spawn result", testSpawnResult);
+
+        it('testSpawn() created an enemy', function(){
             assert.isOk(testSpawnResult);
         });
 
@@ -183,9 +185,9 @@ describe('Index', function(){
             assert.notTypeOf(testSpawnResult, 'string');
         });
 
-        it('testSpawn() is atleast 1', function(){
-            assert.equal(testSpawnResult, 1);
-        });
+        // it('testSpawn() is atleast 1', function(){
+        //     assert.equal(testSpawnResult, 1);
+        // });
     });
 
     //Test cases for generating Enemies
@@ -392,6 +394,17 @@ describe('Index', function(){
                 done();
             });
     });
+
+    it('Attempting to log in Administrator', function(done) {
+        // chai.request('../index')
+        chai.request('https://sfunit.herokuapp.com')
+            .post('/checkAccount')
+            .send({'username': 'ADMIN301254694', 'password': '301254694' })
+            .end(function(err, res){
+                res.should.have.status(200);
+                done();
+            });
+    });
   });
   
   // Test whether the enemy spawns
@@ -402,6 +415,14 @@ describe('Index', function(){
     });
   });
 
+  // Test whether the enemy moves
+  describe('Move the Boss', ()=> {
+    didBossSpawn = index.testBossSpawn();
+    it ('Should move the boss on the map', function() {
+        assert.isOk(didBossSpawn);
+    });
+  });
+    
   describe('Checking Map Zones', ()=> {
     zones = index.testZones("ZoneTestSocketID", "ZoneTestRoom");
     it ('Should contain all zones', function() {

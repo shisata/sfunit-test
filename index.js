@@ -105,9 +105,20 @@ module.exports = {
     return returnProjectiles(rm);
   },
   // Tests randomObjects aka enemies spawn correctlty
-  testSpawn: function(){
-    //spawnEnemies();
-    return 1;
+  testSpawn: function(rm) {
+    createRoom(rm);
+    var mapDataFromFile = JSON.parse(fs.readFileSync('static/objects/testMap2.json', 'utf8'));
+    var processor = require('./static/objects/mapProcessor.js');
+    rooms[rm].mapData = processor.constructFromData(mapDataFromFile);
+    rooms[rm].zones = processor.constructZone(mapDataFromFile);
+    spawnEnemies(rm);
+
+    var enemySuccessfullySpawns = 0
+    console.log("logging the room's enemies", rooms[rm].enemies);
+    if(rooms[rm].enemies) {
+      enemySuccessfullySpawns = 1
+    }
+    return enemySuccessfullySpawns;
   },
 
   // Tests generateEnemies
@@ -593,7 +604,7 @@ function roomData(serverName) {
             continue;
           }
           if (!otherPlayer.quests) {
-            console.log(otherPlayer);
+            // console.log(otherPlayer);
             continue;
           }
           otherPlayer.score += 100;
@@ -1271,11 +1282,11 @@ function reloadGun(player) {
 //Kill a player below 0 health
 function youveBeenTerminated(player, rm) {
   rooms[rm].players[player] = 0;
-  console.log(rooms[rm].players[player]);
+  // console.log(rooms[rm].players[player]);
   rooms[rm].numPlayers -= 1;
 
   if (rooms[rm].numPlayers <= 0) {
-    console.log("room deleted: number of players ", rooms[rm].numPlayers);
+    // console.log("room deleted: number of players ", rooms[rm].numPlayers);
     delete rooms[rm];
   }
   //Load "YOUVE FAILED SCREEN"
