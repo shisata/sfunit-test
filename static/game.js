@@ -8,6 +8,9 @@ var canvas = document.getElementById('canvas');
 console.log(`Hello ${username}!`);
 console.log(`Server ${servername}!`);
 
+//particles
+// var particlesJS = window.particlesJS.load;
+
 //these two messages are related to function 'showMessage'.
 var messageOn = true;
 var messageQueue = ["Welcome to S.F.U.! \nPress B to continue."
@@ -631,7 +634,6 @@ function showBulletBarAbove(x, y, clip, clipSize) {
   context.rect(x-20, y-20, (clip/clipSize)*40, 6);
   context.fill();
 }
-
 
 function processMapDrawing(mapData){
   console.log(mapData);
