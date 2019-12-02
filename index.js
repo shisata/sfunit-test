@@ -203,7 +203,27 @@ module.exports = {
       }
     }
     return resultList;
+  },
+
+  duplicateRooms: function(rm) {
+    createRoom(rm);
+    createRoom(rm);
+    //Will crash if unsuccessfull
+    return 1;
+  },
+
+  nearDeathCheck: function() {
+    createRoom("nearDeathRoom");
+    createPlayer("nearDeathID", "nearDeathRoom", "uname");
+    youveBeenTerminated("nearDeathID",  "nearDeathRoom");
+    return(rooms["nearDeathRoom"].players["nearDeathID"]);
   }
+
+  // checkPlayerDisconnect: function() {
+  //   createRoom("disconnectRoom");
+  //   createPlayer("disconnectID", "disconnectRoom", "uname");
+  //   logOutPlayer("uname")
+  // }
 }
 
 // Dependencies

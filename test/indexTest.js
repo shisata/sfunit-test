@@ -23,19 +23,8 @@ testPlayerAmmoResult = index.testPlayerAmmo();
 testPlayerHealthResult = index.testPlayerHealth();
 testPlayerReloadResult = index.testPlayerReload();
 testMiniMapResult = index.testMiniMap();
-<<<<<<< HEAD
-testZone1Result = index.testZone1();
-testZone2Result = index.testZone2();
-testZone3Result = index.testZone3();
-testZone4Result = index.testZone4();
-testZone6Result = index.testZone6();
-testZone7Result = index.testZone7();
-testZone8Result = index.testZone8();
-testZone9Result = index.testZone9();
-=======
 testWeatherAPIResult = index.testWeatherAPI();
 
->>>>>>> 9817f7d9bc5f174cbee82a4eb5d9105c87bbc20d
 //roomsResult = index.rooms('test');
 
 describe('Index', function(){
@@ -154,6 +143,7 @@ describe('Index', function(){
             result = index.testCollision(`${dir}Test`, `${dir}Room`, "BC", direction);
             it(`moved player ${dir} 200 units to successfully force collision`,
             function() {
+                console.log("logging collision result", result);
                 assert.isOk(result == true);
             });
         }
@@ -229,10 +219,6 @@ describe('Index', function(){
             assert.equal(testEnemyMovementResult, 5);
         });
     });
-<<<<<<< HEAD
-
-=======
->>>>>>> 9817f7d9bc5f174cbee82a4eb5d9105c87bbc20d
 
     // Test cases for Player Shoot
     describe('testPlayerShoot()', function(){
@@ -362,6 +348,7 @@ describe('Index', function(){
             done();
           });
     });
+
     // Render register page
     it('Should render register page on /register GET', (done) => {
       chai.request('https://sfunit.herokuapp.com')
@@ -371,6 +358,7 @@ describe('Index', function(){
             done();
           });
     });
+
     //Loging in valid account
     it('Should log in user with valid account using /checkAccount POST', function(done) {
         // chai.request('../index')
@@ -408,16 +396,31 @@ describe('Index', function(){
   
   // Test whether the enemy spawns
   describe('Spawn Boss', ()=> {
-    result = index.testBossSpawn();
+    didBossSpawn = index.testBossSpawn();
     it ('Should spawn the boss onto the map', function() {
-        assert.isOk(result);
+        assert.isOk(didBossSpawn);
     });
   });
 
   describe('Checking Map Zones', ()=> {
-    result = index.testZones("ZoneTestSocketID", "ZoneTestRoom");
+    zones = index.testZones("ZoneTestSocketID", "ZoneTestRoom");
     it ('Should contain all zones', function() {
-        assert.isOk(result[7] == 9 && result[5] == 7 && result[0] == 1);
+        assert.isOk(zones[7] == 9 && zones[5] == 7 && zones[0] == 1);
+    });
+  });
+
+  describe('Duplicate Rooms Test', ()=> {
+    duplicateRoomResult = index.duplicateRooms("TestyBoi");
+    it("should only create one room", function() {
+        assert.isOk(duplicateRoomResult == 1);
+    });
+  });
+
+  describe('Near Death Check', ()=> {
+    nearDeathResult = index.nearDeathCheck();
+    
+    it("Player should be deleted", function() {
+        assert.isOk(nearDeathResult == 0);
     });
   });
 });
