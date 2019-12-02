@@ -121,12 +121,6 @@ module.exports = {
     return enemySuccessfullySpawns;
   },
 
-  // Tests generateEnemies
-  testGenerateEnemies: function(){
-    //generateEnemies();
-    return 10;
-  },
-
   // Tests Enemy Movements
   testEnemyMovement: function(){
     enemyMove = 5;
@@ -807,7 +801,7 @@ function spawnEnemies(rm) {
     // spawnY = Math.random() * 50 + spawn.y
     spawnX = Math.random() * 150 + spawn[0];
     spawnY = Math.random() * 150 + spawn[1];
-
+    
     //Enemy spawning can be modelled with X ~ Bernoulli(pi)
     //with pi = p(spawn inside wall). This function respawns enemies repeatedly
     //until they are not inside a wall. Expected #spawns = 1/(1-pi), pi ~= .05

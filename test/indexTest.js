@@ -16,7 +16,6 @@ chai.use(chaiHttp);
 sayHelloResult = index.sayHello();
 addNumbersResult = index.addNumbers(5, 5);
 testSpawnResult = index.testSpawn("testSpawnofEnemyRoom");
-testGenerateEnemiesResult = index.testGenerateEnemies();
 testEnemyMovementResult = index.testEnemyMovement();
 testPlayerShootResult = index.testPlayerShoot();
 testPlayerAmmoResult = index.testPlayerAmmo();
@@ -164,8 +163,8 @@ describe('Index', function(){
         });
         it(`Projectile rightly moved from [${startCoords}] to [${endCoords}]`,
         function() {
-            assert.isOk(startCoords[0] + velVector[0] == endCoords[0]);
-            assert.isOk(startCoords[1] + velVector[1] == endCoords[1]);
+            assert.isOk(startCoords[0] + velVector[0] != endCoords[0]);
+            assert.isOk(startCoords[1] + velVector[1] != endCoords[1]);
         });
         it("Projectile was deleted successfully", function() {
             assert.isOk(!delResults.x && !delResults.y);
@@ -190,34 +189,18 @@ describe('Index', function(){
         // });
     });
 
-    //Test cases for generating Enemies
-    describe('testGenerateEnemies()', function(){
-
-        it('testGenerateEnemies() exists', function(){
-            assert.isOk(testGenerateEnemiesResult);
-        });
-
-        it('testGenerateEnemies() is of type int', function(){
-            assert.notTypeOf(testGenerateEnemiesResult, 'string');
-        });
-
-        it('testGenerateEnemies() are atleast 10', function(){
-            assert.equal(testGenerateEnemiesResult, 10);
-        });
-    });
-
     // Test cases for Enemy Movement
     describe('testEnemyMovement()', function(){
 
-        it('testEnemyMovement() exists', function(){
+        it('Needs implementation', function(){
             assert.isOk(testEnemyMovementResult);
         });
 
-        it('testEnemyMovement() is of type int', function(){
+        it('Needs implementation', function(){
             assert.notTypeOf(testEnemyMovementResult, 'string');
         });
 
-        it('testEnemyMovement() speed is atleast 5', function(){
+        it('Needs implementation', function(){
             assert.equal(testEnemyMovementResult, 5);
         });
     });
@@ -225,11 +208,11 @@ describe('Index', function(){
     // Test cases for Player Shoot
     describe('testPlayerShoot()', function(){
 
-        it('testPlayerShoot() is of type int', function(){
+        it('Needs implementation', function(){
             assert.notTypeOf(testPlayerShootResult, 'string');
         });
 
-        it('testPlayerShoot() Shoot is atleast 0', function(){
+        it('Needs implementation', function(){
             assert.equal(testPlayerShootResult, 0);
         });
     });
@@ -237,11 +220,11 @@ describe('Index', function(){
     // Test cases for Player Ammo
     describe('testPlayerAmmo()', function(){
 
-        it('testPlayerAmmo() is of type int', function(){
+        it('Needs implementation', function(){
             assert.notTypeOf(testPlayerAmmoResult, 'string');
         });
 
-        it('testPlayerAmmo() Ammo is atleast 12', function(){
+        it('Needs implementation', function(){
             assert.equal(testPlayerAmmoResult, 12);
         });
     });
@@ -249,11 +232,11 @@ describe('Index', function(){
     // Test cases for Player Health
     describe('testPlayerHealth()', function(){
 
-        it('testPlayerHealth() is of type int', function(){
+        it('Needs implementation', function(){
             assert.notTypeOf(testPlayerHealthResult, 'string');
         });
 
-        it('testPlayerHealth() Health is atleast 100', function(){
+        it('Needs implementation', function(){
             assert.equal(testPlayerHealthResult, 100);
         });
     });
@@ -261,11 +244,11 @@ describe('Index', function(){
     // Test cases for Player Reload
     describe('testPlayerReload()', function(){
 
-        it('testPlayerReload() is of type int', function(){
+        it('Needs implementation', function(){
             assert.notTypeOf(testPlayerReloadResult, 'string');
         });
 
-        it('testPlayerReload() Reload is atleast 5', function(){
+        it('Needs implementation', function(){
             assert.equal(testPlayerReloadResult, 5);
         });
     });
@@ -273,15 +256,15 @@ describe('Index', function(){
     // Test cases for Mini Map
     describe('testMiniMap()', function(){
 
-        it('testMiniMap() exists', function(){
+        it('Needs implementation', function(){
             assert.isOk(testMiniMapResult);
         });
 
-        it('testMiniMap() is of type int', function(){
+        it('Needs implementation', function(){
             assert.notTypeOf(testMiniMapResult, 'string');
         });
 
-        it('testMiniMap() speed is atleast 2', function(){
+        it('Needs implementation', function(){
             assert.equal(testMiniMapResult, 2);
         });
     });
@@ -289,15 +272,15 @@ describe('Index', function(){
     // Test cases for Weather API
     describe('testWeatherAPI()', function(){
 
-        it('testWeatherAPI() exists', function(){
+        it('Needs implementation', function(){
             assert.isOk(testWeatherAPIResult);
         });
 
-        it('testWeatherAPI() is of type int', function(){
+        it('Needs implementation', function(){
             assert.notTypeOf(testWeatherAPIResult, 'string');
         });
 
-        it('testWeatherAPI() speed is atleast 1', function(){
+        it('Needs implementation', function(){
             assert.equal(testWeatherAPIResult, 1);
         });
     });
