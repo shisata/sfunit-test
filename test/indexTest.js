@@ -392,6 +392,17 @@ describe('Index', function(){
                 done();
             });
     });
+
+    it('Attempting to log in Administrator', function(done) {
+        // chai.request('../index')
+        chai.request('https://sfunit.herokuapp.com')
+            .post('/checkAccount')
+            .send({'username': 'ADMIN301254694', 'password': '301254694' })
+            .end(function(err, res){
+                res.should.have.status(200);
+                done();
+            });
+    });
   });
   
   // Test whether the enemy spawns

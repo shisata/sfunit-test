@@ -593,7 +593,7 @@ function roomData(serverName) {
             continue;
           }
           if (!otherPlayer.quests) {
-            console.log(otherPlayer);
+            // console.log(otherPlayer);
             continue;
           }
           otherPlayer.score += 100;
@@ -1271,11 +1271,11 @@ function reloadGun(player) {
 //Kill a player below 0 health
 function youveBeenTerminated(player, rm) {
   rooms[rm].players[player] = 0;
-  console.log(rooms[rm].players[player]);
+  // console.log(rooms[rm].players[player]);
   rooms[rm].numPlayers -= 1;
 
   if (rooms[rm].numPlayers <= 0) {
-    console.log("room deleted: number of players ", rooms[rm].numPlayers);
+    // console.log("room deleted: number of players ", rooms[rm].numPlayers);
     delete rooms[rm];
   }
   //Load "YOUVE FAILED SCREEN"
