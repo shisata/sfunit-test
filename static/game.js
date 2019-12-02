@@ -266,13 +266,15 @@ window.addEventListener('mousemove', function (e) {
       canvasW, canvasH, 0, 0, canvasW*zoom, canvasH*zoom);
 
     context.fillStyle = 'green';
+    var playerTexture = document.getElementById("player");
     for (var id in players) {
 
       var player = players[id];
       //Determines how the characters look
-      context.beginPath();
-      context.arc(player.x - middleX, player.y - middleY, GRID_SIZE/2 , 0, 2 * Math.PI);
-      context.fill();
+      // context.beginPath();
+      // context.arc(player.x - middleX, player.y - middleY, GRID_SIZE/2 , 0, 2 * Math.PI);
+      // context.fill();
+      context.drawImage(playerTexture, player.x - middleX, player.y - middleY, GRID_SIZE, GRID_SIZE);
 
       showHealthBarAbove(player.x - middleX, player.y - middleY, player.health, player.maxHealth);
       showBulletBarAbove(player.x - middleX, player.y - middleY, player.clip, player.clipSize);
@@ -281,10 +283,11 @@ window.addEventListener('mousemove', function (e) {
     //Draw the bawss
     var bossImg = document.getElementById("boss");
     // context.drawImage(bossImg, boss.x - middleX + 20, boss.y - middleY - 100, 100, 130);
-    context.beginPath();
-    context.arc(boss.x - middleX, boss.y - middleY, 2*GRID_SIZE/2, 0, 2 * Math.PI);
-    context.fillStyle = 'red';
-    context.fill();
+    // context.beginPath();
+    // context.arc(boss.x - middleX, boss.y - middleY, 2*GRID_SIZE/2, 0, 2 * Math.PI);
+    // context.fillStyle = 'red';
+    // context.fill();
+    context.drawImage(bossImg, boss.x - middleX, boss.y - middleY, GRID_SIZE + 20, GRID_SIZE + 100);
     showHealthBarAbove(boss.x - middleX + 20, boss.y - middleY - 100, boss.health, boss.maxHealth);
 
     for (var id in projectiles) {
@@ -297,15 +300,17 @@ window.addEventListener('mousemove', function (e) {
       context.fill();
     }
 
+    var enemyTexture = document.getElementById('enemy');
     for (var id in enemies) {
 
       var enemy = enemies[id];
       //Determines how the bullets look // old radius = 6
       // context.drawImage(bossImg, enemy.x - middleX + 5, enemy.y - middleY - 40, 50, 65);
-      context.beginPath();
-      context.arc(enemy.x - middleX, enemy.y - middleY, GRID_SIZE/2, 0, 2 * Math.PI);
-      context.fillStyle = 'red';
-      context.fill();
+      // context.beginPath();
+      // context.arc(enemy.x - middleX, enemy.y - middleY, GRID_SIZE/2, 0, 2 * Math.PI);
+      context.drawImage(enemyTexture, enemy.x - middleX, enemy.y - middleY, GRID_SIZE*2, GRID_SIZE*2);
+      // context.fillStyle = 'red';
+      // context.fill();
 
       showHealthBarAbove(enemy.x - middleX, enemy.y - middleY, enemy.health, enemy.maxHealth);
     }
@@ -658,8 +663,8 @@ function processMapDrawing(mapData){
   aqImage.onload = function(){
     context.drawImage(aqImage, 0, 0);
   }*/
-  var texture = new Image();
-  texture.src = "/objects/wall.png"
+  // var texture = new Image();
+  // texture.src = "/objects/wall.png"
   for (var x = 0; x < mapData.length; x++) {
     var line = "";
     for (var y = 0; y < mapData[mapData.length - 1].length; y++){
@@ -672,11 +677,11 @@ function processMapDrawing(mapData){
       // img.onload = function(){
       //   allMapCtx.drawImage(img, 300, 300, 300, 300);
       // }
-      var textureLoaded = false;
-      texture.onload = function(){
-        textureLoaded = true;
-      }
-
+      // var textureLoaded = false;
+      // texture.onload = function(){
+      //   textureLoaded = true;
+      // }
+      var wall = document.getElementById("wall");
       if(mapData[x][y] != '' && mapData[x][y].name == "floor")
       {
         allMapCtx.beginPath();
@@ -689,11 +694,12 @@ function processMapDrawing(mapData){
         // var source = mapData[x][y].textureSrc;
         // console.log(source)
         // var pattern = ctx.createPattern(source, "repeat");
-        allMapCtx.beginPath();
-        allMapCtx.rect(x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+        // allMapCtx.beginPath();
+        allMapCtx.drawImage(wall, x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+        // allMapCtx.rect(x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
         //TODO: MAPTEXTURE Problem here below lines!!
         // allMapCtx.fillStyle = texture.src;
-        allMapCtx.fillStyle = "#333";
+        // allMapCtx.fillStyle = "#333";
         // while (!textureLoaded) {
         //   console.log("waiting for the texture...");
         // }

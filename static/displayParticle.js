@@ -8,7 +8,7 @@ particlesJS('particles', {
       }
     },
     "color": {
-      "value": "#222222"
+      "value": "#ffffff"
     },
     "shape": {
       "type": "circle",
@@ -68,14 +68,14 @@ particlesJS('particles', {
     }
   },
   "interactivity": {
-    "detect_on": "window",
+    "detect_on": "canvas",
     "events": {
       "onhover": {
-        "enable": false,
+        "enable": true,
         "mode": "repulse"
       },
       "onclick": {
-        "enable": false,
+        "enable": true,
         "mode": "push"
       },
       "resize": true
