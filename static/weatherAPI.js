@@ -3,7 +3,6 @@
 // <head>
 // <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 // </head>
-
 function getTime(position)
 {
   console.log('Search time....')
@@ -102,13 +101,12 @@ function getWeather(position,time) {
           moon();
         break;
     }
-  return weather;
   });
 };
 
 function rain() {
   console.log('rain() called');
-  var canvas = document.getElementByID('rain1');
+  var canvas = $('#rain1')[0];
 
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
@@ -386,12 +384,9 @@ function moon(){
 	var h = meteorSky.height;//document.body.clientHeight;
 
 	var sky = new nightSky(meteorSky, w, h, {
-		// silverRiverNum : 1000,
-		// lineNumMax: 30,
-		// middleNum:7,
-    silverRiverNum : 0,
-		lineNumMax: 0,
-		middleNum:0,
+		silverRiverNum : 1000,
+		lineNumMax: 30,
+		middleNum:7,
 	});
 }
 
@@ -819,9 +814,9 @@ function disableWeather(){
 }
 // ============ END SNOW =============
 //When the document is ready, evoke the followed function
-$(document).ready(()=>{
-    getLocation();
-    setInterval(getLocation,30000);
+$(document).ready(function(){
+  getLocation();
+  setInterval(getLocation,30000);
   // moon();
   // rain();
   // rainLightning();

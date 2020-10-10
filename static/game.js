@@ -1,37 +1,35 @@
 //Getting username
-var username = document.getElementById('username');
+var username = "NooB";//document.getElementById('username');
 username = username.innerHTML;
-var servername = document.getElementById('servername');
+var servername = "Offline";//document.getElementById('servername');
 servername = servername.innerHTML;
 var canvas = document.getElementById('canvas');
 
 console.log(`Hello ${username}!`);
 console.log(`Server ${servername}!`);
 
-//particles
-// var particlesJS = window.particlesJS.load;
-
 //these two messages are related to function 'showMessage'.
 var messageOn = true;
 var messageQueue = ["Welcome to S.F.U.! \nPress B to continue."
-  , "S.F.U. stands for Special Fortification Unit."
-  , "What? You mean, S.F.U. is Simon Fraser University?"
-  , "Well, who cares about that Simon Fraser guy who \ndestroyed aboriginal culture?"
-  , "Press W/A/S/D to move, B to see next message."
-  , "Press M to turn on/off the map."
-  , "Move mouse and click to shoot."
-  , "And survive."
-  , "What? You mean, we didn't talk about this kind of story \nin the meetings?"
-  , "I know, I just wanted to put this in. -Hailey"
-  , "If you are bored, you can go kill the enemies."
-  , "And we have a cool weather feature on top right."
-  , "Don't forget to turn on the music."
-  , "Good luck, have fun!"];
+  , "S.F.U. stands for Special Fortification Unit. \nPress B to continue."
+  , "What? You thought S.F.U. as in Simon Fraser University? \nPress B to continue."
+  , "Well, you are right except its a game version of your time here \nat the University, sorry I meant Unit! *wink* *wink* \nPress B to continue."
+  , "Let's dive into the instructions \nPress B to continue."
+  , "Press W/A/S/D to move, B to see next message. \nPress B to continue."
+  , "Press M to turn on/off the map. \nPress B to continue."
+  , "And we have a cool weather feature on top right. \nPress B to continue."
+  , "Don't forget to turn on/off the music at the bottom of the canvas. \nPress B to continue."
+  , "Move mouse and click to shoot. \nPress B to continue."
+  , "And survive. \nPress B to continue."
+  , "Its you, your laptop and your water bottle against the whole world! \nPress B to continue."
+  , "Prove that you can get through this by defeating your worst \nnightmares \nPress B to continue."
+  , "Hint: Try getting through to ASB before you fail. \nPress B to continue."
+  , "Good luck, have fun! \nPress B to continue."];
 var mapOn = true;
 
 // dead.
 var dead = false;
-var deadMessage = ["We're looking for Co-op!\n\nHailey | Fall 2020 | haa40@sfu.ca   resume ready :D\nWrite you names here let's get a job"]
+var deadMessage = ["Try again!"]
 
 //zoneChange function related.
 var zoneChangeOn = false;
@@ -43,6 +41,13 @@ var questMessageOnTime;
 var questName = "";
 var questCondition = "";
 var questDescription = "";
+
+var quizMessageOn = false;
+var quizMessage = "";
+var quizMessageOnTime;
+var quizChoice;
+
+var clearScreen = false;
 
 var socket = io();
 socket.on('message', function(data) {
@@ -131,7 +136,7 @@ document.addEventListener('keydown', function(event) {
         }
       }
       break;
-    case 77: //M
+    case 77:
       mapOn = !mapOn;
       break;
   }
@@ -139,7 +144,6 @@ document.addEventListener('keydown', function(event) {
 
 canvas.addEventListener('click', function(event) {
   var newAudio = sound.shoot.cloneNode()
-  newAudio.volume = 0.5;
   newAudio.play()
   shoot.shootBullet = true;
   shoot.x = xPos;
@@ -193,7 +197,7 @@ function initSound(){
   sound.reload = new Audio();
   sound.hit = new Audio();
   sound.background.src = "";
-  sound.shoot.src =  "../static/audio/Woosh-Mark_DiAngelo-4778593.mp3";
+  sound.shoot.src =  "../static/audio/9mm.mp3";
   sound.reload.src = "../static/audio/reload.mp3";
   sound.hit.src = "../static/audio/HITMARKER.mp3";
 }
@@ -235,7 +239,11 @@ window.addEventListener('mousemove', function (e) {
 });
 
   var context = canvas.getContext('2d');
-  socket.on('state', function(players, projectiles, enemies, zones, teamQuests, boss) {
+  socket.on('state', function(players, projectiles, enemies, zones,
+    teamQuests, boss, specialObjects) {
+    if (clearScreen) {
+      return;
+    }
     //console.log("socket event state called");
     if (players[myId] == 0) {
       //Died
@@ -265,8 +273,8 @@ window.addEventListener('mousemove', function (e) {
     context.drawImage(mapImage, middleX, middleY,
       canvasW, canvasH, 0, 0, canvasW*zoom, canvasH*zoom);
 
-    context.fillStyle = 'green';
-    var playerTexture = document.getElementById("player");
+    // context.fillStyle = 'green';
+    var playerTexture = document.getElementById("player")
     for (var id in players) {
 
       var player = players[id];
@@ -282,13 +290,18 @@ window.addEventListener('mousemove', function (e) {
 
     //Draw the bawss
     var bossImg = document.getElementById("boss");
-    // context.drawImage(bossImg, boss.x - middleX + 20, boss.y - middleY - 100, 100, 130);
+    // context.drawImage(bossImg, boss.x - middleX, boss.y - middleY, 100, 130);
+    context.beginPath();
+    if (boss) {
+      context.drawImage(bossImg, boss.x - middleX, boss.y - middleY, 100, 100);
+      showHealthBarAbove(boss.x - middleX + 20, boss.y - middleY - 100, boss.health, boss.maxHealth); //temporary
+    }
+
+
     // context.beginPath();
-    // context.arc(boss.x - middleX, boss.y - middleY, 2*GRID_SIZE/2, 0, 2 * Math.PI);
-    // context.fillStyle = 'red';
+    // context.arc(boss.x - middleX, boss.y - middleY, GRID_SIZE/2 , 0, 2 * Math.PI);
     // context.fill();
-    context.drawImage(bossImg, boss.x - middleX, boss.y - middleY, 100, 100);
-    showHealthBarAbove(boss.x - middleX + 20, boss.y - middleY - 100, boss.health, boss.maxHealth);
+
 
     for (var id in projectiles) {
       var projectile = projectiles[id];
@@ -296,7 +309,7 @@ window.addEventListener('mousemove', function (e) {
       // context.drawImage('../public/image/George.jpeg', projectile.x - middleX, projectile.y - middleY,10,10);
       context.beginPath();
       context.arc(projectile.x - middleX, projectile.y - middleY, 2, 0, 2 * Math.PI);
-      context.fillStyle = '#eeeeee';
+      context.fillStyle = 'black';
       context.fill();
     }
 
@@ -305,17 +318,18 @@ window.addEventListener('mousemove', function (e) {
 
       var enemy = enemies[id];
       //Determines how the bullets look // old radius = 6
-      // context.drawImage(bossImg, enemy.x - middleX + 5, enemy.y - middleY - 40, 50, 65);
+      // context.drawImage(bossImg, enemy.x - middleX, enemy.y - middleY, 50, 65);
       // context.beginPath();
       // context.arc(enemy.x - middleX, enemy.y - middleY, GRID_SIZE/2, 0, 2 * Math.PI);
-      context.drawImage(enemyTexture, enemy.x - middleX, enemy.y - middleY, GRID_SIZE*2, GRID_SIZE*2);
       // context.fillStyle = 'red';
       // context.fill();
-
-      showHealthBarAbove(enemy.x - middleX, enemy.y - middleY, enemy.health, enemy.maxHealth);
+      context.drawImage(enemyTexture, enemy.x - middleX, enemy.y - middleY, GRID_SIZE*2, GRID_SIZE*2);
+      if (enemy.health < enemy.maxHealth) {
+        showHealthBarAbove(enemy.x - middleX, enemy.y - middleY, enemy.health, enemy.maxHealth);
+      }
     }
 
-    context.fillStyle = "rgba(100, 100, 100, 0.3)";
+    context.fillStyle = "rgba(30, 10, 10, 0.6)";
     for (var id in zones) {
       var zone = zones[id];
       if (!zone.open) {
@@ -335,6 +349,54 @@ window.addEventListener('mousemove', function (e) {
       context.fillText("RELOAD",  canvasW-70, canvasH-70);
     }
 
+    if (specialObjects.rotundaBoss) {
+      rotundaBoss = specialObjects.rotundaBoss;
+      context.arc(rotundaBoss.x - middleX, rotundaBoss.y - middleY,
+        rotundaBoss.size*GRID_SIZE/2, 0, 2 * Math.PI);
+      context.fillStyle = 'black';
+      context.fill();
+      // showHealthBarAbove(rotundaBoss.x - middleX, rotundaBoss.y - middleY,
+        // rotundaBoss.health, rotundaBoss.maxHealth);
+
+      showBossHealthBar(rotundaBoss.health, rotundaBoss.maxHealth, 1);
+    }
+
+    if (specialObjects.ASBBoss) {
+
+
+      asbBoss = specialObjects.ASBBoss;
+      context.strokeStyle = "black";
+      context.strokeText("F", asbBoss.x-middleX, asbBoss.y-middleY);
+      context.fillStyle = "red";
+      context.font = "bold 40px Arial";
+      context.fillText("F", asbBoss.x-middleX, asbBoss.y-middleY);
+      showBossHealthBar(asbBoss.health, asbBoss.maxHealth, 1);
+    }
+
+
+    if (specialObjects.RCBBoss2) {
+      boss2 = specialObjects.RCBBoss2;
+      context.arc(boss2.x - middleX, boss2.y - middleY,
+        boss2.size*GRID_SIZE/2, 0, 2 * Math.PI);
+      context.fillStyle = 'black';
+      context.fill();
+      if (specialObjects.RCBBoss1) {
+        showBossHealthBar(boss2.health, boss2.maxHealth, 2);
+      }
+      else {
+        showBossHealthBar(boss2.health, boss2.maxHealth, 1);
+      }
+    }
+
+    if (specialObjects.RCBBoss1) {
+      boss1 = specialObjects.RCBBoss1;
+      context.arc(boss1.x - middleX, boss1.y - middleY,
+        boss1.size*GRID_SIZE/2, 0, 2 * Math.PI);
+      context.fillStyle = 'black';
+      context.fill();
+      showBossHealthBar(boss1.health, boss1.maxHealth, 1);
+    }
+
     var thisLoop = new Date();
     context.fillText(Math.round(1000 / (thisLoop - lastLoop)) + " FPS", canvasW-95, canvasH-10);
     lastLoop = thisLoop;
@@ -350,6 +412,8 @@ window.addEventListener('mousemove', function (e) {
     }
 
     showQuests(players[myId], teamQuests);
+
+
 
     // related to function 'showMessage'.
     if (messageOn && messageQueue.length >= 1) {
@@ -381,6 +445,8 @@ window.addEventListener('mousemove', function (e) {
       var mapAreaWidth = 380*GRID_SIZE;
       var mapAreaHeight = mapAreaWidth*mapWHRatio;
 
+
+
       //drawing black box behind the map
       context.beginPath();
       context.rect(mapX-mapMargin, mapY-mapMargin, smallMapWidth+2*mapMargin,
@@ -409,6 +475,7 @@ window.addEventListener('mousemove', function (e) {
         + (yPos+middleY)/GRID_SIZE, mapX+10, mapY+smallMapHeight+50);
 
       //show players on small map
+
       for (var id in players) {
         var player = players[id];
         context.fillStyle = 'green';
@@ -421,6 +488,24 @@ window.addEventListener('mousemove', function (e) {
           GRID_SIZE/3 , 0, 2 * Math.PI);
         context.fill();
       }
+
+    }
+
+    if (quizMessageOn) {
+      if (specialObjects.ASBBoss) {
+        quizMessageOn = false;
+      }
+      thisTime = new Date();
+      if (thisTime > quizDeleteTime) {
+        quizMessageOn = false;
+      }
+      else {
+        displayQuiz(quizMessage);
+        if (quizChoice) {
+          displayQuizFloor(middleX, middleY, quizChoice);
+        }
+      }
+
     }
 
     //zone Change show
@@ -546,6 +631,11 @@ function showMyData(player) {
   context.fillStyle = "black";
   context.font = "bold 35px Arial";
   context.fillText(player.username, 17, 50);
+
+  //score
+  context.fillStyle = "black";
+  context.font = "bold 15px Arial";
+  context.fillText("Score: "+player.score, 17, 120);
 }
 function showOtherPlayerData(player, playerIndex) {
   context.fillStyle = "#BBB";
@@ -573,6 +663,7 @@ function showOtherPlayerData(player, playerIndex) {
 }
 function showQuests(player, teamQuests) {
   var line = 0;
+  context.lineWidth = 1;
   context.fillStyle = "#0AC";
   context.strokeStyle = "rgb(255, 255, 255, 0.5)";
   context.font = "16px Arial";
@@ -592,7 +683,12 @@ function showQuests(player, teamQuests) {
       context.strokeText("["+teamQuests[i].name + "] " + teamQuests[i].condition + " " + teamQuests[i].progressText, 10, 170+line*20);
       context.fillText("["+teamQuests[i].name + "] " + teamQuests[i].condition + " " + teamQuests[i].progressText, 10, 170+line*20);
       line += 1;
-      if (line > 10) {
+      if (teamQuests[i].completeDescription) {
+        context.strokeText("     "+teamQuests[i].completeDescription, 10, 170+line*20);
+        context.fillText("     "+teamQuests[i].completeDescription, 10, 170+line*20);
+        line += 1;
+      }
+      if (line > 20) {
         break;
       }
     }
@@ -638,6 +734,34 @@ function showBulletBarAbove(x, y, clip, clipSize) {
   context.beginPath();
   context.rect(x-20, y-20, (clip/clipSize)*40, 6);
   context.fill();
+}
+
+function showBossHealthBar(health, maxHealth, bossNum) {
+  context.lineWidth = 10;
+  strokeTime = new Date()%3000;
+  if (strokeTime < 1500) {
+    strokeLevel = 0.8*(strokeTime/1500);
+  }
+  else {
+    strokeLevel = 0.8*(3000-strokeTime)/1500;
+  }
+
+  context.strokeStyle = `rgb(255, 255, 255, ${strokeLevel})`;
+  context.strokeRect(150, 100+30*(bossNum-1), 400, 23);
+
+  context.fillStyle = "#BBB";
+  context.beginPath();
+  context.rect(150, 100+30*(bossNum-1), 400, 23);
+  context.fill();
+  context.fillStyle = "red";
+  context.beginPath();
+  context.rect(150, 100+30*(bossNum-1), (health/maxHealth)*400, 23);
+  context.fillStyle = "red";
+  context.fill();
+
+  context.fillStyle = "white";
+  context.font = "bold italic 18px Arial";
+  context.fillText("TARGET HP (" + Math.round(health) + "/" + maxHealth + ")", 155, 118+30*(bossNum-1));
 }
 
 function processMapDrawing(mapData){
@@ -756,6 +880,55 @@ function showDeadScreen() {
   }
 }
 
+function displayQuiz(message) {
+  context.lineWidth = 10;
+  strokeTime = new Date()%3000;
+  if (strokeTime < 1500) {
+    strokeLevel = 0.8*(strokeTime/1500);
+  }
+  else {
+    strokeLevel = 0.8*(3000-strokeTime)/1500;
+  }
+
+  context.strokeStyle = `rgb(255, 255, 255, ${strokeLevel})`;
+  context.strokeRect(100, 120, 600, 100);
+
+  context.fillStyle = "black";
+  context.beginPath();
+  context.rect(100, 120, 600, 100);
+  context.fill();
+
+  context.fillStyle = "white";
+  context.font = "bold italic 22px Arial";
+  context.fillText(message, 120, 150);
+}
+function displayQuizFloor(middleX, middleY, choices) {
+  console.log(choices)
+  // context.fillText(choices[0], 254*GRID_SIZE - middleX, 150*GRID_SIZE - middleY);
+  showQuizFloorText(choices[0], 254, 220, middleX, middleY);
+  showQuizFloorText(choices[1], 279, 220, middleX, middleY);
+  showQuizFloorText(choices[2], 307, 220, middleX, middleY);
+  showQuizFloorText(choices[3], 254, 242, middleX, middleY);
+  showQuizFloorText(choices[4], 279, 242, middleX, middleY);
+  showQuizFloorText(choices[5], 309, 242, middleX, middleY);
+
+}
+
+function showQuizFloorText(message, x, y, middleX, middleY) {
+  if (!message) {
+    return;
+  }
+  console.log(message);
+  context.fillStyle = "black";
+  context.font = "20px Arial";
+
+  lines = message.split(" ");
+  for (var i = 0; i < lines.length; i++) {
+    console.log(lines[i]);
+    context.fillText(lines[i], x*GRID_SIZE - middleX, (y)*GRID_SIZE+20*i - middleY);
+  }
+}
+
 socket.on("zoneChange", function(num){
   //zone changed!
   zoneChangeOn = true;
@@ -774,6 +947,35 @@ socket.on("questOver", function(qName, qCondition, qDescription) {
 
 socket.on("zoneOpen", function(zoneNum) {
   console.log(zoneNum);
+});
+
+socket.on("quizMessage", function(message, time, choice) {
+  // var quizMessageOn = false;
+  // var quizMessage = "";
+  // var quizMessageOnTime;
+  quizMessageOn = true;
+  quizMessageOnTime = new Date();
+  quizMessage = message;
+  quizDeleteTime = time*1000 + quizMessageOnTime;
+  if (choice) {
+    quizChoice = choice;
+  }
+});
+
+socket.on("game clear", function() {
+  clearScreen = true;
+  context.clearRect(startX, startY, canvasW, canvasH);
+  context.beginPath();
+  context.fillStyle = "white";
+  context.rect(0, 0, canvasW, canvasH);
+  context.fill();
+
+  context.fillStyle = "black";
+  context.font = "80px Arial";
+  context.fillText("Congratulations!", canvasW/2-200, canvasH/2-50);
+  context.font = "40px Arial";
+  context.fillText("I'm too sleepy to make this screen.", canvasW/2-200, canvasH/2+100);
+
 });
 
 //=============================================================================
